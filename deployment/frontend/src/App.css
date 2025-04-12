@@ -1,0 +1,464 @@
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --background-color: #f8f9fa;
+  --text-color: #2c3e50;
+  --border-color: #e0e0e0;
+  --success-color: #2ecc71;
+  --warning-color: #f1c40f;
+  --error-color: #e74c3c;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-size: 2.5em;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.1em;
+}
+
+.calculator {
+  display: grid;
+  gap: 30px;
+}
+
+section {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.input-group {
+  display: grid;
+  gap: 20px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 500;
+}
+
+input {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.upload-section {
+  margin-bottom: 30px;
+}
+
+.upload-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.file-input {
+  flex: 1;
+}
+
+.category-select {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: white;
+  min-width: 200px;
+}
+
+.upload-button {
+  padding: 12px 24px;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.upload-button:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.upload-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.invoice-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.invoice-item {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.invoice-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.invoice-header h3 {
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: var(--error-color);
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+}
+
+.delete-button:hover {
+  color: #c0392b;
+}
+
+.invoice-date, .invoice-description, .invoice-amount, .invoice-gst {
+  margin: 8px 0;
+  color: #666;
+}
+
+.summary-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.result {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.result p {
+  margin: 10px 0;
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.gst-payable {
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+.gst-refund {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.guidance-section {
+  margin-top: 30px;
+}
+
+.guidance-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.guidance-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.guidance-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.guidance-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guidance-card li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+}
+
+.guidance-card li:before {
+  content: "•";
+  color: var(--secondary-color);
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.purchases-section {
+  margin-bottom: 30px;
+}
+
+.purchase-input {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.purchase-input input,
+.purchase-input select {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.purchase-input input:focus,
+.purchase-input select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.purchase-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.edit-button {
+  padding: 8px 16px;
+  background: var(--warning-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+  background: #f39c12;
+}
+
+.update-button {
+  padding: 12px 24px;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.update-button:hover {
+  background: #2980b9;
+}
+
+.purchase-category,
+.purchase-supplier {
+  color: #666;
+  font-size: 0.9em;
+  margin: 5px 0;
+}
+
+.receipt-preview {
+  margin-top: 10px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.receipt-preview a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.receipt-preview a:hover {
+  text-decoration: underline;
+}
+
+.purchases-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.purchase-item {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.purchase-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.purchase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.purchase-header h3 {
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.purchase-date, .purchase-amount, .purchase-gst, .purchase-net {
+  margin: 8px 0;
+  color: #666;
+}
+
+.purchase-gst {
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.purchase-net {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+
+  .upload-controls {
+    flex-direction: column;
+  }
+
+  .category-select {
+    width: 100%;
+  }
+
+  .summary-section {
+    grid-template-columns: 1fr;
+  }
+
+  .guidance-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.processing-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-message button {
+  background-color: #c62828;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.error-message button:hover {
+  background-color: #b71c1c;
+} 

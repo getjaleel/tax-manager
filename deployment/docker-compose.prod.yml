@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    image: jaleelmohammad/tax-manager-backend:latest
+    container_name: tax-manager-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    image: jaleelmohammad/tax-manager-frontend:latest
+    container_name: tax-manager-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - REACT_APP_API_URL=http://backend:8000
+      - NODE_ENV=production
+    restart: unless-stopped 
