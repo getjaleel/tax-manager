@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { InvoiceProcessor } from './services/InvoiceProcessor';
 
@@ -14,14 +14,12 @@ interface Invoice {
 
 interface BusinessPurchase {
   id: string;
-  date: string;
   amount: number;
   description: string;
-  gstAmount: number;
-  netAmount: number;
   category: string;
-  supplier?: string;
-  receiptUrl?: string;
+  supplier: string;
+  gstAmount: number;
+  date: string;
 }
 
 const PURCHASE_CATEGORIES = [
@@ -54,25 +52,35 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const invoiceProcessor = new InvoiceProcessor();
+  const invoiceProcessor = useMemo(() => new InvoiceProcessor(), []);
 
-  // Load invoices and purchases from localStorage on component mount
+  // Load data from backend on component mount
   useEffect(() => {
-    const savedInvoices = localStorage.getItem('invoices');
-    const savedPurchases = localStorage.getItem('purchases');
-    if (savedInvoices) {
-      setInvoices(JSON.parse(savedInvoices));
-    }
-    if (savedPurchases) {
-      setPurchases(JSON.parse(savedPurchases));
-    }
-  }, []);
+    const loadData = async () => {
+      try {
+        // Load invoices
+        const invoices = await invoiceProcessor.getInvoices();
+        setInvoices(invoices.map(invoice => ({
+          id: invoice.id || Date.now().toString(),
+          date: invoice.invoice_date || new Date().toISOString().split('T')[0],
+          amount: invoice.total_amount || 0,
+          description: invoice.supplier || '',
+          category: invoice.category || 'Other',
+          gstEligible: invoice.gst_eligible || true
+        })));
 
-  // Save invoices and purchases to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('invoices', JSON.stringify(invoices));
-    localStorage.setItem('purchases', JSON.stringify(purchases));
-  }, [invoices, purchases]);
+        // Load expenses
+        const expenses = await invoiceProcessor.getExpenses();
+        setExpenses(expenses.total.toString());
+        setGstEligibleExpenses(expenses.gstEligible.toString());
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setError('Failed to load data from server');
+      }
+    };
+
+    loadData();
+  }, [invoiceProcessor]);
 
   const gstRate = 0.1; // 10% GST rate
   const incomeNum = parseFloat(income) || 0;
@@ -101,19 +109,40 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (selectedFile) {
-      const newInvoice: Invoice = {
-        id: Date.now().toString(),
-        date: new Date().toISOString().split('T')[0],
-        amount: 0, // This would be extracted from the invoice
-        description: selectedFile.name,
-        category: selectedCategory,
-        gstEligible: true,
-        fileUrl: URL.createObjectURL(selectedFile)
-      };
-      setInvoices([...invoices, newInvoice]);
-      setSelectedFile(null);
+      setIsProcessing(true);
+      setError(null);
+      
+      try {
+        const result = await invoiceProcessor.processDocument(selectedFile);
+        
+        if (result.success && result.invoice) {
+          // Update local state with proper null checks
+          const newInvoice = {
+            id: result.invoice.id || Date.now().toString(),
+            date: result.invoice.invoice_date || new Date().toISOString().split('T')[0],
+            amount: result.invoice.total_amount || 0,
+            description: result.invoice.supplier || selectedFile.name,
+            category: selectedCategory,
+            gstEligible: result.invoice.gst_eligible || true
+          };
+          
+          setInvoices(prev => [...prev, newInvoice]);
+
+          // Update expenses
+          const expenses = await invoiceProcessor.getExpenses();
+          setExpenses(expenses.total.toString());
+          setGstEligibleExpenses(expenses.gstEligible.toString());
+        } else {
+          setError(result.error || 'Failed to process invoice');
+        }
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to process invoice');
+      } finally {
+        setIsProcessing(false);
+        setSelectedFile(null);
+      }
     }
   };
 

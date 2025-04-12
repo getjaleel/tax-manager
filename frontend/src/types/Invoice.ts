@@ -11,7 +11,7 @@ export interface ParsedInvoice {
   gstAmount: number;
   netAmount: number;
   invoiceDate: string;
-  invoiceNumber?: string;
+  invoiceNumber: string;
   rawText: string;
 }
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
-from typing import Dict, Any
+from typing import Dict, Any, List
 import json
 import logging
 import traceback
@@ -13,6 +13,9 @@ import io
 import os
 import pdf2image
 import tempfile
+from datetime import datetime
+from pydantic import BaseModel
+import sqlite3
 
 # Configure logging
 logging.basicConfig(
@@ -26,14 +29,179 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Enable CORS for all origins
+# Configure CORS with more specific settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["http://192.168.1.122:3000"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+@app.middleware("http")
+async def add_cors_header(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "http://192.168.1.122:3000"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
+
+# Database setup
+def init_db():
+    try:
+        logger.info("Initializing database...")
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Create tables
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS invoices (
+                id TEXT PRIMARY KEY,
+                supplier TEXT,
+                total_amount REAL,
+                gst_amount REAL,
+                net_amount REAL,
+                invoice_date TEXT,
+                invoice_number TEXT,
+                category TEXT,
+                gst_eligible BOOLEAN,
+                file_path TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+        ''')
+        
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS expenses (
+                id TEXT PRIMARY KEY,
+                invoice_id TEXT,
+                amount REAL,
+                gst_amount REAL,
+                category TEXT,
+                description TEXT,
+                date TEXT,
+                FOREIGN KEY (invoice_id) REFERENCES invoices (id)
+            )
+        ''')
+        
+        conn.commit()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise
+    finally:
+        conn.close()
+
+# Initialize database at startup
+init_db()
+
+# Pydantic models
+class Invoice(BaseModel):
+    id: str
+    supplier: str
+    total_amount: float
+    gst_amount: float
+    net_amount: float
+    invoice_date: str
+    invoice_number: str = None
+    category: str
+    gst_eligible: bool
+    file_path: str = None
+
+class Expense(BaseModel):
+    id: str
+    invoice_id: str
+    amount: float
+    gst_amount: float
+    category: str
+    description: str
+    date: str
+
+# Database operations
+def save_invoice(invoice: Invoice):
+    conn = sqlite3.connect('gst-helper.db')
+    c = conn.cursor()
+    
+    c.execute('''
+        INSERT OR REPLACE INTO invoices 
+        (id, supplier, total_amount, gst_amount, net_amount, invoice_date, 
+         invoice_number, category, gst_eligible, file_path, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        invoice.id,
+        invoice.supplier,
+        invoice.total_amount,
+        invoice.gst_amount,
+        invoice.net_amount,
+        invoice.invoice_date,
+        invoice.invoice_number,
+        invoice.category,
+        invoice.gst_eligible,
+        invoice.file_path,
+        datetime.now().isoformat(),
+        datetime.now().isoformat()
+    ))
+    
+    conn.commit()
+    conn.close()
+
+def get_invoices() -> List[Invoice]:
+    try:
+        logger.info("Fetching invoices from database")
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        c.execute('SELECT * FROM invoices')
+        rows = c.fetchall()
+        
+        invoices = []
+        for row in rows:
+            try:
+                invoice = Invoice(
+                    id=str(row[0]),
+                    supplier=row[1],
+                    total_amount=float(row[2]),
+                    gst_amount=float(row[3]),
+                    net_amount=float(row[4]),
+                    invoice_date=row[5],
+                    invoice_number=row[6],
+                    category=row[7],
+                    gst_eligible=bool(row[8]),
+                    file_path=row[9]
+                )
+                invoices.append(invoice)
+            except Exception as e:
+                logger.error(f"Error processing invoice row: {str(e)}")
+                logger.error(f"Row data: {row}")
+                continue
+        
+        logger.info(f"Successfully fetched {len(invoices)} invoices")
+        return invoices
+    except Exception as e:
+        logger.error(f"Error in get_invoices: {str(e)}")
+        logger.error(traceback.format_exc())
+        return []
+    finally:
+        conn.close()
+
+def get_total_expenses() -> Dict[str, float]:
+    conn = sqlite3.connect('gst-helper.db')
+    c = conn.cursor()
+    
+    c.execute('SELECT SUM(total_amount) FROM invoices')
+    total = c.fetchone()[0] or 0.0
+    
+    c.execute('SELECT SUM(gst_amount) FROM invoices WHERE gst_eligible = 1')
+    gst_eligible = c.fetchone()[0] or 0.0
+    
+    conn.close()
+    return {
+        "total": total,
+        "gst_eligible": gst_eligible
+    }
 
 @app.get("/")
 async def root():
@@ -229,7 +397,6 @@ async def process_invoice(file: UploadFile = File(...)):
         try:
             result = parse_invoice(text)
             logger.debug(f"Parsing result: {json.dumps(result, indent=2)}")
-            return JSONResponse(content=result)
         except Exception as e:
             logger.error(f"Invoice parsing failed: {str(e)}")
             return JSONResponse(
@@ -240,7 +407,27 @@ async def process_invoice(file: UploadFile = File(...)):
                     "traceback": traceback.format_exc()
                 }
             )
-            
+        
+        # Save to database
+        invoice = Invoice(
+            id=str(datetime.now().timestamp()),
+            supplier=result["supplier"],
+            total_amount=result["total_amount"],
+            gst_amount=result["gst_amount"],
+            net_amount=result["net_amount"],
+            invoice_date=result["invoice_date"],
+            invoice_number=result.get("invoice_number", ""),  # Default to empty string if None
+            category="Other",  # Default category
+            gst_eligible=True  # Default to true, can be updated later
+        )
+        
+        save_invoice(invoice)
+        
+        return JSONResponse(content={
+            "success": True,
+            "invoice": invoice.dict()
+        })
+        
     except HTTPException as he:
         raise he
     except Exception as e:
@@ -254,6 +441,31 @@ async def process_invoice(file: UploadFile = File(...)):
                 "traceback": traceback.format_exc()
             }
         )
+
+@app.get("/invoices")
+async def get_invoices_endpoint():
+    try:
+        logger.info("Fetching invoices from database")
+        invoices = get_invoices()
+        logger.info(f"Found {len(invoices)} invoices")
+        
+        # Log each invoice for debugging
+        for invoice in invoices:
+            logger.debug(f"Invoice data: {invoice.dict()}")
+        
+        return {"invoices": [invoice.dict() for invoice in invoices]}
+    except Exception as e:
+        logger.error(f"Error in get_invoices_endpoint: {str(e)}")
+        logger.error(traceback.format_exc())
+        return {"invoices": []}
+
+@app.get("/expenses")
+async def get_expenses_endpoint():
+    expenses = get_total_expenses()
+    return {
+        "total_expenses": expenses["total"],
+        "gst_eligible_expenses": expenses["gst_eligible"]
+    }
 
 if __name__ == "__main__":
     try:
