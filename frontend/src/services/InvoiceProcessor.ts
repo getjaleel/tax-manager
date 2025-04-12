@@ -119,65 +119,28 @@ export class InvoiceProcessor {
     }
   }
 
-  async getInvoices(): Promise<ParsedInvoice[]> {
+  async getInvoices(): Promise<Invoice[]> {
     try {
-      console.log('Fetching invoices from:', `${this.apiUrl}/invoices`);
-      const response = await fetch(`${this.apiUrl}/invoices`);
-      
+      const response = await fetch('http://localhost:8000/invoices');
       if (!response.ok) {
-        console.error('Failed to fetch invoices:', response.status, response.statusText);
-        return [];
+        throw new Error('Failed to fetch invoices');
       }
-
       const data = await response.json();
-      console.log('Received invoice data:', data);
-
-      // Check if data exists and has the expected structure
-      if (!data || typeof data !== 'object') {
-        console.error('Invalid response: data is not an object');
-        return [];
-      }
-
-      // Check if invoices array exists
-      if (!data.invoices) {
-        console.error('Invalid response: missing invoices array');
-        return [];
-      }
-
-      // Ensure data.invoices is an array
       if (!Array.isArray(data.invoices)) {
-        console.error('Invalid response format: invoices is not an array');
-        return [];
+        throw new Error('Invalid response format');
       }
-
-      return data.invoices.map((invoice: any) => {
-        // Log each invoice for debugging
-        console.log('Processing invoice:', invoice);
-        
-        // Ensure invoice is an object
-        if (!invoice || typeof invoice !== 'object') {
-          console.error('Invalid invoice format:', invoice);
-          return {
-            supplier: '',
-            totalAmount: 0,
-            gstAmount: 0,
-            netAmount: 0,
-            invoiceDate: new Date().toISOString().split('T')[0],
-            invoiceNumber: '',
-            rawText: ''
-          };
-        }
-
-        return {
-          supplier: String(invoice.supplier || ''),
-          totalAmount: Number(invoice.total_amount || 0),
-          gstAmount: Number(invoice.gst_amount || 0),
-          netAmount: Number(invoice.net_amount || 0),
-          invoiceDate: String(invoice.invoice_date || new Date().toISOString().split('T')[0]),
-          invoiceNumber: String(invoice.invoice_number || ''),
-          rawText: String(invoice.raw_text || '')
-        };
-      });
+      return data.invoices.map((invoice: any) => ({
+        id: String(invoice.id),
+        invoice_number: invoice.invoice_number || '',
+        date: invoice.date || '',
+        amount: Number(invoice.amount) || 0,
+        gst_amount: Number(invoice.gst_amount) || 0,
+        gst_percentage: Number(invoice.gst_percentage) || 0,
+        description: invoice.description || '',
+        category: invoice.category || '',
+        is_gst_eligible: Boolean(invoice.is_gst_eligible),
+        created_at: invoice.created_at || new Date().toISOString()
+      }));
     } catch (error) {
       console.error('Error fetching invoices:', error);
       return [];
@@ -202,6 +165,48 @@ export class InvoiceProcessor {
     } catch (error) {
       console.error('Error fetching expenses:', error);
       return { total: 0, gstEligible: 0 };
+    }
+  }
+
+  async deleteInvoice(id: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.apiUrl}/invoices/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error(`Invoice with ID ${id} not found`);
+        }
+        throw new Error('Failed to delete invoice');
+      }
+      
+      const data = await response.json();
+      return data.success === true;
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      throw error;
+    }
+  }
+
+  async deleteAllInvoices(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.apiUrl}/invoices`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to delete all invoices');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting all invoices:', error);
+      throw error;
     }
   }
 } 
