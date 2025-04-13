@@ -1336,3 +1336,706 @@ Invoice Number
 2025-04-13 18:58:37,204 - __main__ - INFO - Database initialized successfully
 2025-04-13 18:58:37,207 - __main__ - INFO - Database initialized successfully
 2025-04-13 18:58:37,208 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:47:19,223 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:47:19,226 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:47:19,227 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:49:19,836 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:49:19,840 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:49:19,840 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:50:39,654 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:123]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_field with data[125:137]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_value with data[139:154]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_part_data with data[158:32309]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:17188]
+2025-04-13 19:50:39,655 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:21399]
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_header_field with data[21443:21462]
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_header_value with data[21464:21494]
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_part_data with data[21498:21505]
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:50:39,656 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:50:39,657 - __main__ - DEBUG - Processing invoice - Filename: Sofa Purchase Invoice.pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:50:39,657 - __main__ - DEBUG - File size: 70738 bytes
+2025-04-13 19:50:39,657 - __main__ - DEBUG - Converting PDF to images: /tmp/tmpa5j24ja8.pdf
+2025-04-13 19:50:39,713 - __main__ - DEBUG - Converted PDF to 1 images
+2025-04-13 19:50:39,713 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:50:39,744 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_5hnkovh7_input.PNG', '/tmp/tess_5hnkovh7', 'txt']
+2025-04-13 19:50:40,675 - __main__ - DEBUG - Extracted 2898 characters from page 1
+2025-04-13 19:50:40,675 - __main__ - DEBUG - Total extracted text length: 2899
+2025-04-13 19:50:40,676 - __main__ - DEBUG - Extracted text preview: SALES ORDER
+
+Amart FYSHWICK SUPERSTORE
+AMART FURNITURE PTY LTD A.B.N. 65 009 810 324
+
+74 Collie St Fyshwick ACT 2609
+
+°
+Furniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au
+
+Sales Order # 436 -...
+2025-04-13 19:50:40,676 - __main__ - DEBUG - Parsing result: {
+  "supplier": "your cheque, savings, debit, credit carc Order Total $2,798.00",
+  "total_amount": 0.0,
+  "gst_amount": 0.0,
+  "net_amount": 0.0,
+  "invoice_date": "2025-04-13",
+  "invoice_number": "d",
+  "raw_text": "SALES ORDER\n\nAmart FYSHWICK SUPERSTORE\nAMART FURNITURE PTY LTD A.B.N. 65 009 810 324\n\n74 Collie St Fyshwick ACT 2609\n\n\u00b0\nFurniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au\n\nSales Order # 436 - 092822\n\nCustomer: JALEEL AHMED MOHAMMAD\n9 Delivery Address: 9\n14 LEN WATERS STREET 14 Len Waters Street\nNGUNNAWAL ACT 2913 Ngunnawal 2913 ACT\nMobile: 0469126515\n\nSales Person(s): Junaid\n\nExpected\n\nTotal\nom Qty Description Availability Unit Incl. GST\node MY P (approx.) n\n51129 1 SAN MARCO 3 Seater with 2 Inbuilt Electric Recliners. Upholstered in 100% Leather. 0 - 1 weeks $2,599.00 $2,599.00\n23/03/2024 Available in Black. (BEIGE TBD, MOVED TO MTOQ) (1040Hx2250Wx980D) Ready To\nAssemble (Ctns:2) - BLACK\n10 Year Guarantee\n[Fully Invoiced]\n58063 1  SMARTCARE LEATHER SYSTEM 2-4 Seater with 5 Year Protection Plan (Ctns:1) In Stock $199.00 $199.00\n23/03/2024 5 Year Guarantee\n[Fully Invoiced]\nSub Total $2,798.00\n. . Telephone & Internet Banking - BPAY\u00ae Delivery $0.00\nBiller Code: 443580 Contact your bank or financial institution to make this TT\nRef: 4360 0092 8222 payment from your cheque, savings, debit, credit carc Order Total $2,798.00\nor transaction account. More info: www.bpay.com.au GST Included $254.36\nBalance to pay $0.00\nCUSTOMERS, PLEASE NOTE\ne \u00a7\u00a9See www.amartfurniture.com.au/customer-care/terms-and-conditions SPECIAL ORDERS (including Made to Order)\nfor terms & conditions of sale. . . e A 30% deposit (or 100% for cut-down blinds} is required for all Special Orders including\n\u00a2 We care about quality. See our Quality Guarantee & Guide at Made to Order (MTO)}. Orders will not be sent for production until minimum deposit has\n\nwww.amartfurniture.com.au/customer-care/quality-quarantee.\n\n\u00ab We collect personal information for a variety of purposes.\nSee our Privacy Policy at: www.amartfurniture.com.au/customer-care/privacy.\n\n\u00ab Some products (like bunks, tallboys & dressers) may pose a safety risk if not\nproperly assembled. See www.amartfurniture.com.au/product-safety.\n\n\u00a2 Quoted delivery times are accurate at order placement but may change for reasons\n\nbeen paid.\ne See www.amartfurniture.com.au/custom-product-terms.html\nfor full MTO terms & conditions.\nCANCELLATION OR ORDERS & CHANGE OF MIND\ne See our Returns Policy at www.amartfurniture.com.au/customer-care/returns.\n\noutside our control. BPAY = = Oe\n\u00a2 Products must be delivered/collected immediately after availability is confirmed. e Processing times are dependent on your financial institution. Funds can take\nSee www.amartfurniture.com.au/customer-care/collections-and-delivery. anywhere from 2 to 7 days to clear.\n\ne\u00ab You may ask for your delivery to be delayed after you order. If you do, we\nwill do what we can to supply your order on your nominated date but we are not\nresponsible for delays outside our reasonable control.\n\nPrinted: 12/11/2024 11:48:21AM THANK YOU FOR SHOPPING AT AMART FURNITURE Page 1 of 1\n\n"
+}
+2025-04-13 19:50:40,679 - __main__ - DEBUG - Expense saved successfully
+2025-04-13 19:53:02,793 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:53:02,797 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:53:02,797 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:53:12,214 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:53:12,215 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:53:12,215 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:123]
+2025-04-13 19:53:12,215 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:12,215 - python_multipart.multipart - DEBUG - Calling on_header_field with data[125:137]
+2025-04-13 19:53:12,215 - python_multipart.multipart - DEBUG - Calling on_header_value with data[139:154]
+2025-04-13 19:53:12,216 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:12,216 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:53:12,216 - python_multipart.multipart - DEBUG - Calling on_part_data with data[158:48846]
+2025-04-13 19:53:12,217 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:22050]
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_header_field with data[22094:22113]
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_header_value with data[22115:22145]
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:12,218 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:53:12,219 - python_multipart.multipart - DEBUG - Calling on_part_data with data[22149:22156]
+2025-04-13 19:53:12,219 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:53:12,219 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:53:12,220 - __main__ - DEBUG - Processing invoice - Filename: Sofa Purchase Invoice.pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:53:12,220 - __main__ - DEBUG - File size: 70738 bytes
+2025-04-13 19:53:12,222 - __main__ - DEBUG - Converting PDF to images: /tmp/tmp_kxoj1qx.pdf
+2025-04-13 19:53:12,298 - __main__ - DEBUG - Converted PDF to 1 images
+2025-04-13 19:53:12,298 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:53:12,328 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_ddne1d4t_input.PNG', '/tmp/tess_ddne1d4t', 'txt']
+2025-04-13 19:53:13,454 - __main__ - DEBUG - Extracted 2898 characters from page 1
+2025-04-13 19:53:13,454 - __main__ - DEBUG - Total extracted text length: 2899
+2025-04-13 19:53:13,455 - __main__ - DEBUG - Extracted text preview: SALES ORDER
+
+Amart FYSHWICK SUPERSTORE
+AMART FURNITURE PTY LTD A.B.N. 65 009 810 324
+
+74 Collie St Fyshwick ACT 2609
+
+°
+Furniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au
+
+Sales Order # 436 -...
+2025-04-13 19:53:13,455 - __main__ - DEBUG - Parsed invoice details: supplier=Amart Furniture, total=2798.0, date=2024-03-23, number=Amart
+2025-04-13 19:53:13,455 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Amart Furniture",
+  "total_amount": 2798.0,
+  "gst_amount": 254.36,
+  "net_amount": 2543.64,
+  "invoice_date": "2024-03-23",
+  "invoice_number": "Amart",
+  "raw_text": "SALES ORDER\n\nAmart FYSHWICK SUPERSTORE\nAMART FURNITURE PTY LTD A.B.N. 65 009 810 324\n\n74 Collie St Fyshwick ACT 2609\n\n\u00b0\nFurniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au\n\nSales Order # 436 - 092822\n\nCustomer: JALEEL AHMED MOHAMMAD\n9 Delivery Address: 9\n14 LEN WATERS STREET 14 Len Waters Street\nNGUNNAWAL ACT 2913 Ngunnawal 2913 ACT\nMobile: 0469126515\n\nSales Person(s): Junaid\n\nExpected\n\nTotal\nom Qty Description Availability Unit Incl. GST\node MY P (approx.) n\n51129 1 SAN MARCO 3 Seater with 2 Inbuilt Electric Recliners. Upholstered in 100% Leather. 0 - 1 weeks $2,599.00 $2,599.00\n23/03/2024 Available in Black. (BEIGE TBD, MOVED TO MTOQ) (1040Hx2250Wx980D) Ready To\nAssemble (Ctns:2) - BLACK\n10 Year Guarantee\n[Fully Invoiced]\n58063 1  SMARTCARE LEATHER SYSTEM 2-4 Seater with 5 Year Protection Plan (Ctns:1) In Stock $199.00 $199.00\n23/03/2024 5 Year Guarantee\n[Fully Invoiced]\nSub Total $2,798.00\n. . Telephone & Internet Banking - BPAY\u00ae Delivery $0.00\nBiller Code: 443580 Contact your bank or financial institution to make this TT\nRef: 4360 0092 8222 payment from your cheque, savings, debit, credit carc Order Total $2,798.00\nor transaction account. More info: www.bpay.com.au GST Included $254.36\nBalance to pay $0.00\nCUSTOMERS, PLEASE NOTE\ne \u00a7\u00a9See www.amartfurniture.com.au/customer-care/terms-and-conditions SPECIAL ORDERS (including Made to Order)\nfor terms & conditions of sale. . . e A 30% deposit (or 100% for cut-down blinds} is required for all Special Orders including\n\u00a2 We care about quality. See our Quality Guarantee & Guide at Made to Order (MTO)}. Orders will not be sent for production until minimum deposit has\n\nwww.amartfurniture.com.au/customer-care/quality-quarantee.\n\n\u00ab We collect personal information for a variety of purposes.\nSee our Privacy Policy at: www.amartfurniture.com.au/customer-care/privacy.\n\n\u00ab Some products (like bunks, tallboys & dressers) may pose a safety risk if not\nproperly assembled. See www.amartfurniture.com.au/product-safety.\n\n\u00a2 Quoted delivery times are accurate at order placement but may change for reasons\n\nbeen paid.\ne See www.amartfurniture.com.au/custom-product-terms.html\nfor full MTO terms & conditions.\nCANCELLATION OR ORDERS & CHANGE OF MIND\ne See our Returns Policy at www.amartfurniture.com.au/customer-care/returns.\n\noutside our control. BPAY = = Oe\n\u00a2 Products must be delivered/collected immediately after availability is confirmed. e Processing times are dependent on your financial institution. Funds can take\nSee www.amartfurniture.com.au/customer-care/collections-and-delivery. anywhere from 2 to 7 days to clear.\n\ne\u00ab You may ask for your delivery to be delayed after you order. If you do, we\nwill do what we can to supply your order on your nominated date but we are not\nresponsible for delays outside our reasonable control.\n\nPrinted: 12/11/2024 11:48:21AM THANK YOU FOR SHOPPING AT AMART FURNITURE Page 1 of 1\n\n"
+}
+2025-04-13 19:53:13,458 - __main__ - DEBUG - Expense saved successfully
+2025-04-13 19:53:25,093 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:53:25,093 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:132]
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_header_field with data[134:146]
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_header_value with data[148:163]
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:53:25,094 - python_multipart.multipart - DEBUG - Calling on_part_data with data[167:77145]
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_header_field with data[77189:77208]
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_header_value with data[77210:77240]
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_part_data with data[77244:77251]
+2025-04-13 19:53:25,095 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:53:25,096 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:53:25,096 - __main__ - DEBUG - Processing invoice - Filename: Mac- Mini invoice - Apple (AU).pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:53:25,096 - __main__ - DEBUG - File size: 76978 bytes
+2025-04-13 19:53:25,097 - __main__ - DEBUG - Converting PDF to images: /tmp/tmpdwza42__.pdf
+2025-04-13 19:53:25,168 - __main__ - DEBUG - Converted PDF to 2 images
+2025-04-13 19:53:25,168 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:53:25,193 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_c8jl_ur3_input.PNG', '/tmp/tess_c8jl_ur3', 'txt']
+2025-04-13 19:53:25,751 - __main__ - DEBUG - Extracted 1425 characters from page 1
+2025-04-13 19:53:25,751 - __main__ - DEBUG - Processing page 2
+2025-04-13 19:53:25,772 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_8rn4glkw_input.PNG', '/tmp/tess_8rn4glkw', 'txt']
+2025-04-13 19:53:25,894 - __main__ - DEBUG - Extracted 137 characters from page 2
+2025-04-13 19:53:25,894 - __main__ - DEBUG - Total extracted text length: 1564
+2025-04-13 19:53:25,895 - __main__ - DEBUG - Extracted text preview: 12/04/2025, 06:39
+
+#Apple Store
+
+Invoice Receipt
+Invoice Number
+
+MB34347145
+
+Order Number:
+W1651674506
+
+Sold To:
+
+Jaleel Anmed Mohammad
+Ngunnawal
+
+U 914 Len Waters St
+Ngunnawal ACT 2913
+Australia
+
+Cus...
+2025-04-13 19:53:25,895 - __main__ - DEBUG - Parsed invoice details: supplier=Apple Store, total=3129.0, date=2025-04-12, number=Receipt
+2025-04-13 19:53:25,895 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Apple Store",
+  "total_amount": 3129.0,
+  "gst_amount": 284.45,
+  "net_amount": 2844.55,
+  "invoice_date": "2025-04-12",
+  "invoice_number": "Receipt",
+  "raw_text": "12/04/2025, 06:39\n\n#Apple Store\n\nInvoice Receipt\nInvoice Number\n\nMB34347145\n\nOrder Number:\nW1651674506\n\nSold To:\n\nJaleel Anmed Mohammad\nNgunnawal\n\nU 914 Len Waters St\nNgunnawal ACT 2913\nAustralia\n\nCustomer No.:900140\nOrder Details\n\nProduct Name\n\nMAC MINI\nSerial No.: (W2L464K57W)\n\nThe unit above contains the following options:\n\nPROCESSOR AND GRAPHICS 065-CGYF M4 PRO WITH 14C CPU, 20C\n\nGPU\n\nMEMORY 065-CGYL 48GB UNIFIED MEMORY\nETHERNET ADAPTER 065-CGYX 1GB ETHERNET PORT\nHARD DRIVE/SOLID STATE 065-CKOQ 1TB SSD STORAGE\nDRIVE\nTHUNDERBOLT 065-CK4M THREE THUNDERBOLT 5 PORTS\nCOUNTRY KIT X065- COUNTRY KIT-AUS\n\nCJXQ\n\nAC+ MAC COMPLIMENTARY-AOS\n\nItems will be invoiced once they have shipped or are ready for pickup.\n\nPayment Methods\n\nA$3,129.00 charged to Mastercard XXXXXXXXXXXX1768\nFor a total of A$3,129.00\n\nAdditional Information\n\nInvoice Number Invoice Date\n\nMB34347145 14 November 2024\n\nThis order is subject to Apple's Sales and Refunds Policies\nhttos://www.apple.com/au/shop/open/salespolicies\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741\n\nView duplicate invoice - Apple (AU)\n\nInvoice Date\n14 November 2024\n\nOrder Date:\n\n8 November 2024\n\nLocation:\n\nJaleel Ahmed Mohammad\n\nNgunnawal\n\nU9 14 Len Waters St\nNgunnawal ACT 2913\n\nAustralia\n\nProduct\nNumber\n\nZ1J5V\n\nSC2E2ZX/A\n\n. Quantity Quantity\nitem Price ordered Fulfilled\nA$2,844.55 1 1\n1 1\nTerms\nCredit Card\n\nExtended\nPrice\n\nA$3,129.00\n\n1/2\n\n12/04/2025, 06:39 View duplicate invoice - Apple (AU)\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741 2/2\n\n"
+}
+2025-04-13 19:53:25,897 - __main__ - DEBUG - Expense saved successfully
+2025-04-13 19:55:48,196 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:55:48,200 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:55:48,200 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:55:52,254 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:55:52,254 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:132]
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_header_field with data[134:146]
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_header_value with data[148:163]
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:55:52,255 - python_multipart.multipart - DEBUG - Calling on_part_data with data[167:51094]
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:26051]
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_header_field with data[26095:26114]
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_header_value with data[26116:26146]
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:55:52,256 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:55:52,257 - python_multipart.multipart - DEBUG - Calling on_part_data with data[26150:26157]
+2025-04-13 19:55:52,257 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:55:52,257 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:55:52,257 - __main__ - DEBUG - Processing invoice - Filename: Mac- Mini invoice - Apple (AU).pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:55:52,258 - __main__ - DEBUG - File size: 76978 bytes
+2025-04-13 19:55:52,258 - __main__ - DEBUG - Converting PDF to images: /tmp/tmpa64g07xv.pdf
+2025-04-13 19:55:52,343 - __main__ - DEBUG - Converted PDF to 2 images
+2025-04-13 19:55:52,343 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:55:52,370 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_z45zyry5_input.PNG', '/tmp/tess_z45zyry5', 'txt']
+2025-04-13 19:55:52,972 - __main__ - DEBUG - Extracted 1425 characters from page 1
+2025-04-13 19:55:52,973 - __main__ - DEBUG - Processing page 2
+2025-04-13 19:55:52,993 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_kh2oi740_input.PNG', '/tmp/tess_kh2oi740', 'txt']
+2025-04-13 19:55:53,109 - __main__ - DEBUG - Extracted 137 characters from page 2
+2025-04-13 19:55:53,109 - __main__ - DEBUG - Total extracted text length: 1564
+2025-04-13 19:55:53,110 - __main__ - DEBUG - Extracted text preview: 12/04/2025, 06:39
+
+#Apple Store
+
+Invoice Receipt
+Invoice Number
+
+MB34347145
+
+Order Number:
+W1651674506
+
+Sold To:
+
+Jaleel Anmed Mohammad
+Ngunnawal
+
+U 914 Len Waters St
+Ngunnawal ACT 2913
+Australia
+
+Cus...
+2025-04-13 19:55:53,110 - __main__ - DEBUG - Parsed invoice details: supplier=Apple Store, total=3129.0, date=2025-04-12, number=Receipt
+2025-04-13 19:55:53,110 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Apple Store",
+  "total_amount": 3129.0,
+  "gst_amount": 284.45,
+  "net_amount": 2844.55,
+  "invoice_date": "2025-04-12",
+  "invoice_number": "Receipt",
+  "raw_text": "12/04/2025, 06:39\n\n#Apple Store\n\nInvoice Receipt\nInvoice Number\n\nMB34347145\n\nOrder Number:\nW1651674506\n\nSold To:\n\nJaleel Anmed Mohammad\nNgunnawal\n\nU 914 Len Waters St\nNgunnawal ACT 2913\nAustralia\n\nCustomer No.:900140\nOrder Details\n\nProduct Name\n\nMAC MINI\nSerial No.: (W2L464K57W)\n\nThe unit above contains the following options:\n\nPROCESSOR AND GRAPHICS 065-CGYF M4 PRO WITH 14C CPU, 20C\n\nGPU\n\nMEMORY 065-CGYL 48GB UNIFIED MEMORY\nETHERNET ADAPTER 065-CGYX 1GB ETHERNET PORT\nHARD DRIVE/SOLID STATE 065-CKOQ 1TB SSD STORAGE\nDRIVE\nTHUNDERBOLT 065-CK4M THREE THUNDERBOLT 5 PORTS\nCOUNTRY KIT X065- COUNTRY KIT-AUS\n\nCJXQ\n\nAC+ MAC COMPLIMENTARY-AOS\n\nItems will be invoiced once they have shipped or are ready for pickup.\n\nPayment Methods\n\nA$3,129.00 charged to Mastercard XXXXXXXXXXXX1768\nFor a total of A$3,129.00\n\nAdditional Information\n\nInvoice Number Invoice Date\n\nMB34347145 14 November 2024\n\nThis order is subject to Apple's Sales and Refunds Policies\nhttos://www.apple.com/au/shop/open/salespolicies\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741\n\nView duplicate invoice - Apple (AU)\n\nInvoice Date\n14 November 2024\n\nOrder Date:\n\n8 November 2024\n\nLocation:\n\nJaleel Ahmed Mohammad\n\nNgunnawal\n\nU9 14 Len Waters St\nNgunnawal ACT 2913\n\nAustralia\n\nProduct\nNumber\n\nZ1J5V\n\nSC2E2ZX/A\n\n. Quantity Quantity\nitem Price ordered Fulfilled\nA$2,844.55 1 1\n1 1\nTerms\nCredit Card\n\nExtended\nPrice\n\nA$3,129.00\n\n1/2\n\n12/04/2025, 06:39 View duplicate invoice - Apple (AU)\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741 2/2\n\n"
+}
+2025-04-13 19:55:53,110 - __main__ - ERROR - Error saving invoice: table invoices has no column named invoice_type
+2025-04-13 19:55:53,110 - __main__ - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 182, in save_invoice
+    c.execute('''
+sqlite3.OperationalError: table invoices has no column named invoice_type
+
+2025-04-13 19:55:59,652 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:55:59,655 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:00,915 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:00,919 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:04,548 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:04,551 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:08,097 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:08,101 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:11,985 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:56:11,985 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:123]
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_header_field with data[125:137]
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_header_value with data[139:154]
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:56:11,986 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:56:11,987 - python_multipart.multipart - DEBUG - Calling on_part_data with data[158:32308]
+2025-04-13 19:56:11,987 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:38588]
+2025-04-13 19:56:11,987 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:56:11,987 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_header_field with data[38632:38651]
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_header_value with data[38653:38683]
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_part_data with data[38687:38694]
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:56:11,988 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:56:11,989 - __main__ - DEBUG - Processing invoice - Filename: Sofa Purchase Invoice.pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:56:11,989 - __main__ - DEBUG - File size: 70738 bytes
+2025-04-13 19:56:11,989 - __main__ - DEBUG - Converting PDF to images: /tmp/tmpmdck3vkd.pdf
+2025-04-13 19:56:12,063 - __main__ - DEBUG - Converted PDF to 1 images
+2025-04-13 19:56:12,063 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:56:12,092 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_47t9ll_c_input.PNG', '/tmp/tess_47t9ll_c', 'txt']
+2025-04-13 19:56:12,968 - __main__ - DEBUG - Extracted 2898 characters from page 1
+2025-04-13 19:56:12,969 - __main__ - DEBUG - Total extracted text length: 2899
+2025-04-13 19:56:12,969 - __main__ - DEBUG - Extracted text preview: SALES ORDER
+
+Amart FYSHWICK SUPERSTORE
+AMART FURNITURE PTY LTD A.B.N. 65 009 810 324
+
+74 Collie St Fyshwick ACT 2609
+
+°
+Furniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au
+
+Sales Order # 436 -...
+2025-04-13 19:56:12,969 - __main__ - DEBUG - Parsed invoice details: supplier=Amart Furniture, total=2798.0, date=2024-03-23, number=Amart
+2025-04-13 19:56:12,969 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Amart Furniture",
+  "total_amount": 2798.0,
+  "gst_amount": 254.36,
+  "net_amount": 2543.64,
+  "invoice_date": "2024-03-23",
+  "invoice_number": "Amart",
+  "raw_text": "SALES ORDER\n\nAmart FYSHWICK SUPERSTORE\nAMART FURNITURE PTY LTD A.B.N. 65 009 810 324\n\n74 Collie St Fyshwick ACT 2609\n\n\u00b0\nFurniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au\n\nSales Order # 436 - 092822\n\nCustomer: JALEEL AHMED MOHAMMAD\n9 Delivery Address: 9\n14 LEN WATERS STREET 14 Len Waters Street\nNGUNNAWAL ACT 2913 Ngunnawal 2913 ACT\nMobile: 0469126515\n\nSales Person(s): Junaid\n\nExpected\n\nTotal\nom Qty Description Availability Unit Incl. GST\node MY P (approx.) n\n51129 1 SAN MARCO 3 Seater with 2 Inbuilt Electric Recliners. Upholstered in 100% Leather. 0 - 1 weeks $2,599.00 $2,599.00\n23/03/2024 Available in Black. (BEIGE TBD, MOVED TO MTOQ) (1040Hx2250Wx980D) Ready To\nAssemble (Ctns:2) - BLACK\n10 Year Guarantee\n[Fully Invoiced]\n58063 1  SMARTCARE LEATHER SYSTEM 2-4 Seater with 5 Year Protection Plan (Ctns:1) In Stock $199.00 $199.00\n23/03/2024 5 Year Guarantee\n[Fully Invoiced]\nSub Total $2,798.00\n. . Telephone & Internet Banking - BPAY\u00ae Delivery $0.00\nBiller Code: 443580 Contact your bank or financial institution to make this TT\nRef: 4360 0092 8222 payment from your cheque, savings, debit, credit carc Order Total $2,798.00\nor transaction account. More info: www.bpay.com.au GST Included $254.36\nBalance to pay $0.00\nCUSTOMERS, PLEASE NOTE\ne \u00a7\u00a9See www.amartfurniture.com.au/customer-care/terms-and-conditions SPECIAL ORDERS (including Made to Order)\nfor terms & conditions of sale. . . e A 30% deposit (or 100% for cut-down blinds} is required for all Special Orders including\n\u00a2 We care about quality. See our Quality Guarantee & Guide at Made to Order (MTO)}. Orders will not be sent for production until minimum deposit has\n\nwww.amartfurniture.com.au/customer-care/quality-quarantee.\n\n\u00ab We collect personal information for a variety of purposes.\nSee our Privacy Policy at: www.amartfurniture.com.au/customer-care/privacy.\n\n\u00ab Some products (like bunks, tallboys & dressers) may pose a safety risk if not\nproperly assembled. See www.amartfurniture.com.au/product-safety.\n\n\u00a2 Quoted delivery times are accurate at order placement but may change for reasons\n\nbeen paid.\ne See www.amartfurniture.com.au/custom-product-terms.html\nfor full MTO terms & conditions.\nCANCELLATION OR ORDERS & CHANGE OF MIND\ne See our Returns Policy at www.amartfurniture.com.au/customer-care/returns.\n\noutside our control. BPAY = = Oe\n\u00a2 Products must be delivered/collected immediately after availability is confirmed. e Processing times are dependent on your financial institution. Funds can take\nSee www.amartfurniture.com.au/customer-care/collections-and-delivery. anywhere from 2 to 7 days to clear.\n\ne\u00ab You may ask for your delivery to be delayed after you order. If you do, we\nwill do what we can to supply your order on your nominated date but we are not\nresponsible for delays outside our reasonable control.\n\nPrinted: 12/11/2024 11:48:21AM THANK YOU FOR SHOPPING AT AMART FURNITURE Page 1 of 1\n\n"
+}
+2025-04-13 19:56:12,969 - __main__ - ERROR - Error saving invoice: table invoices has no column named invoice_type
+2025-04-13 19:56:12,970 - __main__ - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 182, in save_invoice
+    c.execute('''
+sqlite3.OperationalError: table invoices has no column named invoice_type
+
+2025-04-13 19:56:44,794 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:56:44,797 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:57:34,610 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:57:34,614 - __main__ - ERROR - Error fetching invoices: no such column: invoice_type
+2025-04-13 19:57:54,088 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:57:54,091 - __main__ - INFO - Database initialized successfully
+2025-04-13 19:57:54,092 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-13 19:58:14,173 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:132]
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_field with data[134:146]
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_value with data[148:163]
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:14,174 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:58:14,175 - python_multipart.multipart - DEBUG - Calling on_part_data with data[167:47854]
+2025-04-13 19:58:14,175 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:29291]
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_header_field with data[29335:29354]
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_header_value with data[29356:29386]
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_part_data with data[29390:29397]
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:58:14,176 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:58:14,177 - __main__ - DEBUG - Processing invoice - Filename: Mac- Mini invoice - Apple (AU).pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:58:14,177 - __main__ - DEBUG - File size: 76978 bytes
+2025-04-13 19:58:14,179 - __main__ - DEBUG - Converting PDF to images: /tmp/tmp0vigqscu.pdf
+2025-04-13 19:58:14,253 - __main__ - DEBUG - Converted PDF to 2 images
+2025-04-13 19:58:14,253 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:58:14,278 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_8_j1zyif_input.PNG', '/tmp/tess_8_j1zyif', 'txt']
+2025-04-13 19:58:14,833 - __main__ - DEBUG - Extracted 1425 characters from page 1
+2025-04-13 19:58:14,833 - __main__ - DEBUG - Processing page 2
+2025-04-13 19:58:14,854 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_npr1eh1q_input.PNG', '/tmp/tess_npr1eh1q', 'txt']
+2025-04-13 19:58:14,979 - __main__ - DEBUG - Extracted 137 characters from page 2
+2025-04-13 19:58:14,979 - __main__ - DEBUG - Total extracted text length: 1564
+2025-04-13 19:58:14,980 - __main__ - DEBUG - Extracted text preview: 12/04/2025, 06:39
+
+#Apple Store
+
+Invoice Receipt
+Invoice Number
+
+MB34347145
+
+Order Number:
+W1651674506
+
+Sold To:
+
+Jaleel Anmed Mohammad
+Ngunnawal
+
+U 914 Len Waters St
+Ngunnawal ACT 2913
+Australia
+
+Cus...
+2025-04-13 19:58:14,981 - __main__ - DEBUG - Parsed invoice details: supplier=Apple Store, total=3129.0, date=2025-04-12, number=Receipt
+2025-04-13 19:58:14,981 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Apple Store",
+  "total_amount": 3129.0,
+  "gst_amount": 284.45,
+  "net_amount": 2844.55,
+  "invoice_date": "2025-04-12",
+  "invoice_number": "Receipt",
+  "raw_text": "12/04/2025, 06:39\n\n#Apple Store\n\nInvoice Receipt\nInvoice Number\n\nMB34347145\n\nOrder Number:\nW1651674506\n\nSold To:\n\nJaleel Anmed Mohammad\nNgunnawal\n\nU 914 Len Waters St\nNgunnawal ACT 2913\nAustralia\n\nCustomer No.:900140\nOrder Details\n\nProduct Name\n\nMAC MINI\nSerial No.: (W2L464K57W)\n\nThe unit above contains the following options:\n\nPROCESSOR AND GRAPHICS 065-CGYF M4 PRO WITH 14C CPU, 20C\n\nGPU\n\nMEMORY 065-CGYL 48GB UNIFIED MEMORY\nETHERNET ADAPTER 065-CGYX 1GB ETHERNET PORT\nHARD DRIVE/SOLID STATE 065-CKOQ 1TB SSD STORAGE\nDRIVE\nTHUNDERBOLT 065-CK4M THREE THUNDERBOLT 5 PORTS\nCOUNTRY KIT X065- COUNTRY KIT-AUS\n\nCJXQ\n\nAC+ MAC COMPLIMENTARY-AOS\n\nItems will be invoiced once they have shipped or are ready for pickup.\n\nPayment Methods\n\nA$3,129.00 charged to Mastercard XXXXXXXXXXXX1768\nFor a total of A$3,129.00\n\nAdditional Information\n\nInvoice Number Invoice Date\n\nMB34347145 14 November 2024\n\nThis order is subject to Apple's Sales and Refunds Policies\nhttos://www.apple.com/au/shop/open/salespolicies\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741\n\nView duplicate invoice - Apple (AU)\n\nInvoice Date\n14 November 2024\n\nOrder Date:\n\n8 November 2024\n\nLocation:\n\nJaleel Ahmed Mohammad\n\nNgunnawal\n\nU9 14 Len Waters St\nNgunnawal ACT 2913\n\nAustralia\n\nProduct\nNumber\n\nZ1J5V\n\nSC2E2ZX/A\n\n. Quantity Quantity\nitem Price ordered Fulfilled\nA$2,844.55 1 1\n1 1\nTerms\nCredit Card\n\nExtended\nPrice\n\nA$3,129.00\n\n1/2\n\n12/04/2025, 06:39 View duplicate invoice - Apple (AU)\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741 2/2\n\n"
+}
+2025-04-13 19:58:14,983 - __main__ - DEBUG - Expense already exists, skipping
+2025-04-13 19:58:39,662 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:58:39,663 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:123]
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_header_field with data[125:137]
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_header_value with data[139:154]
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:58:39,664 - python_multipart.multipart - DEBUG - Calling on_part_data with data[158:16909]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:32484]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:21503]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_header_field with data[21547:21566]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_header_value with data[21568:21598]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_data with data[21602:21609]
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:58:39,665 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:58:39,666 - __main__ - DEBUG - Processing invoice - Filename: Sofa Purchase Invoice.pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:58:39,666 - __main__ - DEBUG - File size: 70738 bytes
+2025-04-13 19:58:39,666 - __main__ - DEBUG - Converting PDF to images: /tmp/tmpx4i7fvro.pdf
+2025-04-13 19:58:39,723 - __main__ - DEBUG - Converted PDF to 1 images
+2025-04-13 19:58:39,723 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:58:39,753 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_1yq_fvh7_input.PNG', '/tmp/tess_1yq_fvh7', 'txt']
+2025-04-13 19:58:40,733 - __main__ - DEBUG - Extracted 2898 characters from page 1
+2025-04-13 19:58:40,733 - __main__ - DEBUG - Total extracted text length: 2899
+2025-04-13 19:58:40,734 - __main__ - DEBUG - Extracted text preview: SALES ORDER
+
+Amart FYSHWICK SUPERSTORE
+AMART FURNITURE PTY LTD A.B.N. 65 009 810 324
+
+74 Collie St Fyshwick ACT 2609
+
+°
+Furniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au
+
+Sales Order # 436 -...
+2025-04-13 19:58:40,734 - __main__ - DEBUG - Parsed invoice details: supplier=Amart Furniture, total=2798.0, date=2024-03-23, number=Amart
+2025-04-13 19:58:40,735 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Amart Furniture",
+  "total_amount": 2798.0,
+  "gst_amount": 254.36,
+  "net_amount": 2543.64,
+  "invoice_date": "2024-03-23",
+  "invoice_number": "Amart",
+  "raw_text": "SALES ORDER\n\nAmart FYSHWICK SUPERSTORE\nAMART FURNITURE PTY LTD A.B.N. 65 009 810 324\n\n74 Collie St Fyshwick ACT 2609\n\n\u00b0\nFurniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au\n\nSales Order # 436 - 092822\n\nCustomer: JALEEL AHMED MOHAMMAD\n9 Delivery Address: 9\n14 LEN WATERS STREET 14 Len Waters Street\nNGUNNAWAL ACT 2913 Ngunnawal 2913 ACT\nMobile: 0469126515\n\nSales Person(s): Junaid\n\nExpected\n\nTotal\nom Qty Description Availability Unit Incl. GST\node MY P (approx.) n\n51129 1 SAN MARCO 3 Seater with 2 Inbuilt Electric Recliners. Upholstered in 100% Leather. 0 - 1 weeks $2,599.00 $2,599.00\n23/03/2024 Available in Black. (BEIGE TBD, MOVED TO MTOQ) (1040Hx2250Wx980D) Ready To\nAssemble (Ctns:2) - BLACK\n10 Year Guarantee\n[Fully Invoiced]\n58063 1  SMARTCARE LEATHER SYSTEM 2-4 Seater with 5 Year Protection Plan (Ctns:1) In Stock $199.00 $199.00\n23/03/2024 5 Year Guarantee\n[Fully Invoiced]\nSub Total $2,798.00\n. . Telephone & Internet Banking - BPAY\u00ae Delivery $0.00\nBiller Code: 443580 Contact your bank or financial institution to make this TT\nRef: 4360 0092 8222 payment from your cheque, savings, debit, credit carc Order Total $2,798.00\nor transaction account. More info: www.bpay.com.au GST Included $254.36\nBalance to pay $0.00\nCUSTOMERS, PLEASE NOTE\ne \u00a7\u00a9See www.amartfurniture.com.au/customer-care/terms-and-conditions SPECIAL ORDERS (including Made to Order)\nfor terms & conditions of sale. . . e A 30% deposit (or 100% for cut-down blinds} is required for all Special Orders including\n\u00a2 We care about quality. See our Quality Guarantee & Guide at Made to Order (MTO)}. Orders will not be sent for production until minimum deposit has\n\nwww.amartfurniture.com.au/customer-care/quality-quarantee.\n\n\u00ab We collect personal information for a variety of purposes.\nSee our Privacy Policy at: www.amartfurniture.com.au/customer-care/privacy.\n\n\u00ab Some products (like bunks, tallboys & dressers) may pose a safety risk if not\nproperly assembled. See www.amartfurniture.com.au/product-safety.\n\n\u00a2 Quoted delivery times are accurate at order placement but may change for reasons\n\nbeen paid.\ne See www.amartfurniture.com.au/custom-product-terms.html\nfor full MTO terms & conditions.\nCANCELLATION OR ORDERS & CHANGE OF MIND\ne See our Returns Policy at www.amartfurniture.com.au/customer-care/returns.\n\noutside our control. BPAY = = Oe\n\u00a2 Products must be delivered/collected immediately after availability is confirmed. e Processing times are dependent on your financial institution. Funds can take\nSee www.amartfurniture.com.au/customer-care/collections-and-delivery. anywhere from 2 to 7 days to clear.\n\ne\u00ab You may ask for your delivery to be delayed after you order. If you do, we\nwill do what we can to supply your order on your nominated date but we are not\nresponsible for delays outside our reasonable control.\n\nPrinted: 12/11/2024 11:48:21AM THANK YOU FOR SHOPPING AT AMART FURNITURE Page 1 of 1\n\n"
+}
+2025-04-13 19:58:40,737 - __main__ - DEBUG - Expense already exists, skipping
+2025-04-13 19:59:12,501 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:59:12,501 - python_multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-13 19:59:12,501 - python_multipart.multipart - DEBUG - Calling on_header_value with data[63:132]
+2025-04-13 19:59:12,502 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:59:12,502 - python_multipart.multipart - DEBUG - Calling on_header_field with data[134:146]
+2025-04-13 19:59:12,502 - python_multipart.multipart - DEBUG - Calling on_header_value with data[148:163]
+2025-04-13 19:59:12,502 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:59:12,502 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:59:12,503 - python_multipart.multipart - DEBUG - Calling on_part_data with data[167:32768]
+2025-04-13 19:59:12,503 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:36775]
+2025-04-13 19:59:12,503 - python_multipart.multipart - DEBUG - Calling on_part_data with data[0:7602]
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_header_field with data[7646:7665]
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_header_value with data[7667:7697]
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-13 19:59:12,504 - python_multipart.multipart - DEBUG - Calling on_part_data with data[7701:7708]
+2025-04-13 19:59:12,505 - python_multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-13 19:59:12,505 - python_multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-13 19:59:12,505 - __main__ - DEBUG - Processing invoice - Filename: Mac- Mini invoice - Apple (AU).pdf, Content-Type: application/pdf, Type: expense
+2025-04-13 19:59:12,505 - __main__ - DEBUG - File size: 76978 bytes
+2025-04-13 19:59:12,506 - __main__ - DEBUG - Converting PDF to images: /tmp/tmplqvq9pgn.pdf
+2025-04-13 19:59:12,592 - __main__ - DEBUG - Converted PDF to 2 images
+2025-04-13 19:59:12,592 - __main__ - DEBUG - Processing page 1
+2025-04-13 19:59:12,616 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_dl121vby_input.PNG', '/tmp/tess_dl121vby', 'txt']
+2025-04-13 19:59:13,183 - __main__ - DEBUG - Extracted 1425 characters from page 1
+2025-04-13 19:59:13,183 - __main__ - DEBUG - Processing page 2
+2025-04-13 19:59:13,200 - pytesseract - DEBUG - ['tesseract', '/tmp/tess_olps5eem_input.PNG', '/tmp/tess_olps5eem', 'txt']
+2025-04-13 19:59:13,314 - __main__ - DEBUG - Extracted 137 characters from page 2
+2025-04-13 19:59:13,314 - __main__ - DEBUG - Total extracted text length: 1564
+2025-04-13 19:59:13,315 - __main__ - DEBUG - Extracted text preview: 12/04/2025, 06:39
+
+#Apple Store
+
+Invoice Receipt
+Invoice Number
+
+MB34347145
+
+Order Number:
+W1651674506
+
+Sold To:
+
+Jaleel Anmed Mohammad
+Ngunnawal
+
+U 914 Len Waters St
+Ngunnawal ACT 2913
+Australia
+
+Cus...
+2025-04-13 19:59:13,315 - __main__ - DEBUG - Parsed invoice details: supplier=Apple Store, total=3129.0, date=2025-04-12, number=Receipt
+2025-04-13 19:59:13,315 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Apple Store",
+  "total_amount": 3129.0,
+  "gst_amount": 284.45,
+  "net_amount": 2844.55,
+  "invoice_date": "2025-04-12",
+  "invoice_number": "Receipt",
+  "raw_text": "12/04/2025, 06:39\n\n#Apple Store\n\nInvoice Receipt\nInvoice Number\n\nMB34347145\n\nOrder Number:\nW1651674506\n\nSold To:\n\nJaleel Anmed Mohammad\nNgunnawal\n\nU 914 Len Waters St\nNgunnawal ACT 2913\nAustralia\n\nCustomer No.:900140\nOrder Details\n\nProduct Name\n\nMAC MINI\nSerial No.: (W2L464K57W)\n\nThe unit above contains the following options:\n\nPROCESSOR AND GRAPHICS 065-CGYF M4 PRO WITH 14C CPU, 20C\n\nGPU\n\nMEMORY 065-CGYL 48GB UNIFIED MEMORY\nETHERNET ADAPTER 065-CGYX 1GB ETHERNET PORT\nHARD DRIVE/SOLID STATE 065-CKOQ 1TB SSD STORAGE\nDRIVE\nTHUNDERBOLT 065-CK4M THREE THUNDERBOLT 5 PORTS\nCOUNTRY KIT X065- COUNTRY KIT-AUS\n\nCJXQ\n\nAC+ MAC COMPLIMENTARY-AOS\n\nItems will be invoiced once they have shipped or are ready for pickup.\n\nPayment Methods\n\nA$3,129.00 charged to Mastercard XXXXXXXXXXXX1768\nFor a total of A$3,129.00\n\nAdditional Information\n\nInvoice Number Invoice Date\n\nMB34347145 14 November 2024\n\nThis order is subject to Apple's Sales and Refunds Policies\nhttos://www.apple.com/au/shop/open/salespolicies\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741\n\nView duplicate invoice - Apple (AU)\n\nInvoice Date\n14 November 2024\n\nOrder Date:\n\n8 November 2024\n\nLocation:\n\nJaleel Ahmed Mohammad\n\nNgunnawal\n\nU9 14 Len Waters St\nNgunnawal ACT 2913\n\nAustralia\n\nProduct\nNumber\n\nZ1J5V\n\nSC2E2ZX/A\n\n. Quantity Quantity\nitem Price ordered Fulfilled\nA$2,844.55 1 1\n1 1\nTerms\nCredit Card\n\nExtended\nPrice\n\nA$3,129.00\n\n1/2\n\n12/04/2025, 06:39 View duplicate invoice - Apple (AU)\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741 2/2\n\n"
+}
+2025-04-13 19:59:13,318 - __main__ - DEBUG - Expense saved successfully
+2025-04-14 04:40:49,992 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:40:49,994 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:40:49,994 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-14 04:40:50,001 - uvicorn.error - INFO - Started server process [434864]
+2025-04-14 04:40:50,002 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 04:40:50,002 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 04:40:50,002 - uvicorn.error - ERROR - [Errno 98] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
+2025-04-14 04:40:50,002 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 04:40:50,002 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 04:41:12,455 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:41:12,457 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:41:12,457 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-14 04:41:12,462 - uvicorn.error - INFO - Started server process [434899]
+2025-04-14 04:41:12,462 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 04:41:12,462 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 04:41:12,462 - uvicorn.error - ERROR - [Errno 98] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
+2025-04-14 04:41:12,462 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 04:41:12,462 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 04:41:27,545 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:41:27,548 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:41:27,548 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-14 04:41:27,553 - uvicorn.error - INFO - Started server process [434957]
+2025-04-14 04:41:27,553 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 04:41:27,554 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 04:41:27,554 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_value with data[63:123]
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_field with data[125:137]
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_value with data[139:154]
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:41:37,508 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:41:37,509 - multipart.multipart - DEBUG - Calling on_part_data with data[158:4932]
+2025-04-14 04:41:37,509 - multipart.multipart - DEBUG - Calling on_part_data with data[0:1]
+2025-04-14 04:41:37,509 - multipart.multipart - DEBUG - Calling on_part_data with data[4933:32308]
+2025-04-14 04:41:37,510 - multipart.multipart - DEBUG - Calling on_part_data with data[0:17186]
+2025-04-14 04:41:37,510 - multipart.multipart - DEBUG - Calling on_part_data with data[0:21402]
+2025-04-14 04:41:37,510 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:41:37,510 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_header_field with data[21446:21465]
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_header_value with data[21467:21497]
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_part_data with data[21501:21508]
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:41:37,511 - multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-14 04:41:37,512 - __main__ - DEBUG - Processing invoice - Filename: Sofa Purchase Invoice.pdf, Content-Type: application/pdf, Type: expense
+2025-04-14 04:41:37,512 - __main__ - DEBUG - File size: 70738 bytes
+2025-04-14 04:41:37,513 - __main__ - DEBUG - Converting PDF to images: /tmp/tmp44zolvku.pdf
+2025-04-14 04:41:37,620 - __main__ - DEBUG - Converted PDF to 1 images
+2025-04-14 04:41:37,620 - __main__ - DEBUG - Processing page 1
+2025-04-14 04:41:38,710 - __main__ - DEBUG - Extracted 2898 characters from page 1
+2025-04-14 04:41:38,710 - __main__ - DEBUG - Total extracted text length: 2899
+2025-04-14 04:41:38,711 - __main__ - DEBUG - Extracted text preview: SALES ORDER
+
+Amart FYSHWICK SUPERSTORE
+AMART FURNITURE PTY LTD A.B.N. 65 009 810 324
+
+74 Collie St Fyshwick ACT 2609
+
+°
+Furniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au
+
+Sales Order # 436 -...
+2025-04-14 04:41:38,712 - __main__ - DEBUG - Parsed invoice details: supplier=Amart Furniture, total=2798.0, date=2024-03-23, number=Amart
+2025-04-14 04:41:38,712 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Amart Furniture",
+  "total_amount": 2798.0,
+  "gst_amount": 254.36,
+  "net_amount": 2543.64,
+  "invoice_date": "2024-03-23",
+  "invoice_number": "Amart",
+  "raw_text": "SALES ORDER\n\nAmart FYSHWICK SUPERSTORE\nAMART FURNITURE PTY LTD A.B.N. 65 009 810 324\n\n74 Collie St Fyshwick ACT 2609\n\n\u00b0\nFurniture T: 02 6285 5400 E: fyshwick@amartfurniture.com.au\n\nSales Order # 436 - 092822\n\nCustomer: JALEEL AHMED MOHAMMAD\n9 Delivery Address: 9\n14 LEN WATERS STREET 14 Len Waters Street\nNGUNNAWAL ACT 2913 Ngunnawal 2913 ACT\nMobile: 0469126515\n\nSales Person(s): Junaid\n\nExpected\n\nTotal\nom Qty Description Availability Unit Incl. GST\node MY P (approx.) n\n51129 1 SAN MARCO 3 Seater with 2 Inbuilt Electric Recliners. Upholstered in 100% Leather. 0 - 1 weeks $2,599.00 $2,599.00\n23/03/2024 Available in Black. (BEIGE TBD, MOVED TO MTOQ) (1040Hx2250Wx980D) Ready To\nAssemble (Ctns:2) - BLACK\n10 Year Guarantee\n[Fully Invoiced]\n58063 1  SMARTCARE LEATHER SYSTEM 2-4 Seater with 5 Year Protection Plan (Ctns:1) In Stock $199.00 $199.00\n23/03/2024 5 Year Guarantee\n[Fully Invoiced]\nSub Total $2,798.00\n. . Telephone & Internet Banking - BPAY\u00ae Delivery $0.00\nBiller Code: 443580 Contact your bank or financial institution to make this TT\nRef: 4360 0092 8222 payment from your cheque, savings, debit, credit carc Order Total $2,798.00\nor transaction account. More info: www.bpay.com.au GST Included $254.36\nBalance to pay $0.00\nCUSTOMERS, PLEASE NOTE\ne \u00a7\u00a9See www.amartfurniture.com.au/customer-care/terms-and-conditions SPECIAL ORDERS (including Made to Order)\nfor terms & conditions of sale. . . e A 30% deposit (or 100% for cut-down blinds} is required for all Special Orders including\n\u00a2 We care about quality. See our Quality Guarantee & Guide at Made to Order (MTO)}. Orders will not be sent for production until minimum deposit has\n\nwww.amartfurniture.com.au/customer-care/quality-quarantee.\n\n\u00ab We collect personal information for a variety of purposes.\nSee our Privacy Policy at: www.amartfurniture.com.au/customer-care/privacy.\n\n\u00ab Some products (like bunks, tallboys & dressers) may pose a safety risk if not\nproperly assembled. See www.amartfurniture.com.au/product-safety.\n\n\u00a2 Quoted delivery times are accurate at order placement but may change for reasons\n\nbeen paid.\ne See www.amartfurniture.com.au/custom-product-terms.html\nfor full MTO terms & conditions.\nCANCELLATION OR ORDERS & CHANGE OF MIND\ne See our Returns Policy at www.amartfurniture.com.au/customer-care/returns.\n\noutside our control. BPAY = = Oe\n\u00a2 Products must be delivered/collected immediately after availability is confirmed. e Processing times are dependent on your financial institution. Funds can take\nSee www.amartfurniture.com.au/customer-care/collections-and-delivery. anywhere from 2 to 7 days to clear.\n\ne\u00ab You may ask for your delivery to be delayed after you order. If you do, we\nwill do what we can to supply your order on your nominated date but we are not\nresponsible for delays outside our reasonable control.\n\nPrinted: 12/11/2024 11:48:21AM THANK YOU FOR SHOPPING AT AMART FURNITURE Page 1 of 1\n\n"
+}
+2025-04-14 04:41:38,715 - __main__ - DEBUG - Expense saved successfully
+2025-04-14 04:41:38,715 - __main__ - ERROR - Invoice parsing failed: 'Invoice' object has no attribute 'model_dump'
+2025-04-14 04:41:49,795 - uvicorn.error - INFO - Shutting down
+2025-04-14 04:41:49,897 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 04:41:49,898 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 04:41:49,899 - uvicorn.error - INFO - Finished server process [434957]
+2025-04-14 04:42:30,488 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:42:30,490 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:42:30,490 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-14 04:42:30,495 - uvicorn.error - INFO - Started server process [435143]
+2025-04-14 04:42:30,495 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 04:42:30,495 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 04:42:30,495 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2025-04-14 04:42:46,922 - uvicorn.error - INFO - Shutting down
+2025-04-14 04:42:47,024 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 04:42:47,025 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 04:42:47,026 - uvicorn.error - INFO - Finished server process [435143]
+2025-04-14 04:43:00,610 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:43:00,613 - __main__ - INFO - Database initialized successfully
+2025-04-14 04:43:00,613 - asyncio - DEBUG - Using selector: EpollSelector
+2025-04-14 04:43:00,618 - uvicorn.error - INFO - Started server process [435247]
+2025-04-14 04:43:00,618 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 04:43:00,618 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 04:43:00,618 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2025-04-14 04:43:17,819 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_value with data[63:143]
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_field with data[145:157]
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_value with data[159:169]
+2025-04-14 04:43:17,820 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:17,821 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:43:17,821 - multipart.multipart - DEBUG - Calling on_part_data with data[173:267]
+2025-04-14 04:43:17,821 - multipart.multipart - DEBUG - Calling on_part_data with data[0:1]
+2025-04-14 04:43:17,821 - multipart.multipart - DEBUG - Calling on_part_data with data[268:64636]
+2025-04-14 04:43:17,822 - multipart.multipart - DEBUG - Calling on_part_data with data[0:21817]
+2025-04-14 04:43:17,822 - multipart.multipart - DEBUG - Calling on_part_data with data[0:1]
+2025-04-14 04:43:17,822 - multipart.multipart - DEBUG - Calling on_part_data with data[21818:33575]
+2025-04-14 04:43:17,823 - multipart.multipart - DEBUG - Calling on_part_data with data[0:1]
+2025-04-14 04:43:17,823 - multipart.multipart - DEBUG - Calling on_part_data with data[33576:75269]
+2025-04-14 04:43:17,823 - multipart.multipart - DEBUG - Calling on_part_data with data[0:9647]
+2025-04-14 04:43:17,823 - multipart.multipart - DEBUG - Calling on_part_data with data[0:1]
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_part_data with data[9648:47345]
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_header_field with data[47389:47408]
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_header_value with data[47410:47440]
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_part_data with data[47444:47451]
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:43:17,824 - multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-14 04:43:17,825 - __main__ - DEBUG - Processing invoice - Filename: purchase_invoice_template_australia_xls-o.jpg, Content-Type: image/jpeg, Type: expense
+2025-04-14 04:43:17,825 - __main__ - DEBUG - File size: 187077 bytes
+2025-04-14 04:43:17,825 - __main__ - DEBUG - Received image data size: 187077 bytes
+2025-04-14 04:43:17,835 - __main__ - DEBUG - Image format: JPEG, Size: (2524, 2833), Mode: RGB
+2025-04-14 04:43:17,836 - __main__ - DEBUG - Starting OCR processing...
+2025-04-14 04:43:18,415 - __main__ - DEBUG - Extracted text length: 671
+2025-04-14 04:43:18,415 - __main__ - DEBUG - Extracted text preview: - Fe INV24.COM
+
+AUSTRALIA
+
+ee [Vendor's company name]
+
+[My company name] [Address]
+[Address] [Address]
+[Address] ACN: [Australian Company Number]
+ACN: [Australian Company Number] ABN: [Australian Busi...
+2025-04-14 04:43:18,416 - __main__ - DEBUG - Parsed invoice details: supplier=Unknown Supplier, total=1672.0, date=2025-04-14, number=Date
+2025-04-14 04:43:18,416 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Unknown Supplier",
+  "total_amount": 1672.0,
+  "gst_amount": 152.0,
+  "net_amount": 1520.0,
+  "invoice_date": "2025-04-14",
+  "invoice_number": "Date",
+  "raw_text": "- Fe INV24.COM\n\nAUSTRALIA\n\nee [Vendor's company name]\n\n[My company name] [Address]\n[Address] [Address]\n[Address] ACN: [Australian Company Number]\nACN: [Australian Company Number] ABN: [Australian Business Number]\nABN: [Australian Business Number] Phone: [Phone]\nInvoice Date: 29 Jan 2024 [Bank name]\nDue Date: 13 Feb 2024 SWIFT: [SWIFT / BIC]\nBank account number: [Bank account\nnumber]\n\nTax Invoice # 1930\n\nDESCRIPTION UNIT PRICE SUBTOTAL\nProduct 2 440.00 880.00 88.00 (10%)\nService 1 990.00 990.00 99.00 (10%)\nService (Discount 20%) 4 -198.00 -198.00 -19.80 (10%)\n\nONE THOUSAND EIGHT HUNDRED THIRTY NINE AUD AND 20 CENTS\n\nSUBTOTAL $1,672.00\nGST $167.20\n\nTotal $1,839.20\n"
+}
+2025-04-14 04:43:18,418 - __main__ - DEBUG - Expense saved successfully
+2025-04-14 04:43:18,418 - __main__ - ERROR - Invoice parsing failed: 'Invoice' object has no attribute 'model_dump'
+2025-04-14 04:43:25,376 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_field with data[42:61]
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_value with data[63:132]
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_field with data[134:146]
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_value with data[148:163]
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:25,377 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:43:25,378 - multipart.multipart - DEBUG - Calling on_part_data with data[167:30259]
+2025-04-14 04:43:25,378 - multipart.multipart - DEBUG - Calling on_part_data with data[0:17523]
+2025-04-14 04:43:25,379 - multipart.multipart - DEBUG - Calling on_part_data with data[0:29363]
+2025-04-14 04:43:25,379 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:43:25,379 - multipart.multipart - DEBUG - Calling on_part_begin with no data
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_header_field with data[29407:29426]
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_header_value with data[29428:29458]
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_header_end with no data
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_headers_finished with no data
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_part_data with data[29462:29469]
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_part_end with no data
+2025-04-14 04:43:25,380 - multipart.multipart - DEBUG - Calling on_end with no data
+2025-04-14 04:43:25,380 - __main__ - DEBUG - Processing invoice - Filename: Mac- Mini invoice - Apple (AU).pdf, Content-Type: application/pdf, Type: expense
+2025-04-14 04:43:25,380 - __main__ - DEBUG - File size: 76978 bytes
+2025-04-14 04:43:25,381 - __main__ - DEBUG - Converting PDF to images: /tmp/tmp5l6a2zfm.pdf
+2025-04-14 04:43:25,450 - __main__ - DEBUG - Converted PDF to 2 images
+2025-04-14 04:43:25,450 - __main__ - DEBUG - Processing page 1
+2025-04-14 04:43:26,017 - __main__ - DEBUG - Extracted 1425 characters from page 1
+2025-04-14 04:43:26,017 - __main__ - DEBUG - Processing page 2
+2025-04-14 04:43:26,151 - __main__ - DEBUG - Extracted 137 characters from page 2
+2025-04-14 04:43:26,151 - __main__ - DEBUG - Total extracted text length: 1564
+2025-04-14 04:43:26,151 - __main__ - DEBUG - Extracted text preview: 12/04/2025, 06:39
+
+#Apple Store
+
+Invoice Receipt
+Invoice Number
+
+MB34347145
+
+Order Number:
+W1651674506
+
+Sold To:
+
+Jaleel Anmed Mohammad
+Ngunnawal
+
+U 914 Len Waters St
+Ngunnawal ACT 2913
+Australia
+
+Cus...
+2025-04-14 04:43:26,151 - __main__ - DEBUG - Parsed invoice details: supplier=Apple Store, total=3129.0, date=2025-04-12, number=Receipt
+2025-04-14 04:43:26,151 - __main__ - DEBUG - Parsing result: {
+  "supplier": "Apple Store",
+  "total_amount": 3129.0,
+  "gst_amount": 284.45,
+  "net_amount": 2844.55,
+  "invoice_date": "2025-04-12",
+  "invoice_number": "Receipt",
+  "raw_text": "12/04/2025, 06:39\n\n#Apple Store\n\nInvoice Receipt\nInvoice Number\n\nMB34347145\n\nOrder Number:\nW1651674506\n\nSold To:\n\nJaleel Anmed Mohammad\nNgunnawal\n\nU 914 Len Waters St\nNgunnawal ACT 2913\nAustralia\n\nCustomer No.:900140\nOrder Details\n\nProduct Name\n\nMAC MINI\nSerial No.: (W2L464K57W)\n\nThe unit above contains the following options:\n\nPROCESSOR AND GRAPHICS 065-CGYF M4 PRO WITH 14C CPU, 20C\n\nGPU\n\nMEMORY 065-CGYL 48GB UNIFIED MEMORY\nETHERNET ADAPTER 065-CGYX 1GB ETHERNET PORT\nHARD DRIVE/SOLID STATE 065-CKOQ 1TB SSD STORAGE\nDRIVE\nTHUNDERBOLT 065-CK4M THREE THUNDERBOLT 5 PORTS\nCOUNTRY KIT X065- COUNTRY KIT-AUS\n\nCJXQ\n\nAC+ MAC COMPLIMENTARY-AOS\n\nItems will be invoiced once they have shipped or are ready for pickup.\n\nPayment Methods\n\nA$3,129.00 charged to Mastercard XXXXXXXXXXXX1768\nFor a total of A$3,129.00\n\nAdditional Information\n\nInvoice Number Invoice Date\n\nMB34347145 14 November 2024\n\nThis order is subject to Apple's Sales and Refunds Policies\nhttos://www.apple.com/au/shop/open/salespolicies\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741\n\nView duplicate invoice - Apple (AU)\n\nInvoice Date\n14 November 2024\n\nOrder Date:\n\n8 November 2024\n\nLocation:\n\nJaleel Ahmed Mohammad\n\nNgunnawal\n\nU9 14 Len Waters St\nNgunnawal ACT 2913\n\nAustralia\n\nProduct\nNumber\n\nZ1J5V\n\nSC2E2ZX/A\n\n. Quantity Quantity\nitem Price ordered Fulfilled\nA$2,844.55 1 1\n1 1\nTerms\nCredit Card\n\nExtended\nPrice\n\nA$3,129.00\n\n1/2\n\n12/04/2025, 06:39 View duplicate invoice - Apple (AU)\n\nhttps://secure9 store apple.com/au/shop/order/print/invoice/10128/ADY 3689741 2/2\n\n"
+}
+2025-04-14 04:43:26,151 - __main__ - WARNING - Duplicate invoice detected for supplier Apple Store with amount 3129.0

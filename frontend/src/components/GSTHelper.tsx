@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Box, 
   Typography, 
@@ -25,7 +25,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  CircularProgress
 } from '@mui/material';
 import { format } from 'date-fns';
 import axios from 'axios';
@@ -33,6 +34,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { InvoiceProcessor } from '../services/InvoiceProcessor';
 import { API_BASE_URL } from '../config';
+import UploadIcon from '@mui/icons-material/Upload';
 
 interface Transaction {
   date: string;
@@ -87,6 +89,10 @@ const GSTHelper: React.FC = () => {
   const [showInvoiceDialog, setShowInvoiceDialog] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [invoiceType, setInvoiceType] = useState<'income' | 'expense'>('expense');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const invoiceProcessor = new InvoiceProcessor();
 
   useEffect(() => {
@@ -128,62 +134,44 @@ const GSTHelper: React.FC = () => {
     }
   };
 
-  const handleProcessInvoice = async () => {
-    if (!selectedFile) return;
-
+  const handleProcessInvoice = async (file: File) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    
     try {
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append('file', file);
       formData.append('invoice_type', invoiceType);
-
-      const response = await fetch(`${API_BASE_URL}/process-invoice`, {
+      
+      const response = await fetch('http://localhost:8001/process-invoice', {
         method: 'POST',
         body: formData,
       });
-
+      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to process invoice');
       }
-
+      
       const data = await response.json();
+      setSuccess('Invoice processed successfully!');
       
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to process invoice');
-      }
-
-      setMessage({ type: 'success', text: 'Invoice processed successfully' });
-      await loadProcessedInvoices();
-      
-      // Update the appropriate field based on invoice type
-      if (invoiceType === 'income') {
-        setIncome({
-          date: data.invoice.invoice_date,
-          amount: data.invoice.total_amount,
-          description: `${data.invoice.supplier} - ${data.invoice.invoice_number}`,
-          category: 'Sales'
-        });
-      } else {
-        setExpense({
-          date: data.invoice.invoice_date,
-          amount: data.invoice.total_amount,
-          description: `${data.invoice.supplier} - ${data.invoice.invoice_number}`,
-          category: 'General'
-        });
-      }
-
-      // Refresh GST summary and expense summary after processing invoice
-      await fetchGSTSummary();
+      // Refresh both GST summary and expense summary
+      fetchGSTSummary();
       if (invoiceType === 'expense') {
-        // Trigger a custom event to refresh the expense summary
+        // Dispatch event to update expense summary
         window.dispatchEvent(new CustomEvent('expenseUpdated'));
       }
-    } catch (error) {
-      console.error('Error processing invoice:', error);
-      setMessage({ type: 'error', text: 'Failed to process invoice' });
+      
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to process invoice');
     } finally {
-      setShowInvoiceDialog(false);
-      setSelectedFile(null);
+      setLoading(false);
     }
   };
 
@@ -246,9 +234,25 @@ const GSTHelper: React.FC = () => {
         GST Helper
       </Typography>
 
-      {message && (
-        <Alert severity={message.type} sx={{ mb: 2 }}>
-          {message.text}
+      {/* Loading indicator */}
+      {loading && (
+        <Box sx={{ mb: 2 }}>
+          <CircularProgress />
+          <Typography>Processing invoice...</Typography>
+        </Box>
+      )}
+      
+      {/* Error message */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      
+      {/* Success message */}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
         </Alert>
       )}
 
@@ -268,7 +272,7 @@ const GSTHelper: React.FC = () => {
           <Button
             variant="contained"
             component="span"
-            startIcon={<CloudUploadIcon />}
+            startIcon={<UploadIcon />}
           >
             Upload Invoice
           </Button>
@@ -491,7 +495,7 @@ const GSTHelper: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowInvoiceDialog(false)}>Cancel</Button>
-          <Button onClick={handleProcessInvoice} variant="contained" color="primary">
+          <Button onClick={() => handleProcessInvoice(selectedFile as File)} variant="contained" color="primary">
             Process
           </Button>
         </DialogActions>

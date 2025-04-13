@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi import Query
@@ -76,21 +76,25 @@ def init_db():
                 file_path TEXT,
                 created_at TEXT,
                 updated_at TEXT,
-                is_system_date INTEGER DEFAULT 0
+                is_system_date INTEGER DEFAULT 0,
+                invoice_type TEXT DEFAULT 'expense'
             )
         ''')
         
-        # Create expenses table with gst_amount field
+        # Add invoice_type column if it doesn't exist
+        try:
+            c.execute('ALTER TABLE invoices ADD COLUMN invoice_type TEXT DEFAULT "expense"')
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
+            
+        # Clean up duplicates
         c.execute('''
-            CREATE TABLE IF NOT EXISTS expenses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                amount REAL,
-                gst_amount REAL,
-                description TEXT,
-                category TEXT,
-                is_gst_eligible INTEGER,
-                created_at TEXT
+            DELETE FROM invoices 
+            WHERE id NOT IN (
+                SELECT MIN(id)
+                FROM invoices
+                GROUP BY supplier, total_amount, invoice_date, invoice_number
             )
         ''')
         
@@ -120,6 +124,7 @@ class Invoice(BaseModel):
     gst_eligible: bool
     file_path: str = None
     is_system_date: bool
+    invoice_type: str = None
 
 class Expense(BaseModel):
     id: Optional[int] = None
@@ -180,8 +185,8 @@ def save_invoice(invoice: Invoice):
         c.execute('''
             INSERT OR REPLACE INTO invoices 
             (id, supplier, total_amount, gst_amount, net_amount, invoice_date, 
-             invoice_number, category, gst_eligible, file_path, created_at, updated_at, is_system_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             invoice_number, category, gst_eligible, file_path, created_at, updated_at, is_system_date, invoice_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             invoice.id,
             invoice.supplier,  # Store original supplier name
@@ -195,7 +200,8 @@ def save_invoice(invoice: Invoice):
             invoice.file_path,
             datetime.now().isoformat(),
             datetime.now().isoformat(),
-            invoice.is_system_date
+            invoice.is_system_date,
+            invoice.invoice_type or 'expense'  # Default to 'expense' if not specified
         ))
         
         conn.commit()
@@ -230,7 +236,8 @@ def get_invoices() -> List[Invoice]:
                     category=row[7],
                     gst_eligible=bool(row[8]),
                     file_path=row[9],
-                    is_system_date=bool(row[10])
+                    is_system_date=bool(row[10]),
+                    invoice_type=row[11] or 'expense'  # Default to 'expense' if not specified
                 )
                 invoices.append(invoice)
             except Exception as e:
@@ -425,31 +432,67 @@ def extract_text_from_pdf(pdf_data: bytes) -> str:
 def parse_invoice(text: str) -> dict:
     """Parse invoice details from extracted text."""
     try:
-        # Extract total amount
-        total_match = re.search(r'TOTAL\s*\$?(\d+\.\d{2})', text, re.IGNORECASE)
-        total_amount = float(total_match.group(1)) if total_match else 0.0
+        # Extract supplier - look for common patterns
+        supplier = "Unknown Supplier"
+        if "Apple Store" in text:
+            supplier = "Apple Store"
+        elif "AMART" in text or "Amart" in text:
+            supplier = "Amart Furniture"
+        elif "BUNNINGS" in text or "Bunnings" in text:
+            supplier = "Bunnings"
+        elif "OFFICEWORKS" in text or "Officeworks" in text:
+            supplier = "Officeworks"
+        
+        # Extract total amount - look for different patterns
+        total_amount = 0.0
+        # Pattern 1: Look for "Order Total" or "Total" followed by amount
+        total_match = re.search(r'(?:Order Total|Total)\s*\$?\s*([\d,]+\.\d{2})', text, re.IGNORECASE)
+        if total_match:
+            total_amount = float(total_match.group(1).replace(',', ''))
+        else:
+            # Pattern 2: Look for amount at the end of line
+            total_match = re.search(r'\$([\d,]+\.\d{2})\s*$', text, re.MULTILINE)
+            if total_match:
+                total_amount = float(total_match.group(1).replace(',', ''))
         
         # Calculate GST (10% of total)
         gst_amount = round(total_amount / 11, 2)
         net_amount = round(total_amount - gst_amount, 2)
         
-        # Extract supplier
-        supplier_match = re.search(r'(?:FROM|SUPPLIER|VENDOR):?\s*([^\n]+)', text, re.IGNORECASE)
-        supplier = supplier_match.group(1).strip() if supplier_match else "Unknown Supplier"
-        
-        # Extract date
-        date_match = re.search(r'(?:DATE|INVOICE DATE):?\s*(\d{1,2}/\d{1,2}/\d{4})', text, re.IGNORECASE)
+        # Extract date - look for different date formats
+        date_match = re.search(r'(\d{2}/\d{2}/\d{4})', text)
+        if not date_match:
+            date_match = re.search(r'(\d{2}-\d{2}-\d{4})', text)
+        if not date_match:
+            date_match = re.search(r'(\d{4}-\d{2}-\d{2})', text)
+            
         if date_match:
             date_str = date_match.group(1)
             # Convert from DD/MM/YYYY to YYYY-MM-DD
-            day, month, year = date_str.split('/')
-            invoice_date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+            if '/' in date_str:
+                day, month, year = date_str.split('/')
+                invoice_date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+            elif '-' in date_str:
+                if len(date_str.split('-')[0]) == 4:  # YYYY-MM-DD
+                    invoice_date = date_str
+                else:  # DD-MM-YYYY
+                    day, month, year = date_str.split('-')
+                    invoice_date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
         else:
             invoice_date = datetime.now().strftime('%Y-%m-%d')
         
-        # Extract invoice number
-        invoice_match = re.search(r'(?:INVOICE|INV|BILL)\s*(?:#|NO\.?)?\s*([A-Z0-9-]+)', text, re.IGNORECASE)
-        invoice_number = invoice_match.group(1) if invoice_match else ""
+        # Extract invoice number - look for different patterns
+        invoice_number = ""
+        invoice_match = re.search(r'(?:Invoice|Order|Sales Order)\s*#?\s*([A-Z0-9-]+)', text, re.IGNORECASE)
+        if invoice_match:
+            invoice_number = invoice_match.group(1)
+        else:
+            # Look for reference numbers
+            ref_match = re.search(r'Ref:\s*([A-Z0-9-]+)', text, re.IGNORECASE)
+            if ref_match:
+                invoice_number = ref_match.group(1)
+        
+        logger.debug(f"Parsed invoice details: supplier={supplier}, total={total_amount}, date={invoice_date}, number={invoice_number}")
         
         return {
             "supplier": supplier,
@@ -465,10 +508,10 @@ def parse_invoice(text: str) -> dict:
         raise
 
 @app.post("/process-invoice")
-async def process_invoice(file: UploadFile = File(...), invoice_type: str = "expense"):
+async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form("expense")):
     try:
         # Log file details
-        logger.debug(f"Processing invoice - Filename: {file.filename}, Content-Type: {file.content_type}")
+        logger.debug(f"Processing invoice - Filename: {file.filename}, Content-Type: {file.content_type}, Type: {invoice_type}")
         
         # Validate file type
         allowed_types = ['image/jpeg', 'image/png', 'image/tiff', 'application/pdf']
@@ -505,9 +548,9 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = "exp
             result = parse_invoice(text)
             logger.debug(f"Parsing result: {json.dumps(result, indent=2)}")
             
-            # Create invoice object
+            # Create invoice object with the provided invoice_type
             invoice = Invoice(
-                id=str(datetime.now().timestamp()),
+                id=str(uuid.uuid4()),
                 supplier=result["supplier"],
                 total_amount=result["total_amount"],
                 gst_amount=result["gst_amount"],
@@ -517,7 +560,8 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = "exp
                 category="Other",
                 gst_eligible=True,
                 file_path=file.filename,
-                is_system_date=False
+                is_system_date=False,
+                invoice_type=invoice_type  # Use the provided invoice_type
             )
             
             # Save to database
@@ -562,7 +606,7 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = "exp
                 
                 return JSONResponse(content={
                     "success": True,
-                    "invoice": invoice.dict()
+                    "invoice": invoice.model_dump()
                 })
             else:
                 return JSONResponse(
@@ -605,7 +649,7 @@ async def get_invoices():
         cursor = conn.cursor()
         cursor.execute("""
             SELECT id, invoice_date, supplier, invoice_number, total_amount, 
-                   gst_amount, net_amount, category, gst_eligible, is_system_date
+                   gst_amount, net_amount, category, gst_eligible, is_system_date, invoice_type
             FROM invoices
             ORDER BY invoice_date DESC
         """)
@@ -622,7 +666,8 @@ async def get_invoices():
                 "net_amount": row[6],
                 "category": row[7],
                 "gst_eligible": bool(row[8]),
-                "is_system_date": bool(row[9])
+                "is_system_date": bool(row[9]),
+                "invoice_type": row[10] or 'expense'  # Default to 'expense' if not specified
             }
             invoices.append(invoice)
         conn.close()
@@ -644,8 +689,8 @@ async def create_invoice(invoice: dict):
         cursor.execute("""
             INSERT INTO invoices (
                 id, invoice_date, supplier, invoice_number, total_amount,
-                gst_amount, net_amount, category, gst_eligible, is_system_date
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                gst_amount, net_amount, category, gst_eligible, is_system_date, invoice_type
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             invoice_id,
             invoice.get('invoice_date'),
@@ -656,7 +701,8 @@ async def create_invoice(invoice: dict):
             invoice.get('net_amount'),
             invoice.get('category'),
             invoice.get('gst_eligible', False),
-            invoice.get('is_system_date', False)
+            invoice.get('is_system_date', False),
+            invoice.get('invoice_type', 'expense')
         ))
         
         conn.commit()
