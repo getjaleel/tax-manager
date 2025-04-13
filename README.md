@@ -1,116 +1,130 @@
 # Tax Manager
 
-A full-stack application for managing business purchases and processing invoices using OCR technology. The application automatically extracts key information from invoices including supplier details, total amounts, and GST calculations.
+A comprehensive tax management application that helps users track expenses, manage invoices, and calculate GST claims. Built with React, FastAPI, and SQLite.
 
 ## Features
 
-- Upload and process invoices (PDF, JPEG, PNG, TIFF)
-- Automatic extraction of:
-  - Supplier information
-  - Total amount
-  - GST calculation
+### 1. GST Helper
+- **Invoice Processing**: Upload and process invoices in PDF format
+- **Smart Extraction**: Automatically extracts key information from invoices:
+  - Supplier details
   - Invoice date
-- Real-time OCR processing
-- Modern React frontend
-- FastAPI backend with Tesseract OCR
+  - Total amount
+  - GST amount
+  - Invoice type (expense/income)
+- **Duplicate Detection**: Prevents duplicate invoice entries
+- **GST Calculation**: Automatically calculates GST amounts
+- **Real-time Updates**: Updates expense tracker automatically
 
-## Tech Stack
+### 2. Expense Tracker
+- **Manual Entry**: Add expenses with detailed categorization
+- **GST Integration**: Automatically includes GST Helper expenses
+- **Periodic Summary**: View expenses by month, quarter, or year
+- **Category Breakdown**: Detailed breakdown of expenses by category
+- **GST Claims**: Track GST claimable amounts
+- **Real-time Updates**: Updates when new expenses are added
+
+### 3. Invoice Manager
+- **Invoice Storage**: Store and manage processed invoices
+- **Quick Access**: View and search through all invoices
+- **Status Tracking**: Track processing status of invoices
+- **Bulk Actions**: Process multiple invoices at once
+
+## Technical Architecture
 
 ### Frontend
-- React with TypeScript
-- Modern UI components
-- Form handling and file upload
-- Error handling and validation
+- **React**: Modern UI framework
+- **Material-UI**: Component library for consistent design
+- **TypeScript**: Type-safe development
+- **State Management**: React hooks for state management
+- **Event System**: Custom events for cross-component communication
 
 ### Backend
-- FastAPI (Python)
-- Tesseract OCR for text extraction
-- PDF2Image for PDF processing
-- Comprehensive error handling and logging
+- **FastAPI**: High-performance Python web framework
+- **SQLite**: Lightweight database for data storage
+- **PDF Processing**: Text extraction from PDF invoices
+- **RESTful API**: Clean API design for frontend communication
+- **Error Handling**: Comprehensive error handling and logging
 
-## Setup
+### Data Models
+1. **Invoice**
+   - ID
+   - Supplier
+   - Invoice date
+   - Total amount
+   - GST amount
+   - Invoice type
+   - Processing status
+   - Created/Updated timestamps
+
+2. **Expense**
+   - ID
+   - Date
+   - Amount
+   - GST amount
+   - Description
+   - Category
+   - GST eligibility
+
+## Getting Started
 
 ### Prerequisites
-- Python 3.11 or higher
-- Node.js 16 or higher
-- Tesseract OCR
-- Poppler Utils (for PDF processing)
+- Docker
+- Docker Compose
+- Node.js (for development)
+- Python 3.8+ (for development)
 
-### Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+### Installation
+1. Clone the repository
+2. Create `.env` file with required environment variables
+3. Run `docker-compose up --build`
 
-2. Create and activate virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Start the server:
-   ```bash
-   ./start_server.sh
-   ```
-
-### Frontend Setup
-1. Navigate to the frontend directory:
+### Development Setup
+1. Frontend:
    ```bash
    cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
    npm install
-   ```
-
-3. Start the development server:
-   ```bash
    npm start
    ```
 
-## Usage
+2. Backend:
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn main:app --reload
+   ```
 
-1. Start both backend and frontend servers
-2. Navigate to the application in your browser
-3. Upload an invoice using the file upload button
-4. The system will automatically process the invoice and display:
-   - Extracted supplier information
-   - Total amount
-   - Calculated GST
-   - Invoice date
+## API Endpoints
 
-## Development
+### GST Helper
+- `POST /api/process-invoice`: Process uploaded invoice
+- `GET /api/gst-summary`: Get GST summary for period
+- `GET /api/invoices`: List all invoices
 
-### Project Structure
-```
-tax-manager/
-├── backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   └── start_server.sh
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   ├── services/
-    │   └── types/
-    ├── package.json
-    └── tsconfig.json
-```
+### Expense Tracker
+- `POST /api/expenses`: Add new expense
+- `GET /api/expenses/summary`: Get expense summary
+- `DELETE /api/expenses/clear`: Clear all expenses
+
+## Environment Variables
+
+### Frontend
+- `REACT_APP_API_BASE_URL`: Backend API URL
+- `REACT_APP_DEBUG`: Enable debug mode
+
+### Backend
+- `DATABASE_URL`: SQLite database path
+- `DEBUG`: Enable debug mode
+- `UPLOAD_FOLDER`: Path for storing uploaded files
 
 ## Contributing
-
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
-
-This project is licensed under the MIT License - see the LICENSE file for details 
+This project is licensed under the MIT License - see the LICENSE file for details. 
