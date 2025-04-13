@@ -1,21 +1,30 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import Query
 import uvicorn
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import json
 import logging
 import traceback
 import sys
+import os
 import pytesseract
 from PIL import Image, UnidentifiedImageError
 import io
-import os
 import pdf2image
 import tempfile
 from datetime import datetime
 from pydantic import BaseModel
 import sqlite3
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import Image as RLImage
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+import uuid
 
 # Configure logging
 logging.basicConfig(
@@ -51,11 +60,15 @@ async def add_cors_header(request, call_next):
 # Database setup
 def init_db():
     try:
-        logger.info("Initializing database...")
+        # Check if database exists and drop it
+        if os.path.exists('gst-helper.db'):
+            os.remove('gst-helper.db')
+            logger.info("Removed existing database file")
+        
         conn = sqlite3.connect('gst-helper.db')
         c = conn.cursor()
         
-        # Create tables
+        # Create invoices table with all required fields
         c.execute('''
             CREATE TABLE IF NOT EXISTS invoices (
                 id TEXT PRIMARY KEY,
@@ -66,23 +79,24 @@ def init_db():
                 invoice_date TEXT,
                 invoice_number TEXT,
                 category TEXT,
-                gst_eligible BOOLEAN,
+                gst_eligible INTEGER,
                 file_path TEXT,
                 created_at TEXT,
-                updated_at TEXT
+                updated_at TEXT,
+                is_system_date INTEGER DEFAULT 0
             )
         ''')
         
+        # Create expenses table
         c.execute('''
             CREATE TABLE IF NOT EXISTS expenses (
-                id TEXT PRIMARY KEY,
-                invoice_id TEXT,
-                amount REAL,
-                gst_amount REAL,
-                category TEXT,
-                description TEXT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT,
-                FOREIGN KEY (invoice_id) REFERENCES invoices (id)
+                amount REAL,
+                description TEXT,
+                category TEXT,
+                is_gst_eligible INTEGER,
+                created_at TEXT
             )
         ''')
         
@@ -110,6 +124,7 @@ class Invoice(BaseModel):
     category: str
     gst_eligible: bool
     file_path: str = None
+    is_system_date: bool
 
 class Expense(BaseModel):
     id: str
@@ -120,33 +135,81 @@ class Expense(BaseModel):
     description: str
     date: str
 
+class ReportRequest(BaseModel):
+    year: Optional[str] = None
+    quarter: Optional[str] = None
+
 # Database operations
-def save_invoice(invoice: Invoice):
-    conn = sqlite3.connect('gst-helper.db')
+def normalize_supplier_name(supplier: str) -> str:
+    """Normalize supplier name by removing extra whitespace and common variations"""
+    if not supplier:
+        return ""
+    # Remove extra whitespace and newlines
+    normalized = " ".join(supplier.split())
+    # Remove common variations
+    normalized = normalized.replace("PTY LTD", "").replace("PTY", "").replace("LTD", "")
+    normalized = normalized.replace("PTY.", "").replace("LTD.", "")
+    # Remove any remaining extra whitespace
+    return " ".join(normalized.split())
+
+def check_duplicate_invoice(invoice: Invoice, conn) -> bool:
     c = conn.cursor()
+    # Normalize supplier name
+    normalized_supplier = normalize_supplier_name(invoice.supplier)
     
+    # Check for existing invoice with same supplier, amount and date
+    # Only check essential fields and use normalized supplier name
     c.execute('''
-        INSERT OR REPLACE INTO invoices 
-        (id, supplier, total_amount, gst_amount, net_amount, invoice_date, 
-         invoice_number, category, gst_eligible, file_path, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        SELECT id FROM invoices 
+        WHERE LOWER(TRIM(supplier)) = LOWER(TRIM(?))
+        AND total_amount = ? 
+        AND invoice_date = ?
     ''', (
-        invoice.id,
-        invoice.supplier,
+        normalized_supplier,
         invoice.total_amount,
-        invoice.gst_amount,
-        invoice.net_amount,
-        invoice.invoice_date,
-        invoice.invoice_number,
-        invoice.category,
-        invoice.gst_eligible,
-        invoice.file_path,
-        datetime.now().isoformat(),
-        datetime.now().isoformat()
+        invoice.invoice_date
     ))
-    
-    conn.commit()
-    conn.close()
+    return c.fetchone() is not None
+
+def save_invoice(invoice: Invoice):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        
+        # Check for duplicates before saving
+        if check_duplicate_invoice(invoice, conn):
+            logger.warning(f"Duplicate invoice detected for supplier {invoice.supplier} with amount {invoice.total_amount}")
+            return False
+            
+        c = conn.cursor()
+        c.execute('''
+            INSERT OR REPLACE INTO invoices 
+            (id, supplier, total_amount, gst_amount, net_amount, invoice_date, 
+             invoice_number, category, gst_eligible, file_path, created_at, updated_at, is_system_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            invoice.id,
+            invoice.supplier,  # Store original supplier name
+            invoice.total_amount,
+            invoice.gst_amount,
+            invoice.net_amount,
+            invoice.invoice_date,
+            invoice.invoice_number,
+            invoice.category,
+            invoice.gst_eligible,
+            invoice.file_path,
+            datetime.now().isoformat(),
+            datetime.now().isoformat(),
+            invoice.is_system_date
+        ))
+        
+        conn.commit()
+        return True
+    except Exception as e:
+        logger.error(f"Error saving invoice: {str(e)}")
+        logger.error(traceback.format_exc())
+        return False
+    finally:
+        conn.close()
 
 def get_invoices() -> List[Invoice]:
     try:
@@ -170,7 +233,8 @@ def get_invoices() -> List[Invoice]:
                     invoice_number=row[6],
                     category=row[7],
                     gst_eligible=bool(row[8]),
-                    file_path=row[9]
+                    file_path=row[9],
+                    is_system_date=bool(row[10])
                 )
                 invoices.append(invoice)
             except Exception as e:
@@ -418,15 +482,23 @@ async def process_invoice(file: UploadFile = File(...)):
             invoice_date=result["invoice_date"],
             invoice_number=result.get("invoice_number", ""),  # Default to empty string if None
             category="Other",  # Default category
-            gst_eligible=True  # Default to true, can be updated later
+            gst_eligible=True,  # Default to true, can be updated later
+            is_system_date=False  # Default to false
         )
         
-        save_invoice(invoice)
-        
-        return JSONResponse(content={
-            "success": True,
-            "invoice": invoice.dict()
-        })
+        if save_invoice(invoice):
+            return JSONResponse(content={
+                "success": True,
+                "invoice": invoice.dict()
+            })
+        else:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Duplicate invoice detected",
+                    "detail": f"Invoice for supplier {invoice.supplier} with amount {invoice.total_amount} already exists for date {invoice.invoice_date}"
+                }
+            )
         
     except HTTPException as he:
         raise he
@@ -443,21 +515,72 @@ async def process_invoice(file: UploadFile = File(...)):
         )
 
 @app.get("/invoices")
-async def get_invoices_endpoint():
+async def get_invoices():
     try:
-        logger.info("Fetching invoices from database")
-        invoices = get_invoices()
-        logger.info(f"Found {len(invoices)} invoices")
-        
-        # Log each invoice for debugging
-        for invoice in invoices:
-            logger.debug(f"Invoice data: {invoice.dict()}")
-        
-        return {"invoices": [invoice.dict() for invoice in invoices]}
+        conn = sqlite3.connect('gst-helper.db')
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, invoice_date, supplier, invoice_number, total_amount, 
+                   gst_amount, net_amount, category, gst_eligible, is_system_date
+            FROM invoices
+            ORDER BY invoice_date DESC
+        """)
+        rows = cursor.fetchall()
+        invoices = []
+        for row in rows:
+            invoice = {
+                "id": row[0],
+                "invoice_date": row[1],
+                "supplier": row[2],
+                "invoice_number": row[3],
+                "total_amount": row[4],
+                "gst_amount": row[5],
+                "net_amount": row[6],
+                "category": row[7],
+                "gst_eligible": bool(row[8]),
+                "is_system_date": bool(row[9])
+            }
+            invoices.append(invoice)
+        conn.close()
+        return {"invoices": invoices}
     except Exception as e:
-        logger.error(f"Error in get_invoices_endpoint: {str(e)}")
-        logger.error(traceback.format_exc())
-        return {"invoices": []}
+        logger.error(f"Error fetching invoices: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/invoices")
+async def create_invoice(invoice: dict):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        cursor = conn.cursor()
+        
+        # Generate a unique ID if not provided
+        invoice_id = invoice.get('id', str(uuid.uuid4()))
+        
+        # Insert the invoice into the database
+        cursor.execute("""
+            INSERT INTO invoices (
+                id, invoice_date, supplier, invoice_number, total_amount,
+                gst_amount, net_amount, category, gst_eligible, is_system_date
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            invoice_id,
+            invoice.get('invoice_date'),
+            invoice.get('supplier'),
+            invoice.get('invoice_number'),
+            invoice.get('total_amount'),
+            invoice.get('gst_amount'),
+            invoice.get('net_amount'),
+            invoice.get('category'),
+            invoice.get('gst_eligible', False),
+            invoice.get('is_system_date', False)
+        ))
+        
+        conn.commit()
+        conn.close()
+        return {"success": True, "id": invoice_id}
+    except Exception as e:
+        logger.error(f"Error creating invoice: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/expenses")
 async def get_expenses_endpoint():
@@ -466,6 +589,214 @@ async def get_expenses_endpoint():
         "total_expenses": expenses["total"],
         "gst_eligible_expenses": expenses["gst_eligible"]
     }
+
+@app.post("/generate-report")
+async def generate_report(request: ReportRequest):
+    try:
+        # Get filtered invoices based on year and quarter
+        invoices = get_invoices()
+        if request.year:
+            invoices = [inv for inv in invoices if inv.invoice_date.startswith(request.year)]
+        if request.quarter:
+            quarter_start_month = (int(request.quarter) - 1) * 3 + 1
+            quarter_end_month = quarter_start_month + 2
+            invoices = [
+                inv for inv in invoices 
+                if quarter_start_month <= int(inv.invoice_date.split('-')[1]) <= quarter_end_month
+            ]
+
+        # Create PDF
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        elements = []
+
+        # Add title
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=16,
+            spaceAfter=30
+        )
+        title = f"GST Report - {request.year or 'All Years'} Q{request.quarter or 'All Quarters'}"
+        elements.append(Paragraph(title, title_style))
+        elements.append(Spacer(1, 12))
+
+        # Add summary
+        total_amount = sum(inv.total_amount for inv in invoices)
+        gst_amount = sum(inv.gst_amount for inv in invoices)
+        net_amount = sum(inv.net_amount for inv in invoices)
+
+        summary_data = [
+            ["Total Amount", f"${total_amount:.2f}"],
+            ["Total GST", f"${gst_amount:.2f}"],
+            ["Net Amount", f"${net_amount:.2f}"]
+        ]
+        summary_table = Table(summary_data, colWidths=[200, 100])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        elements.append(summary_table)
+        elements.append(Spacer(1, 20))
+
+        # Add invoice details
+        if invoices:
+            invoice_data = [["Date", "Supplier", "Invoice #", "Total", "GST", "Net"]]
+            for inv in invoices:
+                invoice_data.append([
+                    inv.invoice_date,
+                    inv.supplier,
+                    inv.invoice_number,
+                    f"${inv.total_amount:.2f}",
+                    f"${inv.gst_amount:.2f}",
+                    f"${inv.net_amount:.2f}"
+                ])
+
+            invoice_table = Table(invoice_data, colWidths=[80, 150, 100, 80, 80, 80])
+            invoice_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 1), (-1, -1), 8),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            elements.append(invoice_table)
+        else:
+            elements.append(Paragraph("No invoices found for the selected period.", styles["Normal"]))
+
+        # Build PDF
+        doc.build(elements)
+        buffer.seek(0)
+
+        return StreamingResponse(
+            buffer,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename=GST-Report-{request.year or 'All'}-Q{request.quarter or 'All'}.pdf"
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error generating report: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Failed to generate report")
+
+@app.post("/cleanup-duplicates")
+async def cleanup_duplicates():
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Find and remove duplicates based on supplier, total_amount, and invoice_date
+        c.execute('''
+            DELETE FROM invoices 
+            WHERE id NOT IN (
+                SELECT MIN(id)
+                FROM invoices
+                GROUP BY supplier, total_amount, invoice_date, category
+            )
+        ''')
+        
+        deleted_count = c.rowcount
+        conn.commit()
+        conn.close()
+        
+        return JSONResponse(content={
+            "success": True,
+            "message": f"Removed {deleted_count} duplicate invoices"
+        })
+    except Exception as e:
+        logger.error(f"Error cleaning up duplicates: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to clean up duplicates",
+                "detail": str(e)
+            }
+        )
+
+@app.delete("/invoices/{invoice_id}")
+async def delete_invoice(invoice_id: str):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # First check if the invoice exists
+        c.execute('SELECT id FROM invoices WHERE id = ?', (str(invoice_id),))
+        if not c.fetchone():
+            return JSONResponse(
+                status_code=404,
+                content={"error": "Invoice not found", "detail": f"Invoice with ID {invoice_id} does not exist"}
+            )
+        
+        # Delete the invoice
+        c.execute('DELETE FROM invoices WHERE id = ?', (str(invoice_id),))
+        conn.commit()
+        
+        return JSONResponse(content={
+            "success": True,
+            "message": f"Invoice {invoice_id} deleted successfully"
+        })
+    except Exception as e:
+        logger.error(f"Error deleting invoice: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to delete invoice",
+                "detail": str(e)
+            }
+        )
+    finally:
+        conn.close()
+
+@app.delete("/invoices")
+async def delete_all_invoices():
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Get count before deletion
+        c.execute('SELECT COUNT(*) FROM invoices')
+        count = c.fetchone()[0]
+        
+        # Delete all invoices
+        c.execute('DELETE FROM invoices')
+        conn.commit()
+        
+        return JSONResponse(content={
+            "success": True,
+            "message": f"Successfully deleted {count} invoices"
+        })
+    except Exception as e:
+        logger.error(f"Error deleting all invoices: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to delete invoices",
+                "detail": str(e)
+            }
+        )
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     try:

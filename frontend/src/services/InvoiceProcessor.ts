@@ -12,6 +12,8 @@ export interface Invoice {
   gst_eligible: boolean;
   file_url?: string;
   rawText?: string;
+  file_path: string;
+  is_system_date: boolean;
 }
 
 // Use environment variable for API URL with fallback for development
@@ -91,13 +93,37 @@ export class InvoiceProcessor {
           throw new Error('Invalid response format: missing invoice data');
         }
 
+        // Format supplier name by removing extra whitespace and newlines
+        const formattedSupplier = result.invoice.supplier?.replace(/\s+/g, ' ').trim() || '';
+        
+        // Handle date - ensure it's properly formatted
+        let invoiceDate = result.invoice.invoice_date || '';
+        if (invoiceDate) {
+          try {
+            const date = new Date(invoiceDate);
+            if (!isNaN(date.getTime())) {
+              invoiceDate = date.toLocaleDateString('en-AU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to parse date:', invoiceDate);
+          }
+        }
+
         // Convert the backend invoice data to ParsedInvoice format
         const parsedInvoice: ParsedInvoice = {
-          supplier: String(result.invoice.supplier || ''),
+          supplier: formattedSupplier,
           totalAmount: Number(result.invoice.total_amount || 0),
           gstAmount: Number(result.invoice.gst_amount || 0),
           netAmount: Number(result.invoice.net_amount || 0),
-          invoiceDate: String(result.invoice.invoice_date || new Date().toISOString().split('T')[0]),
+          invoiceDate: invoiceDate || new Date().toLocaleDateString('en-AU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }),
           invoiceNumber: String(result.invoice.invoice_number || ''),
           rawText: String(result.invoice.raw_text || '')
         };
@@ -121,7 +147,7 @@ export class InvoiceProcessor {
 
   async getInvoices(): Promise<Invoice[]> {
     try {
-      const response = await fetch('http://localhost:8000/invoices');
+      const response = await fetch(`${this.apiUrl}/invoices`);
       if (!response.ok) {
         throw new Error('Failed to fetch invoices');
       }
@@ -129,18 +155,69 @@ export class InvoiceProcessor {
       if (!Array.isArray(data.invoices)) {
         throw new Error('Invalid response format');
       }
-      return data.invoices.map((invoice: any) => ({
-        id: String(invoice.id),
-        invoice_number: invoice.invoice_number || '',
-        date: invoice.date || '',
-        amount: Number(invoice.amount) || 0,
-        gst_amount: Number(invoice.gst_amount) || 0,
-        gst_percentage: Number(invoice.gst_percentage) || 0,
-        description: invoice.description || '',
-        category: invoice.category || '',
-        is_gst_eligible: Boolean(invoice.is_gst_eligible),
-        created_at: invoice.created_at || new Date().toISOString()
-      }));
+      console.log('Received invoices data:', data.invoices); // Debug log
+      return data.invoices.map((invoice: any) => {
+        console.log('Processing invoice:', invoice); // Debug log
+        
+        // Enhanced supplier name formatting
+        let formattedSupplier = invoice.supplier || '';
+        
+        // Remove newlines and extra spaces
+        formattedSupplier = formattedSupplier.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        // Check if the supplier name is actually an invoice number or header
+        const isLikelyInvoiceNumber = /^(?:INV|REC|ORD|BILL|DOC|REF)?[-#\s]*\d+[-#\s]*\d*$/i.test(formattedSupplier);
+        const isLikelyHeader = /^(?:Invoice|Receipt|Number|Order|Bill|Document|Reference|ID|No\.|No:)/i.test(formattedSupplier);
+        
+        // If the supplier name is clearly not a valid company name, set it to empty
+        if (isLikelyInvoiceNumber || isLikelyHeader || formattedSupplier === 'Invoice Receipt Invoice Number') {
+          formattedSupplier = '';
+        }
+        
+        // Handle date - ensure it's properly formatted
+        let invoiceDate = invoice.invoice_date || '';
+        const isSystemDate = !invoice.invoice_date;
+        
+        // If we have a date in DD/MM/YYYY format, keep it as is
+        if (invoiceDate && /^\d{2}\/\d{2}\/\d{4}$/.test(invoiceDate)) {
+          // Date is already in correct format, do nothing
+        } else if (invoiceDate) {
+          // Try to parse and format the date
+          try {
+            const date = new Date(invoiceDate);
+            if (!isNaN(date.getTime())) {
+              invoiceDate = date.toLocaleDateString('en-AU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to parse date:', invoiceDate);
+          }
+        }
+
+        // Format invoice number - remove any extra whitespace and clean up
+        let formattedInvoiceNumber = invoice.invoice_number || '';
+        formattedInvoiceNumber = formattedInvoiceNumber
+          .replace(/[\n\r]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        
+        return {
+          id: String(invoice.id),
+          supplier: formattedSupplier || 'N/A', // Will be manually entered if needed
+          total_amount: Number(invoice.total_amount) || 0,
+          gst_amount: Number(invoice.gst_amount) || 0,
+          net_amount: Number(invoice.net_amount) || 0,
+          invoice_date: invoiceDate || 'N/A',
+          invoice_number: formattedInvoiceNumber || 'N/A',
+          category: invoice.category || '',
+          gst_eligible: Boolean(invoice.gst_eligible),
+          file_path: invoice.file_path || '',
+          is_system_date: isSystemDate
+        };
+      });
     } catch (error) {
       console.error('Error fetching invoices:', error);
       return [];
@@ -206,6 +283,55 @@ export class InvoiceProcessor {
       return true;
     } catch (error) {
       console.error('Error deleting all invoices:', error);
+      throw error;
+    }
+  }
+
+  async storeInvoice(invoice: Omit<Invoice, 'id' | 'gst_eligible' | 'is_system_date'>): Promise<{ success: boolean; error?: string }> {
+    try {
+      const response = await fetch(`${this.apiUrl}/invoices`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(invoice),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          success: false,
+          error: errorData.detail || 'Failed to store invoice'
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error storing invoice:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to store invoice'
+      };
+    }
+  }
+
+  async updateInvoice(invoice: Invoice): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.apiUrl}/invoices/${invoice.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(invoice),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update invoice');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating invoice:', error);
       throw error;
     }
   }

@@ -158,14 +158,16 @@ const App: React.FC = () => {
         if (result.success && result.invoice) {
           // Generate a unique ID for the new invoice
           const newInvoice = ensureInvoiceHasId({
-            date: result.invoice.invoiceDate || new Date().toISOString().split('T')[0],
+            invoice_date: result.invoice.invoiceDate || new Date().toISOString().split('T')[0],
             supplier: result.invoice.supplier || selectedFile.name,
             invoice_number: result.invoice.invoiceNumber || '',
             total_amount: result.invoice.totalAmount || 0,
             gst_amount: result.invoice.gstAmount || 0,
             net_amount: result.invoice.netAmount || 0,
             category: selectedCategory,
-            gst_eligible: true
+            gst_eligible: true,
+            file_path: '',
+            is_system_date: !result.invoice.invoiceDate
           });
           
           setInvoices(prev => [...prev, newInvoice]);
@@ -325,7 +327,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAddPurchase = () => {
+  const handleAddPurchase = async () => {
     if (newPurchase.amount && newPurchase.description) {
       const amount = parseFloat(newPurchase.amount);
       const gstAmount = calculateGST(amount);
@@ -346,6 +348,16 @@ const App: React.FC = () => {
       setPurchases([...purchases, purchase]);
       setNewPurchase({ amount: '', description: '', category: 'Other', supplier: '' });
       setReceiptFile(null);
+
+      // Refresh the invoices list
+      try {
+        const invoicesData = await invoiceProcessor.getInvoices();
+        const invoicesWithIds = invoicesData.map(ensureInvoiceHasId);
+        setInvoices(invoicesWithIds);
+      } catch (error) {
+        console.error('Error refreshing invoices:', error);
+        setError('Failed to refresh invoices list');
+      }
     }
   };
 
@@ -459,11 +471,31 @@ const App: React.FC = () => {
     }
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Routes>
+  const handleUpdateInvoice = async (updatedInvoice: Invoice) => {
+    try {
+      const success = await invoiceProcessor.updateInvoice(updatedInvoice);
+      if (success) {
+        setInvoices(prev => 
+          prev.map(invoice => 
+            invoice.id === updatedInvoice.id ? updatedInvoice : invoice
+          )
+        );
+        setError(null);
+      } else {
+        setError('Failed to update invoice');
+      }
+    } catch (error) {
+      console.error('Error updating invoice:', error);
+      setError(error instanceof Error ? error.message : 'Failed to update invoice');
+      throw error;
+    }
+  };
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+                <Router>
+                    <Routes>
           <Route path="/" element={
             <div className="app">
               <header className="app-header">
@@ -540,6 +572,11 @@ const App: React.FC = () => {
                       accept="image/*,.pdf"
                       onChange={handleReceiptUpload}
                       className="file-input"
+                      title="Choose a file"
+                      onClick={(e) => {
+                        // Reset the value to allow selecting the same file again
+                        (e.target as HTMLInputElement).value = '';
+                      }}
                     />
                     {editingPurchase ? (
                       <button onClick={handleUpdatePurchase} className="update-button">
@@ -592,36 +629,6 @@ const App: React.FC = () => {
 
                 <section className="invoice-section">
                   <h2>Invoice Management</h2>
-                  <div className="upload-section">
-                    <div className="upload-controls">
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={handleFileUpload}
-                        className="file-input"
-                      />
-                      <select 
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="category-select"
-                      >
-                        <option value="Cloud Services">Cloud Services</option>
-                        <option value="Software">Software</option>
-                        <option value="Hardware">Hardware</option>
-                        <option value="Professional Development">Professional Development</option>
-                        <option value="Office Expenses">Office Expenses</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <button 
-                        onClick={handleUpload} 
-                        disabled={!selectedFile}
-                        className="upload-button"
-                      >
-                        Upload Invoice
-                      </button>
-                    </div>
-                  </div>
-                  
                   <div className="invoice-list">
                     {invoices.length === 0 ? (
                       <p>No invoices found</p>
@@ -674,7 +681,7 @@ const App: React.FC = () => {
                                       onChange={() => handleSelectInvoice(invoiceWithId.id)}
                                     />
                                   </td>
-                                  <td>{invoiceWithId.date || 'N/A'}</td>
+                                  <td>{invoiceWithId.invoice_date || 'N/A'}</td>
                                   <td>{invoiceWithId.supplier || 'N/A'}</td>
                                   <td>{invoiceWithId.invoice_number || 'N/A'}</td>
                                   <td>${(invoiceWithId.total_amount || 0).toFixed(2)}</td>
@@ -855,12 +862,13 @@ const App: React.FC = () => {
             <InvoiceManager 
               invoices={invoices} 
               onDelete={handleDeleteInvoice}
+              onUpdate={handleUpdateInvoice}
             />
           } />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
+                    </Routes>
+                </Router>
+        </ThemeProvider>
+    );
 };
 
 export default App;

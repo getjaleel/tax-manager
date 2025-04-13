@@ -27,4 +27,18 @@ export interface OCRServiceConfig {
   region?: string;
 }
 
-export type OCRProvider = 'aws' | 'azure' | 'google'; 
+export type OCRProvider = 'aws' | 'azure' | 'google';
+
+export interface Invoice {
+  id: string;
+  supplier: string;
+  total_amount: number;
+  gst_amount: number;
+  net_amount: number;
+  invoice_date: string;
+  invoice_number: string;
+  category: string;
+  gst_eligible: boolean;
+  file_path: string;
+  is_system_date: boolean;
+} 

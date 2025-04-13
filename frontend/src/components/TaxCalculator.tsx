@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import {
   Box,
+  Paper,
   Typography,
   TextField,
-  Paper,
   List,
   ListItem,
-  ListItemText,
-  Divider,
+  ListItemText
 } from '@mui/material';
 
 const TaxCalculator: React.FC = () => {
