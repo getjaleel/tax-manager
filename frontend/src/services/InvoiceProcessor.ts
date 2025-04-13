@@ -1,4 +1,5 @@
 import { InvoiceProcessingResult, ParsedInvoice } from '../types/Invoice';
+import { API_BASE_URL } from '../config';
 
 export interface Invoice {
   id: string;
@@ -16,23 +17,17 @@ export interface Invoice {
   is_system_date: boolean;
 }
 
-// Use environment variable for API URL with fallback for development
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-    (process.env.NODE_ENV === 'development' 
-        ? 'http://192.168.1.122:8000'  // Use the IP address instead of localhost
-        : 'http://backend:8000');
-
 export class InvoiceProcessor {
-  private apiUrl: string;
+  private baseUrl: string;
 
   constructor() {
-    this.apiUrl = API_BASE_URL;
+    this.baseUrl = API_BASE_URL;
   }
 
   async checkServerHealth(): Promise<boolean> {
     try {
-      console.log('Checking server health at:', this.apiUrl);
-      const response = await fetch(`${this.apiUrl}/health`);
+      console.log('Checking server health at:', this.baseUrl);
+      const response = await fetch(`${this.baseUrl}/health`);
       if (!response.ok) {
         console.error('Health check failed:', response.status, response.statusText);
         return false;
@@ -46,178 +41,70 @@ export class InvoiceProcessor {
     }
   }
 
-  async processDocument(file: File): Promise<InvoiceProcessingResult> {
+  async processDocument(file: File): Promise<ParsedInvoice> {
     try {
-      // Check if server is running
-      const isServerHealthy = await this.checkServerHealth();
-      if (!isServerHealthy) {
-        throw new Error('Server is not running. Please start the backend server first.');
-      }
-
-      console.log('Starting document processing for file:', file.name);
-      console.log('File size:', file.size, 'bytes');
-      console.log('File type:', file.type);
-      
-      // Create form data
       const formData = new FormData();
       formData.append('file', file);
-      
-      console.log('Sending request to OCR service at:', this.apiUrl);
-      const startTime = Date.now();
-      
-      // Add timeout to the fetch request
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-      
-      try {
-        const response = await fetch(`${this.apiUrl}/process-invoice`, {
-          method: 'POST',
-          body: formData,
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('OCR service error:', errorData);
-          throw new Error(errorData.detail || 'Failed to process document');
-        }
-        
-        const result = await response.json();
-        console.log('OCR processing completed in:', Date.now() - startTime, 'ms');
-        console.log('Processing result:', result);
-        
-        // Ensure the response has the expected structure
-        if (!result.success || !result.invoice) {
-          throw new Error('Invalid response format: missing invoice data');
-        }
 
-        // Format supplier name by removing extra whitespace and newlines
-        const formattedSupplier = result.invoice.supplier?.replace(/\s+/g, ' ').trim() || '';
-        
-        // Handle date - ensure it's properly formatted
-        let invoiceDate = result.invoice.invoice_date || '';
-        if (invoiceDate) {
-          try {
-            const date = new Date(invoiceDate);
-            if (!isNaN(date.getTime())) {
-              invoiceDate = date.toLocaleDateString('en-AU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-              });
-            }
-          } catch (e) {
-            console.warn('Failed to parse date:', invoiceDate);
-          }
-        }
+      const response = await fetch(`${this.baseUrl}/process-invoice`, {
+        method: 'POST',
+        body: formData,
+      });
 
-        // Convert the backend invoice data to ParsedInvoice format
-        const parsedInvoice: ParsedInvoice = {
-          supplier: formattedSupplier,
-          totalAmount: Number(result.invoice.total_amount || 0),
-          gstAmount: Number(result.invoice.gst_amount || 0),
-          netAmount: Number(result.invoice.net_amount || 0),
-          invoiceDate: invoiceDate || new Date().toLocaleDateString('en-AU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-          }),
-          invoiceNumber: String(result.invoice.invoice_number || ''),
-          rawText: String(result.invoice.raw_text || '')
-        };
-        
-        return {
-          success: true,
-          invoice: parsedInvoice
-        };
-      } catch (error) {
-        clearTimeout(timeoutId);
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to process invoice');
       }
-    } catch (error: unknown) {
-      console.error('Document processing failed:', error);
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to process invoice');
+      }
+
       return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        id: data.invoice.id,
+        supplier: data.invoice.supplier,
+        totalAmount: data.invoice.total_amount,
+        gstAmount: data.invoice.gst_amount,
+        netAmount: data.invoice.net_amount,
+        invoiceDate: data.invoice.invoice_date,
+        invoiceNumber: data.invoice.invoice_number,
+        category: data.invoice.category,
+        gstEligible: data.invoice.gst_eligible,
+        filePath: data.invoice.file_path,
+        isSystemDate: data.invoice.is_system_date
       };
+    } catch (error) {
+      console.error('Error processing document:', error);
+      throw error;
     }
   }
 
   async getInvoices(): Promise<Invoice[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/invoices`);
+      const response = await fetch(`${this.baseUrl}/invoices`);
       if (!response.ok) {
         throw new Error('Failed to fetch invoices');
       }
       const data = await response.json();
-      if (!Array.isArray(data.invoices)) {
+      if (!data.invoices) {
         throw new Error('Invalid response format');
       }
-      console.log('Received invoices data:', data.invoices); // Debug log
-      return data.invoices.map((invoice: any) => {
-        console.log('Processing invoice:', invoice); // Debug log
-        
-        // Enhanced supplier name formatting
-        let formattedSupplier = invoice.supplier || '';
-        
-        // Remove newlines and extra spaces
-        formattedSupplier = formattedSupplier.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
-        
-        // Check if the supplier name is actually an invoice number or header
-        const isLikelyInvoiceNumber = /^(?:INV|REC|ORD|BILL|DOC|REF)?[-#\s]*\d+[-#\s]*\d*$/i.test(formattedSupplier);
-        const isLikelyHeader = /^(?:Invoice|Receipt|Number|Order|Bill|Document|Reference|ID|No\.|No:)/i.test(formattedSupplier);
-        
-        // If the supplier name is clearly not a valid company name, set it to empty
-        if (isLikelyInvoiceNumber || isLikelyHeader || formattedSupplier === 'Invoice Receipt Invoice Number') {
-          formattedSupplier = '';
-        }
-        
-        // Handle date - ensure it's properly formatted
-        let invoiceDate = invoice.invoice_date || '';
-        const isSystemDate = !invoice.invoice_date;
-        
-        // If we have a date in DD/MM/YYYY format, keep it as is
-        if (invoiceDate && /^\d{2}\/\d{2}\/\d{4}$/.test(invoiceDate)) {
-          // Date is already in correct format, do nothing
-        } else if (invoiceDate) {
-          // Try to parse and format the date
-          try {
-            const date = new Date(invoiceDate);
-            if (!isNaN(date.getTime())) {
-              invoiceDate = date.toLocaleDateString('en-AU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-              });
-            }
-          } catch (e) {
-            console.warn('Failed to parse date:', invoiceDate);
-          }
-        }
-
-        // Format invoice number - remove any extra whitespace and clean up
-        let formattedInvoiceNumber = invoice.invoice_number || '';
-        formattedInvoiceNumber = formattedInvoiceNumber
-          .replace(/[\n\r]+/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-        
-        return {
-          id: String(invoice.id),
-          supplier: formattedSupplier || 'N/A', // Will be manually entered if needed
-          total_amount: Number(invoice.total_amount) || 0,
-          gst_amount: Number(invoice.gst_amount) || 0,
-          net_amount: Number(invoice.net_amount) || 0,
-          invoice_date: invoiceDate || 'N/A',
-          invoice_number: formattedInvoiceNumber || 'N/A',
-          category: invoice.category || '',
-          gst_eligible: Boolean(invoice.gst_eligible),
-          file_path: invoice.file_path || '',
-          is_system_date: isSystemDate
-        };
-      });
+      
+      return data.invoices.map((invoice: any) => ({
+        id: String(invoice.id),
+        supplier: invoice.supplier || 'N/A',
+        total_amount: Number(invoice.total_amount) || 0,
+        gst_amount: Number(invoice.gst_amount) || 0,
+        net_amount: Number(invoice.net_amount) || 0,
+        invoice_date: invoice.invoice_date || 'N/A',
+        invoice_number: invoice.invoice_number || 'N/A',
+        category: invoice.category || '',
+        gst_eligible: Boolean(invoice.gst_eligible),
+        file_path: invoice.file_path || '',
+        is_system_date: Boolean(invoice.is_system_date)
+      }));
     } catch (error) {
       console.error('Error fetching invoices:', error);
       return [];
@@ -226,7 +113,7 @@ export class InvoiceProcessor {
 
   async getExpenses(): Promise<{ total: number; gstEligible: number }> {
     try {
-      const response = await fetch(`${this.apiUrl}/expenses`);
+      const response = await fetch(`${this.baseUrl}/expenses`);
       if (!response.ok) {
         console.error('Failed to fetch expenses:', response.status, response.statusText);
         return { total: 0, gstEligible: 0 };
@@ -247,7 +134,7 @@ export class InvoiceProcessor {
 
   async deleteInvoice(id: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.apiUrl}/invoices/${id}`, {
+      const response = await fetch(`${this.baseUrl}/invoices/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -271,7 +158,7 @@ export class InvoiceProcessor {
 
   async deleteAllInvoices(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.apiUrl}/invoices`, {
+      const response = await fetch(`${this.baseUrl}/invoices`, {
         method: 'DELETE',
       });
       
@@ -289,7 +176,7 @@ export class InvoiceProcessor {
 
   async storeInvoice(invoice: Omit<Invoice, 'id' | 'gst_eligible' | 'is_system_date'>): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${this.apiUrl}/invoices`, {
+      const response = await fetch(`${this.baseUrl}/invoices`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -317,7 +204,7 @@ export class InvoiceProcessor {
 
   async updateInvoice(invoice: Invoice): Promise<boolean> {
     try {
-      const response = await fetch(`${this.apiUrl}/invoices/${invoice.id}`, {
+      const response = await fetch(`${this.baseUrl}/invoices/${invoice.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

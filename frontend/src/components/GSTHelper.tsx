@@ -10,10 +10,29 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Alert
+  Alert,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { format } from 'date-fns';
 import axios from 'axios';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { InvoiceProcessor } from '../services/InvoiceProcessor';
+import { API_BASE_URL } from '../config';
 
 interface Transaction {
   date: string;
@@ -36,6 +55,16 @@ interface Deduction {
   notes: string;
 }
 
+interface ProcessedInvoice {
+  id: string;
+  fileName: string;
+  supplier: string;
+  date: string;
+  amount: number;
+  gstAmount: number;
+  type: 'income' | 'expense';
+}
+
 const GSTHelper: React.FC = () => {
   const [income, setIncome] = useState<Transaction>({
     date: format(new Date(), 'yyyy-MM-dd'),
@@ -54,15 +83,113 @@ const GSTHelper: React.FC = () => {
   const [gstSummary, setGstSummary] = useState<GSTSummary | null>(null);
   const [deductions, setDeductions] = useState<Deduction[]>([]);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [processedInvoices, setProcessedInvoices] = useState<ProcessedInvoice[]>([]);
+  const [showInvoiceDialog, setShowInvoiceDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [invoiceType, setInvoiceType] = useState<'income' | 'expense'>('expense');
+  const invoiceProcessor = new InvoiceProcessor();
 
   useEffect(() => {
     fetchGSTSummary();
     fetchDeductions();
+    loadProcessedInvoices();
   }, []);
+
+  const loadProcessedInvoices = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/invoices`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch invoices');
+      }
+      const data = await response.json();
+      if (!data.invoices) {
+        throw new Error('Invalid response format');
+      }
+      
+      setProcessedInvoices(data.invoices.map((invoice: any) => ({
+        id: invoice.id,
+        fileName: invoice.invoice_number || 'Unknown',
+        supplier: invoice.supplier || 'N/A',
+        date: invoice.invoice_date || 'N/A',
+        amount: invoice.total_amount || 0,
+        gstAmount: invoice.gst_amount || 0,
+        type: invoice.total_amount > 0 ? 'income' : 'expense'
+      })));
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to load processed invoices' });
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setShowInvoiceDialog(true);
+    }
+  };
+
+  const handleProcessInvoice = async () => {
+    if (!selectedFile) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('invoice_type', invoiceType);
+
+      const response = await fetch(`${API_BASE_URL}/process-invoice`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to process invoice');
+      }
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to process invoice');
+      }
+
+      setMessage({ type: 'success', text: 'Invoice processed successfully' });
+      await loadProcessedInvoices();
+      
+      // Update the appropriate field based on invoice type
+      if (invoiceType === 'income') {
+        setIncome({
+          date: data.invoice.invoice_date,
+          amount: data.invoice.total_amount,
+          description: `${data.invoice.supplier} - ${data.invoice.invoice_number}`,
+          category: 'Sales'
+        });
+      } else {
+        setExpense({
+          date: data.invoice.invoice_date,
+          amount: data.invoice.total_amount,
+          description: `${data.invoice.supplier} - ${data.invoice.invoice_number}`,
+          category: 'General'
+        });
+      }
+
+      // Refresh GST summary and expense summary after processing invoice
+      await fetchGSTSummary();
+      if (invoiceType === 'expense') {
+        // Trigger a custom event to refresh the expense summary
+        window.dispatchEvent(new CustomEvent('expenseUpdated'));
+      }
+    } catch (error) {
+      console.error('Error processing invoice:', error);
+      setMessage({ type: 'error', text: 'Failed to process invoice' });
+    } finally {
+      setShowInvoiceDialog(false);
+      setSelectedFile(null);
+    }
+  };
 
   const fetchGSTSummary = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/gst-summary');
+      const response = await axios.get(`${API_BASE_URL}/api/gst-summary`);
       setGstSummary(response.data);
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to fetch GST summary' });
@@ -71,7 +198,7 @@ const GSTHelper: React.FC = () => {
 
   const fetchDeductions = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/common-deductions');
+      const response = await axios.get(`${API_BASE_URL}/api/common-deductions`);
       setDeductions(response.data);
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to fetch deductions' });
@@ -80,7 +207,7 @@ const GSTHelper: React.FC = () => {
 
   const handleAddIncome = async () => {
     try {
-      await axios.post('http://localhost:3001/api/income', income);
+      await axios.post(`${API_BASE_URL}/api/income`, income);
       setMessage({ type: 'success', text: 'Income added successfully' });
       fetchGSTSummary();
       setIncome({
@@ -96,7 +223,7 @@ const GSTHelper: React.FC = () => {
 
   const handleAddExpense = async () => {
     try {
-      await axios.post('http://localhost:3001/api/expenses', {
+      await axios.post(`${API_BASE_URL}/api/expenses`, {
         ...expense,
         is_deductible: true
       });
@@ -124,6 +251,84 @@ const GSTHelper: React.FC = () => {
           {message.text}
         </Alert>
       )}
+
+      {/* Invoice Upload Section */}
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Upload Invoice
+        </Typography>
+        <input
+          accept=".pdf,.jpg,.jpeg,.png"
+          style={{ display: 'none' }}
+          id="invoice-upload"
+          type="file"
+          onChange={handleFileUpload}
+        />
+        <label htmlFor="invoice-upload">
+          <Button
+            variant="contained"
+            component="span"
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload Invoice
+          </Button>
+        </label>
+      </Paper>
+
+      {/* Processed Invoices Table */}
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Processed Invoices
+        </Typography>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Supplier</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>GST</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {processedInvoices.map((invoice) => (
+                <TableRow key={invoice.id}>
+                  <TableCell>{invoice.date}</TableCell>
+                  <TableCell>{invoice.supplier}</TableCell>
+                  <TableCell>${Math.abs(invoice.amount).toFixed(2)}</TableCell>
+                  <TableCell>${invoice.gstAmount.toFixed(2)}</TableCell>
+                  <TableCell>{invoice.type}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => {
+                        if (invoice.type === 'income') {
+                          setIncome({
+                            date: invoice.date,
+                            amount: invoice.amount,
+                            description: `${invoice.supplier} - ${invoice.fileName}`,
+                            category: 'Sales'
+                          });
+                        } else {
+                          setExpense({
+                            date: invoice.date,
+                            amount: Math.abs(invoice.amount),
+                            description: `${invoice.supplier} - ${invoice.fileName}`,
+                            category: 'General'
+                          });
+                        }
+                      }}
+                    >
+                      <CloudUploadIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
 
       <Grid container spacing={3}>
         {/* Income Form */}
@@ -265,6 +470,32 @@ const GSTHelper: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Invoice Processing Dialog */}
+      <Dialog open={showInvoiceDialog} onClose={() => setShowInvoiceDialog(false)}>
+        <DialogTitle>Process Invoice</DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Invoice Type</InputLabel>
+              <Select
+                value={invoiceType}
+                onChange={(e) => setInvoiceType(e.target.value as 'income' | 'expense')}
+                label="Invoice Type"
+              >
+                <MenuItem value="expense">Expense</MenuItem>
+                <MenuItem value="income">Income</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowInvoiceDialog(false)}>Cancel</Button>
+          <Button onClick={handleProcessInvoice} variant="contained" color="primary">
+            Process
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

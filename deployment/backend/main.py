@@ -13,6 +13,7 @@ import io
 import os
 import pdf2image
 import tempfile
+import sqlite3
 
 # Configure logging
 logging.basicConfig(
@@ -254,6 +255,72 @@ async def process_invoice(file: UploadFile = File(...)):
                 "traceback": traceback.format_exc()
             }
         )
+
+@app.get("/api/gst-summary")
+async def get_gst_summary():
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Get total GST collected (from invoices)
+        c.execute('SELECT SUM(gst_amount) FROM invoices WHERE gst_eligible = 1')
+        gst_collected = c.fetchone()[0] or 0.0
+        
+        # Get total GST paid (from expenses)
+        c.execute('SELECT SUM(gst_amount) FROM expenses WHERE is_gst_eligible = 1')
+        gst_paid = c.fetchone()[0] or 0.0
+        
+        # Calculate net GST
+        net_gst = gst_collected - gst_paid
+        
+        conn.close()
+        
+        return {
+            "gst_collected": gst_collected,
+            "gst_paid": gst_paid,
+            "net_gst": net_gst,
+            "gst_owing": net_gst if net_gst > 0 else 0,
+            "gst_refund": abs(net_gst) if net_gst < 0 else 0
+        }
+    except Exception as e:
+        logger.error(f"Error fetching GST summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/common-deductions")
+async def get_common_deductions():
+    try:
+        # Common tax deductions for Australian businesses
+        deductions = [
+            {
+                "category": "Home Office Expenses",
+                "description": "Expenses related to working from home",
+                "notes": "Includes internet, phone, electricity, and office supplies"
+            },
+            {
+                "category": "Vehicle Expenses",
+                "description": "Business-related vehicle costs",
+                "notes": "Logbook method or cents per kilometer"
+            },
+            {
+                "category": "Professional Development",
+                "description": "Training and education costs",
+                "notes": "Must be directly related to current work"
+            },
+            {
+                "category": "Equipment & Tools",
+                "description": "Tools and equipment for work",
+                "notes": "Depreciation may apply for items over $300"
+            },
+            {
+                "category": "Travel Expenses",
+                "description": "Business travel costs",
+                "notes": "Includes accommodation, meals, and transport"
+            }
+        ]
+        return deductions
+    except Exception as e:
+        logger.error(f"Error fetching common deductions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     try:

@@ -3,11 +3,13 @@ import './App.css';
 import { InvoiceProcessor } from './services/InvoiceProcessor';
 import { ParsedInvoice } from './types/Invoice';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider, createTheme, Box, Tabs, Tab, Paper, Typography, Container, Grid, Link } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import GSTHelper from './components/GSTHelper';
 import InvoiceManager from './components/InvoiceManager';
 import TaxCalculator from './components/TaxCalculator';
+import TaxDeductionCalculator from './components/TaxDeductionCalculator';
+import ExpenseTracker from './components/ExpenseTracker';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
 interface Invoice {
@@ -53,7 +55,46 @@ const theme = createTheme({
   },
 });
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+        return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+            </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 const App: React.FC = () => {
+  const [tabValue, setTabValue] = useState(0);
+  const [sharedData, setSharedData] = useState({
+    income: 0,
+    expenses: 0,
+    gstEligibleExpenses: 0
+  });
   const [income, setIncome] = useState<string>('');
   const [expenses, setExpenses] = useState<string>('');
   const [gstEligibleExpenses, setGstEligibleExpenses] = useState<string>('');
@@ -140,6 +181,14 @@ const App: React.FC = () => {
   const totalGSTPaid = gstPaid + purchases.reduce((sum, purchase) => sum + purchase.gstAmount, 0);
   const netGst = gstCollected - totalGSTPaid;
   const taxableIncome = incomeNum - expensesNum;
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const updateSharedData = (data: { income?: number; expenses?: number; gstEligibleExpenses?: number }) => {
+    setSharedData(prev => ({ ...prev, ...data }));
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -494,379 +543,170 @@ const App: React.FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-                <Router>
-                    <Routes>
-          <Route path="/" element={
-            <div className="app">
-              <header className="app-header">
-                <h1>IT Business Tax Assistant</h1>
-                <p className="subtitle">Streamline your tax and GST management</p>
-              </header>
-              
-              <div className="calculator">
-                <section className="input-section">
-                  <h2>Income & Expenses</h2>
-                  <div className="input-group">
-                    <label>
-                      Total Income (including GST):
-                      <input
-                        type="text"
-                        value={income}
-                        onChange={(e) => handleInputChange(e.target.value, setIncome)}
-                        placeholder="Enter amount"
-                      />
-                    </label>
-                    <label>
-                      Total Expenses:
-                      <input
-                        type="text"
-                        value={expenses}
-                        onChange={(e) => handleInputChange(e.target.value, setExpenses)}
-                        placeholder="Enter amount"
-                      />
-                    </label>
-                    <label>
-                      GST-Eligible Expenses:
-                      <input
-                        type="text"
-                        value={gstEligibleExpenses}
-                        onChange={(e) => handleInputChange(e.target.value, setGstEligibleExpenses)}
-                        placeholder="Enter amount"
-                      />
-                    </label>
-                  </div>
-                </section>
-
-                <section className="purchases-section">
-                  <h2>Business Purchases</h2>
-                  <div className="purchase-input">
-                    <input
-                      type="text"
-                      value={newPurchase.amount}
-                      onChange={(e) => handlePurchaseInputChange('amount', e.target.value)}
-                      placeholder="Enter purchase amount (including GST)"
-                    />
-                    <input
-                      type="text"
-                      value={newPurchase.description}
-                      onChange={(e) => handlePurchaseInputChange('description', e.target.value)}
-                      placeholder="Enter purchase description"
-                    />
-                    <input
-                      type="text"
-                      value={newPurchase.supplier}
-                      onChange={(e) => handlePurchaseInputChange('supplier', e.target.value)}
-                      placeholder="Enter supplier name"
-                    />
-                    <select
-                      value={newPurchase.category}
-                      onChange={(e) => handlePurchaseInputChange('category', e.target.value)}
-                      className="category-select"
-                    >
-                      {PURCHASE_CATEGORIES.map(category => (
-                        <option key={category} value={category}>{category}</option>
-                      ))}
-                    </select>
-                    <input
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={handleReceiptUpload}
-                      className="file-input"
-                      title="Choose a file"
-                      onClick={(e) => {
-                        // Reset the value to allow selecting the same file again
-                        (e.target as HTMLInputElement).value = '';
-                      }}
-                    />
-                    {editingPurchase ? (
-                      <button onClick={handleUpdatePurchase} className="update-button">
-                        Update Purchase
-                      </button>
-                    ) : (
-                      <button onClick={handleAddPurchase} className="add-button">
-                        Add Purchase
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="purchases-list">
-                    {purchases.map(purchase => (
-                      <div key={purchase.id} className="purchase-item">
-                        <div className="purchase-header">
-                          <h3>{purchase.description}</h3>
-                          <div className="purchase-actions">
-                            <button 
-                              onClick={() => handleEditPurchase(purchase)}
-                              className="edit-button"
-                            >
-                              Edit
-                            </button>
-                            <button 
-                              onClick={() => handleDeletePurchase(purchase.id)}
-                              className="delete-button"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        </div>
-                        <p className="purchase-date">Date: {purchase.date}</p>
-                        <p className="purchase-category">Category: {purchase.category}</p>
-                        {purchase.supplier && <p className="purchase-supplier">Supplier: {purchase.supplier}</p>}
-                        <p className="purchase-amount">Total Amount: ${purchase.amount.toFixed(2)}</p>
-                        <p className="purchase-gst">GST Amount: ${purchase.gstAmount.toFixed(2)}</p>
-                        <p className="purchase-net">Net Amount: ${purchase.netAmount.toFixed(2)}</p>
-                        {purchase.receiptUrl && (
-                          <div className="receipt-preview">
-                            <a href={purchase.receiptUrl} target="_blank" rel="noopener noreferrer">
-                              View Receipt
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                <section className="invoice-section">
-                  <h2>Invoice Management</h2>
-                  <div className="invoice-list">
-                    {invoices.length === 0 ? (
-                      <p>No invoices found</p>
-                    ) : (
-                      <div className="invoice-table-container">
-                        <div className="invoice-actions">
-                          <button
-                            className="delete-selected-button"
-                            disabled={selectedInvoices.length === 0}
-                            onClick={() => setDeleteDialogOpen(true)}
-                          >
-                            Delete Selected
-                          </button>
-                          <button
-                            className="delete-all-button"
-                            disabled={invoices.length === 0}
-                            onClick={() => setDeleteAllDialogOpen(true)}
-                          >
-                            Delete All
-                          </button>
-                        </div>
-                        <table className="invoices-table">
-                          <thead>
-                            <tr>
-                              <th>
-                                <input
-                                  type="checkbox"
-                                  checked={selectedInvoices.length === invoices.length && invoices.length > 0}
-                                  onChange={handleSelectAll}
-                                />
-                              </th>
-                              <th>Date</th>
-                              <th>Supplier</th>
-                              <th>Invoice Number</th>
-                              <th>Total Amount</th>
-                              <th>GST Amount</th>
-                              <th>Net Amount</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoices.map((invoice) => {
-                              // Ensure the invoice has a valid ID before rendering
-                              const invoiceWithId = ensureInvoiceHasId(invoice);
-                              return (
-                                <tr key={`invoice-row-${invoiceWithId.id}`}>
-                                  <td>
-                                    <input
-                                      type="checkbox"
-                                      checked={selectedInvoices.includes(invoiceWithId.id)}
-                                      onChange={() => handleSelectInvoice(invoiceWithId.id)}
-                                    />
-                                  </td>
-                                  <td>{invoiceWithId.invoice_date || 'N/A'}</td>
-                                  <td>{invoiceWithId.supplier || 'N/A'}</td>
-                                  <td>{invoiceWithId.invoice_number || 'N/A'}</td>
-                                  <td>${(invoiceWithId.total_amount || 0).toFixed(2)}</td>
-                                  <td>${(invoiceWithId.gst_amount || 0).toFixed(2)}</td>
-                                  <td>${(invoiceWithId.net_amount || 0).toFixed(2)}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </section>
-
-                <section className="summary-section">
-                  <div className="gst-summary">
-                    <h2>GST Summary</h2>
-                    <div className="result">
-                      <p>Total Income (including GST): ${incomeNum.toFixed(2)}</p>
-                      <p>GST Collected (10% of income): ${gstCollected.toFixed(2)}</p>
-                      <p>GST-Eligible Expenses: ${gstEligibleExpensesNum.toFixed(2)}</p>
-                      <p>GST Paid on Expenses: ${gstPaid.toFixed(2)}</p>
-                      <p>GST Paid on Purchases: ${purchases.reduce((sum, purchase) => sum + purchase.gstAmount, 0).toFixed(2)}</p>
-                      <p>Total GST Paid: ${totalGSTPaid.toFixed(2)}</p>
-                      <p className={netGst >= 0 ? 'gst-payable' : 'gst-refund'}>
-                        Net GST: ${Math.abs(netGst).toFixed(2)} {netGst >= 0 ? '(to pay to ATO)' : '(refund from ATO)'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="tax-summary">
-                    <h2>Tax Summary</h2>
-                    <div className="result">
-                      <p>Taxable Income: ${taxableIncome.toFixed(2)}</p>
-                      <p>Income Tax Payable: ${taxPayable.toFixed(2)}</p>
-                    </div>
-                  </div>
-                </section>
-
-                <section className="guidance-section">
-                  <h2>IT Business Expense Guidance</h2>
-                  <div className="guidance-content">
-                    <div className="guidance-card">
-                      <h3>Common IT Business Deductions</h3>
-                      <ul>
-                        <li>Cloud Service Subscriptions (AWS, Azure, GCP)</li>
-                        <li>Software Licenses and Subscriptions</li>
-                        <li>Hardware and Equipment (servers, laptops, networking gear)</li>
-                        <li>Professional Development (certifications, courses)</li>
-                        <li>Home Office Setup (dedicated workspace)</li>
-                        <li>Internet and Phone Expenses</li>
-                        <li>Professional Memberships and Subscriptions</li>
-                        <li>Business Insurance</li>
-                        <li>Travel for Client Meetings</li>
-                        <li>Marketing and Website Costs</li>
-                      </ul>
-                    </div>
-
-                    <div className="guidance-card">
-                      <h3>GST-Specific Guidance for IT Services</h3>
-                      <ul>
-                        <li>Most IT services are GST-taxable (10%)</li>
-                        <li>Export of IT services to overseas clients may be GST-free</li>
-                        <li>Cloud services from overseas providers may not include GST</li>
-                        <li>Keep detailed records of international transactions</li>
-                      </ul>
-                    </div>
-
-                    <div className="guidance-card">
-                      <h3>Tax-Saving Strategies</h3>
-                      <ul>
-                        <li>Consider timing of large equipment purchases</li>
-                        <li>Prepay annual subscriptions before EOFY</li>
-                        <li>Keep detailed logs of home office usage</li>
-                        <li>Document all business-related travel</li>
-                        <li>Maintain separate business bank accounts</li>
-                        <li>Consider asset depreciation for major purchases</li>
-                      </ul>
-                    </div>
-                  </div>
-                </section>
-
-                <section className="search-filters">
-                  <input
-                    type="text"
-                    placeholder="Search by supplier or invoice number..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                  />
-
-                  <select 
-                    value={selectedYear} 
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="filter-select"
-                  >
-                    {years.map(year => (
-                      <option key={year} value={year}>
-                        {year === 'all' ? 'All Years' : year}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select 
-                    value={selectedQuarter} 
-                    onChange={(e) => setSelectedQuarter(e.target.value)}
-                    className="filter-select"
-                  >
-                    {quarters.map(quarter => (
-                      <option key={quarter} value={quarter}>
-                        {quarter === 'all' ? 'All Quarters' : `Q${quarter}`}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button onClick={handleGenerateReport} className="generate-report-btn">
-                    Generate Report
-                  </button>
-                </section>
-              </div>
-
-              {/* Add loading and error states */}
-              {isProcessing && (
-                <div className="processing-overlay">
-                  <div className="processing-spinner"></div>
-                  <p>Processing invoice...</p>
-                </div>
-              )}
-              
-              {error && (
-                <div className="error-message">
-                  <p>{error}</p>
-                  <button onClick={() => setError(null)}>Dismiss</button>
-                </div>
-              )}
-
-              {/* Add delete confirmation dialogs */}
-              <Dialog
-                open={deleteDialogOpen}
-                onClose={() => setDeleteDialogOpen(false)}
+      <Container maxWidth="lg">
+        <Box sx={{ width: '100%', mt: 4 }}>
+          <Paper sx={{ width: '100%', mb: 2 }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs 
+                value={tabValue} 
+                onChange={handleTabChange} 
+                aria-label="tax management tabs"
+                variant="scrollable"
+                scrollButtons="auto"
               >
-                <DialogTitle>Delete Selected Invoices</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Are you sure you want to delete {selectedInvoices.length} selected invoice(s)? This action cannot be undone.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={handleDeleteSelected} color="error">
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
+                <Tab label="Tax Calculator" {...a11yProps(0)} />
+                <Tab label="Tax Deductions" {...a11yProps(1)} />
+                <Tab label="GST Helper" {...a11yProps(2)} />
+                <Tab label="Invoice Manager" {...a11yProps(3)} />
+                <Tab label="Expense Tracker" {...a11yProps(4)} />
+              </Tabs>
+            </Box>
 
-              <Dialog
-                open={deleteAllDialogOpen}
-                onClose={() => setDeleteAllDialogOpen(false)}
-              >
-                <DialogTitle>Delete All Invoices</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Are you sure you want to delete all {invoices.length} invoices? This action cannot be undone.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setDeleteAllDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={handleDeleteAll} color="error">
-                    Delete All
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </div>
-          } />
-          <Route path="/tax-calculator" element={<TaxCalculator />} />
-          <Route path="/invoice-manager" element={
-            <InvoiceManager 
-              invoices={invoices} 
-              onDelete={handleDeleteInvoice}
-              onUpdate={handleUpdateInvoice}
-            />
-          } />
-                    </Routes>
-                </Router>
+            <TabPanel value={tabValue} index={0}>
+              <TaxCalculator 
+                onDataUpdate={updateSharedData}
+                initialData={sharedData}
+              />
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={1}>
+              <TaxDeductionCalculator 
+                onDataUpdate={updateSharedData}
+                initialData={sharedData}
+              />
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={2}>
+              <GSTHelper 
+                onDataUpdate={updateSharedData}
+                initialData={sharedData}
+              />
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={3}>
+              <InvoiceManager 
+                invoices={invoices} 
+                onDelete={handleDeleteInvoice}
+                onUpdate={handleUpdateInvoice}
+              />
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={4}>
+              <ExpenseTracker />
+            </TabPanel>
+          </Paper>
+
+          <Paper sx={{ p: 2, mt: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Quick Links
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Link 
+                  component="button" 
+                  variant="body1" 
+                  onClick={() => setTabValue(0)}
+                  sx={{ textAlign: 'left' }}
+                >
+                  Calculate Tax
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Link 
+                  component="button" 
+                  variant="body1" 
+                  onClick={() => setTabValue(1)}
+                  sx={{ textAlign: 'left' }}
+                >
+                  View Deductions
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Link 
+                  component="button" 
+                  variant="body1" 
+                  onClick={() => setTabValue(2)}
+                  sx={{ textAlign: 'left' }}
+                >
+                  GST Calculator
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Link 
+                  component="button" 
+                  variant="body1" 
+                  onClick={() => setTabValue(3)}
+                  sx={{ textAlign: 'left' }}
+                >
+                  Manage Invoices
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Link 
+                  component="button" 
+                  variant="body1" 
+                  onClick={() => setTabValue(4)}
+                  sx={{ textAlign: 'left' }}
+                >
+                  Expense Tracker
+                </Link>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Box>
+      </Container>
+
+      {/* Add loading and error states */}
+      {isProcessing && (
+        <div className="processing-overlay">
+          <div className="processing-spinner"></div>
+          <p>Processing invoice...</p>
+        </div>
+      )}
+      
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={() => setError(null)}>Dismiss</button>
+        </div>
+      )}
+
+      {/* Add delete confirmation dialogs */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Selected Invoices</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete {selectedInvoices.length} selected invoice(s)? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteSelected} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteAllDialogOpen}
+        onClose={() => setDeleteAllDialogOpen(false)}
+      >
+        <DialogTitle>Delete All Invoices</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete all {invoices.length} invoices? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteAllDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteAll} color="error">
+            Delete All
+          </Button>
+        </DialogActions>
+      </Dialog>
         </ThemeProvider>
     );
 };

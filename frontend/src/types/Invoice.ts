@@ -6,13 +6,18 @@ export interface LineItem {
 }
 
 export interface ParsedInvoice {
+  id: string;
   supplier: string;
   totalAmount: number;
   gstAmount: number;
   netAmount: number;
   invoiceDate: string;
   invoiceNumber: string;
-  rawText: string;
+  category: string;
+  gstEligible: boolean;
+  filePath: string;
+  isSystemDate: boolean;
+  rawText?: string;
 }
 
 export interface InvoiceProcessingResult {

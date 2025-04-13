@@ -14,8 +14,8 @@ from PIL import Image, UnidentifiedImageError
 import io
 import pdf2image
 import tempfile
-from datetime import datetime
-from pydantic import BaseModel
+from datetime import datetime, timedelta
+from pydantic import BaseModel, Field
 import sqlite3
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -25,45 +25,38 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 import uuid
+import re
 
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,  # Changed to DEBUG for more detailed logs
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout)
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('backend.log')
     ]
 )
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Configure CORS with more specific settings
+# Configure CORS with more permissive settings for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://192.168.1.122:3000"],  # Frontend URL
+    allow_origins=["*"],  # Allow all origins during development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
 
-@app.middleware("http")
-async def add_cors_header(request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "http://192.168.1.122:3000"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    return response
-
 # Database setup
 def init_db():
+    conn = None
     try:
-        # Check if database exists and drop it
-        if os.path.exists('gst-helper.db'):
-            os.remove('gst-helper.db')
-            logger.info("Removed existing database file")
+        # Create database directory if it doesn't exist
+        db_dir = os.path.dirname(os.path.abspath('gst-helper.db'))
+        os.makedirs(db_dir, exist_ok=True)
         
         conn = sqlite3.connect('gst-helper.db')
         c = conn.cursor()
@@ -87,12 +80,13 @@ def init_db():
             )
         ''')
         
-        # Create expenses table
+        # Create expenses table with gst_amount field
         c.execute('''
             CREATE TABLE IF NOT EXISTS expenses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT,
                 amount REAL,
+                gst_amount REAL,
                 description TEXT,
                 category TEXT,
                 is_gst_eligible INTEGER,
@@ -107,7 +101,8 @@ def init_db():
         logger.error(traceback.format_exc())
         raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 # Initialize database at startup
 init_db()
@@ -127,13 +122,14 @@ class Invoice(BaseModel):
     is_system_date: bool
 
 class Expense(BaseModel):
-    id: str
-    invoice_id: str
+    id: Optional[int] = None
+    date: str
     amount: float
     gst_amount: float
-    category: str
     description: str
-    date: str
+    category: str
+    is_gst_eligible: bool
+    created_at: str = Field(default_factory=lambda: datetime.now().isoformat())
 
 class ReportRequest(BaseModel):
     year: Optional[str] = None
@@ -275,37 +271,71 @@ async def root():
 async def health_check():
     return {"status": "ok", "message": "Server is running"}
 
-def extract_text_from_pdf(pdf_data: bytes) -> str:
-    """Extract text from PDF using pdf2image and pytesseract"""
+@app.get("/api/gst-summary")
+async def get_gst_summary():
     try:
-        # Create a temporary file to save the PDF
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
-            pdf_file.write(pdf_data)
-            pdf_path = pdf_file.name
-
-        logger.debug(f"Converting PDF to images: {pdf_path}")
-        # Convert PDF to images
-        images = pdf2image.convert_from_path(pdf_path)
-        logger.debug(f"Converted PDF to {len(images)} images")
-
-        # Extract text from each image
-        text = ""
-        for i, image in enumerate(images):
-            logger.debug(f"Processing page {i+1}")
-            text += pytesseract.image_to_string(image) + "\n"
-
-        # Clean up temporary file
-        os.unlink(pdf_path)
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
         
-        if not text.strip():
-            raise Exception("No text was extracted from the PDF")
-            
-        return text
-
+        # Get total GST collected (from invoices)
+        c.execute('SELECT SUM(gst_amount) FROM invoices WHERE gst_eligible = 1')
+        gst_collected = c.fetchone()[0] or 0.0
+        
+        # Get total GST paid (from expenses)
+        c.execute('SELECT SUM(gst_amount) FROM expenses WHERE is_gst_eligible = 1')
+        gst_paid = c.fetchone()[0] or 0.0
+        
+        # Calculate net GST
+        net_gst = gst_collected - gst_paid
+        
+        conn.close()
+        
+        return {
+            "gst_collected": gst_collected,
+            "gst_paid": gst_paid,
+            "net_gst": net_gst,
+            "gst_owing": net_gst if net_gst > 0 else 0,
+            "gst_refund": abs(net_gst) if net_gst < 0 else 0
+        }
     except Exception as e:
-        logger.error(f"Error in PDF processing: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise
+        logger.error(f"Error fetching GST summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/common-deductions")
+async def get_common_deductions():
+    try:
+        # Common tax deductions for Australian businesses
+        deductions = [
+            {
+                "category": "Home Office Expenses",
+                "description": "Expenses related to working from home",
+                "notes": "Includes internet, phone, electricity, and office supplies"
+            },
+            {
+                "category": "Vehicle Expenses",
+                "description": "Business-related vehicle costs",
+                "notes": "Logbook method or cents per kilometer"
+            },
+            {
+                "category": "Professional Development",
+                "description": "Training and education costs",
+                "notes": "Must be directly related to current work"
+            },
+            {
+                "category": "Equipment & Tools",
+                "description": "Tools and equipment for work",
+                "notes": "Depreciation may apply for items over $300"
+            },
+            {
+                "category": "Travel Expenses",
+                "description": "Business travel costs",
+                "notes": "Includes accommodation, meals, and transport"
+            }
+        ]
+        return deductions
+    except Exception as e:
+        logger.error(f"Error fetching common deductions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 def extract_text_from_image(image_data: bytes, content_type: str) -> str:
     """Extract text from image using pytesseract"""
@@ -349,80 +379,93 @@ def extract_text_from_image(image_data: bytes, content_type: str) -> str:
         logger.error(traceback.format_exc())
         raise
 
-def parse_invoice(text: str) -> Dict[str, Any]:
-    """Parse invoice text to extract relevant information"""
-    logger.info("Starting invoice parsing")
-    # Initialize result dictionary
-    result = {
-        "supplier": "",
-        "total_amount": 0.0,
-        "gst_amount": 0.0,
-        "net_amount": 0.0,
-        "invoice_date": "",
-        "line_items": [],
-        "raw_text": text  # Add raw text for debugging
-    }
-    
-    # Extract total amount (look for patterns like "Total: $123.45" or "Amount Due: $123.45")
-    import re
-    total_patterns = [
-        r"total.*?(?:AUD|A)?\$?\s*(\d+(?:,\d{3})*\.\d{2})",
-        r"amount due.*?(?:AUD|A)?\$?\s*(\d+(?:,\d{3})*\.\d{2})",
-        r"grand total.*?(?:AUD|A)?\$?\s*(\d+(?:,\d{3})*\.\d{2})",
-        r"(?:AUD|A)?\$\s*(\d+(?:,\d{3})*\.\d{2})\s*(?:total|due)",
-        r"charged to.*?(?:AUD|A)?\$\s*(\d+(?:,\d{3})*\.\d{2})",
-    ]
-    
-    for pattern in total_patterns:
-        match = re.search(pattern, text.lower())
-        if match:
-            try:
-                amount_str = match.group(1).replace(',', '')
-                result["total_amount"] = float(amount_str)
-                # Calculate GST (assuming 10%)
-                result["gst_amount"] = result["total_amount"] / 11
-                result["net_amount"] = result["total_amount"] - result["gst_amount"]
-                logger.info(f"Found total amount: {result['total_amount']}")
-                break
-            except ValueError as e:
-                logger.warning(f"Failed to parse amount: {e}")
-                continue
-    
-    # Extract supplier name (look for company names at the top of the document)
-    supplier_patterns = [
-        r"(?:from|supplier|vendor|bill from|invoice from):\s*([^\n]+)",
-        r"([A-Z][A-Za-z\s]+(?:Inc\.|LLC|Ltd\.|PTY|Limited|Corporation))",
-        r"^([A-Z][A-Za-z\s]+)(?=\n)",
-        r"SUPPLIER:\s*([^\n]+)",
-        r"VENDOR:\s*([^\n]+)",
-        r"BILLED BY:\s*([^\n]+)"
-    ]
-    
-    for pattern in supplier_patterns:
-        match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
-        if match:
-            result["supplier"] = match.group(1).strip()
-            logger.info(f"Found supplier: {result['supplier']}")
-            break
-    
-    # Extract invoice date
-    date_patterns = [
-        r"(?:date|invoice date):\s*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
-        r"(\d{1,2}[-/]\d{1,2}[-/]\d{4})",
-        r"(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})"
-    ]
-    
-    for pattern in date_patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            result["invoice_date"] = match.group(1)
-            logger.info(f"Found invoice date: {result['invoice_date']}")
-            break
-    
-    return result
+def extract_text_from_pdf(pdf_data: bytes) -> str:
+    """Extract text from PDF using pdf2image and pytesseract"""
+    try:
+        # Create a temporary file to save the PDF
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
+            pdf_file.write(pdf_data)
+            pdf_path = pdf_file.name
+
+        logger.debug(f"Converting PDF to images: {pdf_path}")
+        # Convert PDF to images with higher DPI for better OCR
+        images = pdf2image.convert_from_path(
+            pdf_path,
+            dpi=300,  # Higher DPI for better OCR
+            thread_count=4,  # Use multiple threads for faster processing
+            grayscale=True  # Convert to grayscale for better OCR
+        )
+        logger.debug(f"Converted PDF to {len(images)} images")
+
+        # Extract text from each image
+        text = ""
+        for i, image in enumerate(images):
+            logger.debug(f"Processing page {i+1}")
+            # Preprocess image for better OCR
+            image = image.convert('L')  # Convert to grayscale
+            image = image.point(lambda x: 0 if x < 128 else 255, '1')  # Apply threshold
+            page_text = pytesseract.image_to_string(image)
+            text += page_text + "\n"
+            logger.debug(f"Extracted {len(page_text)} characters from page {i+1}")
+
+        # Clean up temporary file
+        os.unlink(pdf_path)
+        
+        if not text.strip():
+            raise Exception("No text was extracted from the PDF")
+            
+        logger.debug(f"Total extracted text length: {len(text)}")
+        return text
+
+    except Exception as e:
+        logger.error(f"Error in PDF processing: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise
+
+def parse_invoice(text: str) -> dict:
+    """Parse invoice details from extracted text."""
+    try:
+        # Extract total amount
+        total_match = re.search(r'TOTAL\s*\$?(\d+\.\d{2})', text, re.IGNORECASE)
+        total_amount = float(total_match.group(1)) if total_match else 0.0
+        
+        # Calculate GST (10% of total)
+        gst_amount = round(total_amount / 11, 2)
+        net_amount = round(total_amount - gst_amount, 2)
+        
+        # Extract supplier
+        supplier_match = re.search(r'(?:FROM|SUPPLIER|VENDOR):?\s*([^\n]+)', text, re.IGNORECASE)
+        supplier = supplier_match.group(1).strip() if supplier_match else "Unknown Supplier"
+        
+        # Extract date
+        date_match = re.search(r'(?:DATE|INVOICE DATE):?\s*(\d{1,2}/\d{1,2}/\d{4})', text, re.IGNORECASE)
+        if date_match:
+            date_str = date_match.group(1)
+            # Convert from DD/MM/YYYY to YYYY-MM-DD
+            day, month, year = date_str.split('/')
+            invoice_date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+        else:
+            invoice_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # Extract invoice number
+        invoice_match = re.search(r'(?:INVOICE|INV|BILL)\s*(?:#|NO\.?)?\s*([A-Z0-9-]+)', text, re.IGNORECASE)
+        invoice_number = invoice_match.group(1) if invoice_match else ""
+        
+        return {
+            "supplier": supplier,
+            "total_amount": total_amount,
+            "gst_amount": gst_amount,
+            "net_amount": net_amount,
+            "invoice_date": invoice_date,
+            "invoice_number": invoice_number,
+            "raw_text": text
+        }
+    except Exception as e:
+        logger.error(f"Error parsing invoice: {str(e)}")
+        raise
 
 @app.post("/process-invoice")
-async def process_invoice(file: UploadFile = File(...)):
+async def process_invoice(file: UploadFile = File(...), invoice_type: str = "expense"):
     try:
         # Log file details
         logger.debug(f"Processing invoice - Filename: {file.filename}, Content-Type: {file.content_type}")
@@ -461,6 +504,75 @@ async def process_invoice(file: UploadFile = File(...)):
         try:
             result = parse_invoice(text)
             logger.debug(f"Parsing result: {json.dumps(result, indent=2)}")
+            
+            # Create invoice object
+            invoice = Invoice(
+                id=str(datetime.now().timestamp()),
+                supplier=result["supplier"],
+                total_amount=result["total_amount"],
+                gst_amount=result["gst_amount"],
+                net_amount=result["net_amount"],
+                invoice_date=result["invoice_date"],
+                invoice_number=result.get("invoice_number", ""),
+                category="Other",
+                gst_eligible=True,
+                file_path=file.filename,
+                is_system_date=False
+            )
+            
+            # Save to database
+            if save_invoice(invoice):
+                # If this is an expense, also save it to the expenses table
+                if invoice_type == "expense":
+                    conn = sqlite3.connect('gst-helper.db')
+                    c = conn.cursor()
+                    
+                    # Check if expense already exists
+                    c.execute('''
+                        SELECT id FROM expenses 
+                        WHERE date = ? AND amount = ? AND description = ?
+                    ''', (
+                        invoice.invoice_date,
+                        invoice.total_amount,
+                        f"{invoice.supplier} - {invoice.invoice_number}"
+                    ))
+                    
+                    if not c.fetchone():
+                        # Insert new expense
+                        c.execute('''
+                            INSERT INTO expenses (
+                                date, amount, gst_amount, description, 
+                                category, is_gst_eligible, created_at
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                        ''', (
+                            invoice.invoice_date,
+                            invoice.total_amount,
+                            invoice.gst_amount,
+                            f"{invoice.supplier} - {invoice.invoice_number}",
+                            invoice.category,
+                            invoice.gst_eligible,
+                            datetime.now().isoformat()
+                        ))
+                        conn.commit()
+                        logger.debug("Expense saved successfully")
+                    else:
+                        logger.debug("Expense already exists, skipping")
+                    
+                    conn.close()
+                
+                return JSONResponse(content={
+                    "success": True,
+                    "invoice": invoice.dict()
+                })
+            else:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "error": "Duplicate invoice detected",
+                        "detail": f"Invoice for supplier {invoice.supplier} with amount {invoice.total_amount} already exists for date {invoice.invoice_date}"
+                    }
+                )
+                
         except Exception as e:
             logger.error(f"Invoice parsing failed: {str(e)}")
             return JSONResponse(
@@ -471,35 +583,7 @@ async def process_invoice(file: UploadFile = File(...)):
                     "traceback": traceback.format_exc()
                 }
             )
-        
-        # Save to database
-        invoice = Invoice(
-            id=str(datetime.now().timestamp()),
-            supplier=result["supplier"],
-            total_amount=result["total_amount"],
-            gst_amount=result["gst_amount"],
-            net_amount=result["net_amount"],
-            invoice_date=result["invoice_date"],
-            invoice_number=result.get("invoice_number", ""),  # Default to empty string if None
-            category="Other",  # Default category
-            gst_eligible=True,  # Default to true, can be updated later
-            is_system_date=False  # Default to false
-        )
-        
-        if save_invoice(invoice):
-            return JSONResponse(content={
-                "success": True,
-                "invoice": invoice.dict()
-            })
-        else:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "error": "Duplicate invoice detected",
-                    "detail": f"Invoice for supplier {invoice.supplier} with amount {invoice.total_amount} already exists for date {invoice.invoice_date}"
-                }
-            )
-        
+            
     except HTTPException as he:
         raise he
     except Exception as e:
@@ -798,11 +882,148 @@ async def delete_all_invoices():
     finally:
         conn.close()
 
-if __name__ == "__main__":
+@app.post("/api/expenses")
+async def create_expense(expense: Expense):
     try:
-        logger.info("Starting server on 0.0.0.0:8000")
-        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # If no date provided, use current date
+        if not expense.date:
+            expense.date = datetime.now().strftime("%d/%m/%Y")
+            
+        # Calculate GST amount if not provided
+        if expense.gst_amount == 0 and expense.is_gst_eligible:
+            expense.gst_amount = round(expense.amount / 11, 2)  # GST is 1/11th of total amount
+        
+        c.execute('''
+            INSERT INTO expenses (date, amount, gst_amount, description, category, is_gst_eligible, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            expense.date,
+            expense.amount,
+            expense.gst_amount,
+            expense.description,
+            expense.category,
+            expense.is_gst_eligible,
+            expense.created_at
+        ))
+        
+        conn.commit()
+        expense.id = c.lastrowid
+        return {"expense": expense.dict()}
     except Exception as e:
-        logger.error(f"Failed to start server: {str(e)}")
-        logger.error(traceback.format_exc())
-        sys.exit(1) 
+        logger.error(f"Error creating expense: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+@app.get("/api/expenses/summary")
+async def get_expenses_summary(period: str = "quarter"):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        cursor = conn.cursor()
+        
+        # Calculate date range based on period
+        end_date = datetime.now()
+        if period == "month":
+            start_date = end_date - timedelta(days=30)
+        elif period == "quarter":
+            start_date = end_date - timedelta(days=90)
+        else:  # year
+            start_date = end_date - timedelta(days=365)
+            
+        # Get expenses within the date range
+        cursor.execute("""
+            SELECT 
+                category,
+                SUM(amount) as total_amount,
+                SUM(gst_amount) as total_gst,
+                COUNT(*) as count
+            FROM expenses
+            WHERE date BETWEEN ? AND ?
+            GROUP BY category
+        """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+        
+        category_summary = {}
+        total_expenses = 0
+        total_gst_claimable = 0
+        gst_eligible_expenses = 0
+        non_gst_expenses = 0
+        
+        for row in cursor.fetchall():
+            category, total, gst, count = row
+            category_summary[category] = {
+                "total": total,
+                "gst_amount": gst,
+                "count": count
+            }
+            total_expenses += total
+            total_gst_claimable += gst
+            if gst > 0:
+                gst_eligible_expenses += total
+            else:
+                non_gst_expenses += total
+        
+        # Get recent expenses
+        cursor.execute("""
+            SELECT id, date, amount, gst_amount, description, category
+            FROM expenses
+            WHERE date BETWEEN ? AND ?
+            ORDER BY date DESC
+            LIMIT 10
+        """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+        
+        recent_expenses = []
+        for row in cursor.fetchall():
+            recent_expenses.append({
+                "id": row[0],
+                "date": row[1],
+                "amount": row[2],
+                "gst_amount": row[3],
+                "description": row[4],
+                "category": row[5]
+            })
+        
+        return {
+            "period": period,
+            "start_date": start_date.strftime('%Y-%m-%d'),
+            "end_date": end_date.strftime('%Y-%m-%d'),
+            "total_expenses": total_expenses,
+            "total_gst_claimable": total_gst_claimable,
+            "gst_eligible_expenses": gst_eligible_expenses,
+            "non_gst_expenses": non_gst_expenses,
+            "category_summary": category_summary,
+            "expenses": recent_expenses
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting expenses summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
+@app.delete("/api/expenses/clear")
+async def clear_expenses():
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM expenses")
+        conn.commit()
+        return {"message": "All expenses cleared successfully"}
+    except Exception as e:
+        logger.error(f"Error clearing expenses: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+if __name__ == "__main__":
+    # Initialize database
+    init_db()
+    
+    # Start the server
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001) 
