@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Paper, 
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
   Grid,
   List,
   ListItem,
@@ -31,10 +31,10 @@ import {
 import { format } from 'date-fns';
 import axios from 'axios';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DeleteIcon from '@mui/icons-material/Delete';
+import UploadIcon from '@mui/icons-material/Upload';
 import { InvoiceProcessor } from '../services/InvoiceProcessor';
 import { API_BASE_URL } from '../config';
-import UploadIcon from '@mui/icons-material/Upload';
+import ErrorBoundary from './ErrorBoundary';
 
 interface Transaction {
   date: string;
@@ -44,17 +44,21 @@ interface Transaction {
 }
 
 interface GSTSummary {
+  total_income: number;
+  total_expenses: number;
   gst_collected: number;
   gst_paid: number;
   net_gst: number;
   gst_owing: number;
   gst_refund: number;
+  invoices: Invoice[];
 }
 
 interface Deduction {
-  category: string;
+  id: string;
+  name: string;
   description: string;
-  notes: string;
+  max_amount: number;
 }
 
 interface ProcessedInvoice {
@@ -65,6 +69,16 @@ interface ProcessedInvoice {
   amount: number;
   gstAmount: number;
   type: 'income' | 'expense';
+}
+
+interface Invoice {
+  id: number;
+  supplier: string;
+  date: string;
+  total_amount: number;
+  gst_amount: number;
+  invoice_type: 'income' | 'expense';
+  status: 'pending' | 'processed';
 }
 
 const GSTHelper: React.FC = () => {
@@ -82,51 +96,102 @@ const GSTHelper: React.FC = () => {
     category: 'General'
   });
 
-  const [gstSummary, setGstSummary] = useState<GSTSummary | null>(null);
-  const [deductions, setDeductions] = useState<Deduction[]>([]);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [gstSummary, setGstSummary] = useState<GSTSummary>({
+    total_income: 0,
+    total_expenses: 0,
+    gst_collected: 0,
+    gst_paid: 0,
+    net_gst: 0,
+    gst_owing: 0,
+    gst_refund: 0,
+    invoices: []
+  });
+
   const [processedInvoices, setProcessedInvoices] = useState<ProcessedInvoice[]>([]);
   const [showInvoiceDialog, setShowInvoiceDialog] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [invoiceType, setInvoiceType] = useState<'income' | 'expense'>('expense');
+  const [invoiceTypes, setInvoiceTypes] = useState<Record<number, 'income' | 'expense'>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const invoiceProcessor = new InvoiceProcessor();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
 
   useEffect(() => {
     fetchGSTSummary();
-    fetchDeductions();
     loadProcessedInvoices();
+    fetchInvoices();
   }, []);
 
   const loadProcessedInvoices = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/invoices`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch invoices');
-      }
       const data = await response.json();
-      if (!data.invoices) {
-        throw new Error('Invalid response format');
-      }
-      
-      setProcessedInvoices(data.invoices.map((invoice: any) => ({
-        id: invoice.id,
-        fileName: invoice.invoice_number || 'Unknown',
-        supplier: invoice.supplier || 'N/A',
-        date: invoice.invoice_date || 'N/A',
-        amount: invoice.total_amount || 0,
-        gstAmount: invoice.gst_amount || 0,
-        type: invoice.total_amount > 0 ? 'income' : 'expense'
-      })));
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to load processed invoices' });
+      setProcessedInvoices(
+        data.invoices?.map((invoice: any) => ({
+          id: invoice.id,
+          fileName: invoice.invoice_number || 'Unknown',
+          supplier: invoice.supplier || 'N/A',
+          date: invoice.invoice_date || 'N/A',
+          amount: invoice.total_amount || 0,
+          gstAmount: invoice.gst_amount || 0,
+          type: invoice.invoice_type || (invoice.total_amount > 0 ? 'income' : 'expense')
+        })) || []
+      );
+    } catch {
+      setError('Failed to load processed invoices');
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const fetchGSTSummary = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/gst-summary?period=quarter`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch GST summary');
+      }
+      const data = await response.json();
+      setGstSummary({
+        total_income: data.total_income || 0,
+        total_expenses: data.total_expenses || 0,
+        gst_collected: data.gst_collected || 0,
+        gst_paid: data.gst_paid || 0,
+        net_gst: data.net_gst || 0,
+        gst_owing: data.gst_owing || 0,
+        gst_refund: data.gst_refund || 0,
+        invoices: data.invoices || []
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setGstSummary({
+        total_income: 0,
+        total_expenses: 0,
+        gst_collected: 0,
+        gst_paid: 0,
+        net_gst: 0,
+        gst_owing: 0,
+        gst_refund: 0,
+        invoices: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchInvoices = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/invoices?status=pending`);
+      const data = await response.json();
+      setInvoices(data.invoices ?? []);
+    } catch {
+      setError('Failed to fetch invoices');
+      setInvoices([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
@@ -134,78 +199,109 @@ const GSTHelper: React.FC = () => {
     }
   };
 
-  const handleProcessInvoice = async (file: File) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  const handleProcessUploadedFile = async () => {
+    if (!selectedFile) return;
     
+    setLoading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', selectedFile);
       formData.append('invoice_type', invoiceType);
+
+      const response = await fetch(`${API_BASE_URL}/process-invoice`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload invoice');
+      }
+
+      const data = await response.json();
+      setSuccess('Invoice uploaded successfully');
+      setShowInvoiceDialog(false);
+      fetchGSTSummary();
+      fetchInvoices();
       
-      const response = await fetch('http://localhost:8001/process-invoice', {
+      if (invoiceType === 'expense') {
+        window.dispatchEvent(new CustomEvent('expenseUpdated'));
+      }
+    } catch (error) {
+      setError('Failed to upload invoice');
+      console.error('Error uploading invoice:', error);
+    } finally {
+      setLoading(false);
+      setSelectedFile(null);
+    }
+  };
+
+  const handleProcessInvoice = async (file: File) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Create FormData object
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('invoice_type', 'expense');  // Add required invoice_type field
+
+      const response = await fetch(`${API_BASE_URL}/process-invoice`, {
         method: 'POST',
         body: formData,
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to process invoice');
       }
-      
+
       const data = await response.json();
-      setSuccess('Invoice processed successfully!');
-      
-      // Refresh both GST summary and expense summary
-      fetchGSTSummary();
-      if (invoiceType === 'expense') {
-        // Dispatch event to update expense summary
+      if (data.success) {
+        // Update the invoice in the pending invoices list
+        setInvoices(prevInvoices => 
+          prevInvoices.filter(inv => inv.id !== data.invoice.id)
+        );
+        
+        // Add to processed invoices
+        setProcessedInvoices(prevInvoices => [
+          {
+            id: data.invoice.id,
+            fileName: data.invoice.invoice_number || 'Unknown',
+            supplier: data.invoice.supplier || 'N/A',
+            date: data.invoice.invoice_date || 'N/A',
+            amount: data.invoice.total_amount || 0,
+            gstAmount: data.invoice.gst_amount || 0,
+            type: data.invoice.invoice_type || 'expense'
+          },
+          ...prevInvoices
+        ]);
+        
+        // Refresh GST summary
+        fetchGSTSummary();
+        
+        // Dispatch event to update ExpenseTracker
         window.dispatchEvent(new CustomEvent('expenseUpdated'));
-      }
-      
-      // Clear the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        
+        setSuccess('Invoice processed successfully');
+      } else {
+        throw new Error(data.error || 'Failed to process invoice');
       }
     } catch (err) {
+      console.error('Error processing invoice:', err);
       setError(err instanceof Error ? err.message : 'Failed to process invoice');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchGSTSummary = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/gst-summary`);
-      setGstSummary(response.data);
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to fetch GST summary' });
-    }
-  };
-
-  const fetchDeductions = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/common-deductions`);
-      setDeductions(response.data);
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to fetch deductions' });
-    }
-  };
-
   const handleAddIncome = async () => {
     try {
       await axios.post(`${API_BASE_URL}/api/income`, income);
-      setMessage({ type: 'success', text: 'Income added successfully' });
+      setSuccess('Income added successfully');
       fetchGSTSummary();
-      setIncome({
-        date: format(new Date(), 'yyyy-MM-dd'),
-        amount: 0,
-        description: '',
-        category: 'Sales'
-      });
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to add income' });
+      setIncome({ ...income, amount: 0, description: '' });
+    } catch {
+      setError('Failed to add income');
     }
   };
 
@@ -215,272 +311,154 @@ const GSTHelper: React.FC = () => {
         ...expense,
         is_deductible: true
       });
-      setMessage({ type: 'success', text: 'Expense added successfully' });
+      setSuccess('Expense added successfully');
       fetchGSTSummary();
-      setExpense({
-        date: format(new Date(), 'yyyy-MM-dd'),
-        amount: 0,
-        description: '',
-        category: 'General'
-      });
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to add expense' });
+      setExpense({ ...expense, amount: 0, description: '' });
+    } catch {
+      setError('Failed to add expense');
     }
   };
 
+  const formatCurrency = (val?: number | null): string => `$${(val ?? 0).toFixed(2)}`;
+
   return (
-    <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
-      <Typography variant="h4" gutterBottom>
-        GST Helper
-      </Typography>
+    <ErrorBoundary>
+      <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
+        <Typography variant="h4" gutterBottom>GST Helper</Typography>
 
-      {/* Loading indicator */}
-      {loading && (
-        <Box sx={{ mb: 2 }}>
-          <CircularProgress />
-          <Typography>Processing invoice...</Typography>
-        </Box>
-      )}
-      
-      {/* Error message */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-      
-      {/* Success message */}
-      {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {success}
-        </Alert>
-      )}
+        {loading && <><CircularProgress /><Typography>Loading...</Typography></>}
+        {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
+        {success && <Alert severity="success" onClose={() => setSuccess(null)}>{success}</Alert>}
 
-      {/* Invoice Upload Section */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Upload Invoice
-        </Typography>
-        <input
-          accept=".pdf,.jpg,.jpeg,.png"
-          style={{ display: 'none' }}
-          id="invoice-upload"
-          type="file"
-          onChange={handleFileUpload}
-        />
-        <label htmlFor="invoice-upload">
-          <Button
-            variant="contained"
-            component="span"
-            startIcon={<UploadIcon />}
-          >
-            Upload Invoice
-          </Button>
-        </label>
-      </Paper>
+        {/* Upload */}
+        <Paper sx={{ p: 2, mb: 3 }}>
+          <Typography variant="h6">Upload Invoice</Typography>
+          <input
+            accept=".pdf,.jpg,.jpeg,.png"
+            style={{ display: 'none' }}
+            id="invoice-upload"
+            type="file"
+            onChange={handleFileUpload}
+          />
+          <label htmlFor="invoice-upload">
+            <Button variant="contained" component="span" startIcon={<UploadIcon />}>Upload Invoice</Button>
+          </label>
+        </Paper>
 
-      {/* Processed Invoices Table */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Processed Invoices
-        </Typography>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Supplier</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>GST</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {processedInvoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell>{invoice.date}</TableCell>
-                  <TableCell>{invoice.supplier}</TableCell>
-                  <TableCell>${Math.abs(invoice.amount).toFixed(2)}</TableCell>
-                  <TableCell>${invoice.gstAmount.toFixed(2)}</TableCell>
-                  <TableCell>{invoice.type}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => {
-                        if (invoice.type === 'income') {
-                          setIncome({
-                            date: invoice.date,
-                            amount: invoice.amount,
-                            description: `${invoice.supplier} - ${invoice.fileName}`,
-                            category: 'Sales'
-                          });
-                        } else {
-                          setExpense({
-                            date: invoice.date,
-                            amount: Math.abs(invoice.amount),
-                            description: `${invoice.supplier} - ${invoice.fileName}`,
-                            category: 'General'
-                          });
-                        }
-                      }}
-                    >
-                      <CloudUploadIcon />
-                    </IconButton>
-                  </TableCell>
+        {/* Processed Invoices */}
+        <Paper sx={{ p: 2, mb: 3 }}>
+          <Typography variant="h6">Processed Invoices</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Supplier</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>GST</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+              </TableHead>
+              <TableBody>
+                {processedInvoices.map((inv) => (
+                  <TableRow key={inv.id}>
+                    <TableCell>{inv.date}</TableCell>
+                    <TableCell>{inv.supplier}</TableCell>
+                    <TableCell>{formatCurrency(inv.amount)}</TableCell>
+                    <TableCell>{formatCurrency(inv.gstAmount)}</TableCell>
+                    <TableCell>{inv.type}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => {
+                        const data = {
+                          date: inv.date,
+                          amount: Math.abs(inv.amount),
+                          description: `${inv.supplier} - ${inv.fileName}`,
+                          category: inv.type === 'income' ? 'Sales' : 'General'
+                        };
+                        inv.type === 'income' ? setIncome(data) : setExpense(data);
+                      }}>
+                        <CloudUploadIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-      <Grid container spacing={3}>
-        {/* Income Form */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Add Income
-            </Typography>
-            <TextField
-              fullWidth
-              type="date"
-              label="Date"
-              value={income.date}
-              onChange={(e) => setIncome({ ...income, date: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              type="number"
-              label="Amount"
-              value={income.amount}
-              onChange={(e) => setIncome({ ...income, amount: parseFloat(e.target.value) })}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Description"
-              value={income.description}
-              onChange={(e) => setIncome({ ...income, description: e.target.value })}
-              sx={{ mb: 2 }}
-            />
-            <Button 
-              variant="contained" 
-              onClick={handleAddIncome}
-              disabled={!income.amount || !income.description}
-            >
-              Add Income
-            </Button>
-          </Paper>
-        </Grid>
+        {/* Pending Invoices */}
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h6">Pending Invoices</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Supplier</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>GST</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {invoices.map((inv) => (
+                  <TableRow key={inv.id}>
+                    <TableCell>{inv.supplier}</TableCell>
+                    <TableCell>{inv.date}</TableCell>
+                    <TableCell>{formatCurrency(inv.total_amount)}</TableCell>
+                    <TableCell>{formatCurrency(inv.gst_amount)}</TableCell>
+                    <TableCell>
+                      <FormControl fullWidth>
+                        <Select
+                          value={invoiceTypes[inv.id] || 'expense'}
+                          onChange={(e) => setInvoiceTypes((prev) => ({
+                            ...prev,
+                            [inv.id]: e.target.value as 'income' | 'expense'
+                          }))}
+                        >
+                          <MenuItem value="income">Income</MenuItem>
+                          <MenuItem value="expense">Expense</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          // Get the file input element
+                          const fileInput = document.createElement('input');
+                          fileInput.type = 'file';
+                          fileInput.accept = 'image/*,.pdf';
+                          
+                          fileInput.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) {
+                              handleProcessInvoice(file);
+                            }
+                          };
+                          
+                          fileInput.click();
+                        }}
+                        disabled={loading}
+                      >
+                        Process
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-        {/* Expense Form */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Add Expense
-            </Typography>
-            <TextField
-              fullWidth
-              type="date"
-              label="Date"
-              value={expense.date}
-              onChange={(e) => setExpense({ ...expense, date: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              type="number"
-              label="Amount"
-              value={expense.amount}
-              onChange={(e) => setExpense({ ...expense, amount: parseFloat(e.target.value) })}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Description"
-              value={expense.description}
-              onChange={(e) => setExpense({ ...expense, description: e.target.value })}
-              sx={{ mb: 2 }}
-            />
-            <Button 
-              variant="contained" 
-              onClick={handleAddExpense}
-              disabled={!expense.amount || !expense.description}
-            >
-              Add Expense
-            </Button>
-          </Paper>
-        </Grid>
-
-        {/* GST Summary */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              GST Summary
-            </Typography>
-            {gstSummary && (
-              <Grid container spacing={2}>
-                <Grid item xs={6} md={3}>
-                  <Typography variant="subtitle2">GST Collected</Typography>
-                  <Typography variant="h6">${gstSummary.gst_collected.toFixed(2)}</Typography>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                  <Typography variant="subtitle2">GST Paid</Typography>
-                  <Typography variant="h6">${gstSummary.gst_paid.toFixed(2)}</Typography>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                  <Typography variant="subtitle2">Net GST</Typography>
-                  <Typography variant="h6" color={gstSummary.net_gst >= 0 ? 'error' : 'success'}>
-                    ${Math.abs(gstSummary.net_gst).toFixed(2)} {gstSummary.net_gst >= 0 ? 'Owing' : 'Refund'}
-                  </Typography>
-                </Grid>
-              </Grid>
-            )}
-          </Paper>
-        </Grid>
-
-        {/* Common Deductions */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Common Deductions
-            </Typography>
-            <List>
-              {deductions.map((deduction, index) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemText
-                      primary={deduction.category}
-                      secondary={
-                        <>
-                          <Typography component="span" variant="body2">
-                            {deduction.description}
-                          </Typography>
-                          <br />
-                          <Typography component="span" variant="caption" color="text.secondary">
-                            {deduction.notes}
-                          </Typography>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                  {index < deductions.length - 1 && <Divider />}
-                </React.Fragment>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Invoice Processing Dialog */}
-      <Dialog open={showInvoiceDialog} onClose={() => setShowInvoiceDialog(false)}>
-        <DialogTitle>Process Invoice</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <FormControl fullWidth>
+        {/* File Invoice Dialog */}
+        <Dialog open={showInvoiceDialog} onClose={() => setShowInvoiceDialog(false)}>
+          <DialogTitle>Process Uploaded Invoice</DialogTitle>
+          <DialogContent>
+            <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Invoice Type</InputLabel>
               <Select
                 value={invoiceType}
@@ -491,17 +469,21 @@ const GSTHelper: React.FC = () => {
                 <MenuItem value="income">Income</MenuItem>
               </Select>
             </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowInvoiceDialog(false)}>Cancel</Button>
-          <Button onClick={() => handleProcessInvoice(selectedFile as File)} variant="contained" color="primary">
-            Process
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowInvoiceDialog(false)}>Cancel</Button>
+            <Button 
+              variant="contained" 
+              onClick={handleProcessUploadedFile}
+              disabled={loading}
+            >
+              Process
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </ErrorBoundary>
   );
 };
 
-export default GSTHelper; 
+export default GSTHelper;

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi import Query
@@ -26,38 +26,80 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 import uuid
 import re
+import shutil
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,  # Changed to DEBUG for more detailed logs
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler('backend.log')
-    ]
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('gst_helper')
 
+# Initialize FastAPI app
 app = FastAPI()
 
-# Configure CORS with more permissive settings for development
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins during development
+    allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"],
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
-# Database setup
-def init_db():
+# Database initialization flag
+_db_initialized = False
+
+# Get configuration from environment variables
+UPLOAD_DIR = os.getenv('UPLOAD_DIR', 'uploads')
+DB_DIR = os.getenv('DB_DIR', 'db')
+HOST = os.getenv('HOST', '0.0.0.0')
+PORT = int(os.getenv('PORT', '8000'))
+
+# Ensure directories exist
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(DB_DIR, exist_ok=True)
+
+def clean_test_data():
+    """Clean up test data from the database"""
     conn = None
     try:
-        # Create database directory if it doesn't exist
-        db_dir = os.path.dirname(os.path.abspath('gst-helper.db'))
-        os.makedirs(db_dir, exist_ok=True)
+        db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db')
+        db_path = os.path.join(db_dir, 'gst-helper.db')
         
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        
+        # Delete test invoices
+        c.execute('''
+            DELETE FROM invoices 
+            WHERE supplier IN ('Unknown Supplier', 'Test Supplier', 'Apple Store', 'Amart Furniture')
+            OR total_amount = 0.0
+            OR invoice_date LIKE '2025%'  # Delete test data from 2025
+            OR supplier = 'Unknown Supplier'
+        ''')
+        
+        # Delete test expenses
+        c.execute('''
+            DELETE FROM expenses 
+            WHERE description LIKE '%test%'
+            OR amount = 0.0
+            OR date LIKE '2025%'
+        ''')
+        
+        conn.commit()
+        logger.info("Test data cleaned successfully")
+    except Exception as e:
+        logger.error(f"Error cleaning test data: {str(e)}")
+        logger.error(traceback.format_exc())
+    finally:
+        if conn:
+            conn.close()
+
+def init_db():
+    """Initialize the database with required tables."""
+    try:
         conn = sqlite3.connect('gst-helper.db')
         c = conn.cursor()
         
@@ -77,29 +119,32 @@ def init_db():
                 created_at TEXT,
                 updated_at TEXT,
                 is_system_date INTEGER DEFAULT 0,
-                invoice_type TEXT DEFAULT 'expense'
+                invoice_type TEXT DEFAULT 'expense',
+                status TEXT DEFAULT 'pending'
             )
         ''')
         
-        # Add invoice_type column if it doesn't exist
-        try:
-            c.execute('ALTER TABLE invoices ADD COLUMN invoice_type TEXT DEFAULT "expense"')
-        except sqlite3.OperationalError:
-            # Column already exists
-            pass
-            
-        # Clean up duplicates
+        # Create expenses table
         c.execute('''
-            DELETE FROM invoices 
-            WHERE id NOT IN (
-                SELECT MIN(id)
-                FROM invoices
-                GROUP BY supplier, total_amount, invoice_date, invoice_number
+            CREATE TABLE IF NOT EXISTS expenses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT,
+                amount REAL,
+                gst_amount REAL,
+                description TEXT,
+                category TEXT,
+                is_gst_eligible INTEGER,
+                created_at TEXT
             )
         ''')
         
         conn.commit()
         logger.info("Database initialized successfully")
+        
+        # Clean test data if CLEAN_DB environment variable is set
+        if os.getenv('CLEAN_DB', 'false').lower() == 'true':
+            clean_test_data()
+            
     except Exception as e:
         logger.error(f"Error initializing database: {str(e)}")
         logger.error(traceback.format_exc())
@@ -108,8 +153,36 @@ def init_db():
         if conn:
             conn.close()
 
-# Initialize database at startup
-init_db()
+def migrate_db():
+    """Migrate the database to add new columns."""
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Add status column if it doesn't exist
+        try:
+            c.execute('ALTER TABLE invoices ADD COLUMN status TEXT DEFAULT "pending"')
+            logger.info("Added status column to invoices table")
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
+            
+        conn.commit()
+        logger.info("Database migration completed successfully")
+        
+    except Exception as e:
+        logger.error(f"Error migrating database: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise
+    finally:
+        if conn:
+            conn.close()
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    init_db()
+    migrate_db()
 
 # Pydantic models
 class Invoice(BaseModel):
@@ -119,12 +192,15 @@ class Invoice(BaseModel):
     gst_amount: float
     net_amount: float
     invoice_date: str
-    invoice_number: str = None
-    category: str
-    gst_eligible: bool
-    file_path: str = None
-    is_system_date: bool
-    invoice_type: str = None
+    invoice_number: str = ""
+    category: str = "Other"
+    gst_eligible: bool = True
+    file_path: str = ""
+    created_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    is_system_date: bool = False
+    invoice_type: str = "expense"
+    status: str = "pending"
 
 class Expense(BaseModel):
     id: Optional[int] = None
@@ -173,6 +249,7 @@ def check_duplicate_invoice(invoice: Invoice, conn) -> bool:
     return c.fetchone() is not None
 
 def save_invoice(invoice: Invoice):
+    conn = None
     try:
         conn = sqlite3.connect('gst-helper.db')
         
@@ -185,11 +262,11 @@ def save_invoice(invoice: Invoice):
         c.execute('''
             INSERT OR REPLACE INTO invoices 
             (id, supplier, total_amount, gst_amount, net_amount, invoice_date, 
-             invoice_number, category, gst_eligible, file_path, created_at, updated_at, is_system_date, invoice_type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             invoice_number, category, gst_eligible, file_path, created_at, updated_at, is_system_date, invoice_type, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             invoice.id,
-            invoice.supplier,  # Store original supplier name
+            invoice.supplier,
             invoice.total_amount,
             invoice.gst_amount,
             invoice.net_amount,
@@ -198,10 +275,11 @@ def save_invoice(invoice: Invoice):
             invoice.category,
             invoice.gst_eligible,
             invoice.file_path,
-            datetime.now().isoformat(),
-            datetime.now().isoformat(),
+            invoice.created_at,
+            invoice.updated_at,
             invoice.is_system_date,
-            invoice.invoice_type or 'expense'  # Default to 'expense' if not specified
+            invoice.invoice_type,
+            invoice.status
         ))
         
         conn.commit()
@@ -211,7 +289,8 @@ def save_invoice(invoice: Invoice):
         logger.error(traceback.format_exc())
         return False
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 def get_invoices() -> List[Invoice]:
     try:
@@ -236,8 +315,11 @@ def get_invoices() -> List[Invoice]:
                     category=row[7],
                     gst_eligible=bool(row[8]),
                     file_path=row[9],
-                    is_system_date=bool(row[10]),
-                    invoice_type=row[11] or 'expense'  # Default to 'expense' if not specified
+                    created_at=row[10],
+                    updated_at=row[11],
+                    is_system_date=bool(row[12]),
+                    invoice_type=row[13] or 'expense',  # Default to 'expense' if not specified
+                    status=row[14] or 'pending'  # Default to 'pending' if not specified
                 )
                 invoices.append(invoice)
             except Exception as e:
@@ -505,17 +587,28 @@ def parse_invoice(text: str) -> dict:
         }
     except Exception as e:
         logger.error(f"Error parsing invoice: {str(e)}")
-        raise
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=400, detail=f"Failed to parse invoice: {str(e)}")
 
 @app.post("/process-invoice")
-async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form("expense")):
+@app.post("/process-invoice/{invoice_id}")
+async def process_invoice(
+    invoice_id: Optional[str] = None,
+    file: UploadFile = File(...),
+    invoice_type: str = Form("expense")
+):
     try:
+        # Generate invoice_id if not provided
+        if not invoice_id:
+            invoice_id = str(uuid.uuid4())
+            
         # Log file details
-        logger.debug(f"Processing invoice - Filename: {file.filename}, Content-Type: {file.content_type}, Type: {invoice_type}")
+        logger.debug(f"Processing invoice {invoice_id} - Filename: {file.filename}, Content-Type: {file.content_type}, Type: {invoice_type}")
         
         # Validate file type
         allowed_types = ['image/jpeg', 'image/png', 'image/tiff', 'application/pdf']
         if file.content_type not in allowed_types:
+            logger.error(f"Invalid file type: {file.content_type}")
             raise HTTPException(
                 status_code=400,
                 detail=f"Unsupported file type: {file.content_type}. Supported types are: {', '.join(allowed_types)}"
@@ -524,6 +617,7 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
         # Read file content
         contents = await file.read()
         if not contents:
+            logger.error("Empty file received")
             raise HTTPException(status_code=400, detail="Empty file received")
         
         logger.debug(f"File size: {len(contents)} bytes")
@@ -538,8 +632,7 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
                 status_code=500,
                 content={
                     "error": "Failed to extract text from image",
-                    "detail": str(e),
-                    "traceback": traceback.format_exc()
+                    "detail": str(e)
                 }
             )
         
@@ -550,7 +643,7 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
             
             # Create invoice object with the provided invoice_type
             invoice = Invoice(
-                id=str(uuid.uuid4()),
+                id=invoice_id,
                 supplier=result["supplier"],
                 total_amount=result["total_amount"],
                 gst_amount=result["gst_amount"],
@@ -560,53 +653,18 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
                 category="Other",
                 gst_eligible=True,
                 file_path=file.filename,
+                created_at=datetime.now().isoformat(),
+                updated_at=datetime.now().isoformat(),
                 is_system_date=False,
-                invoice_type=invoice_type  # Use the provided invoice_type
+                invoice_type=invoice_type,
+                status='pending'
             )
             
             # Save to database
             if save_invoice(invoice):
-                # If this is an expense, also save it to the expenses table
-                if invoice_type == "expense":
-                    conn = sqlite3.connect('gst-helper.db')
-                    c = conn.cursor()
-                    
-                    # Check if expense already exists
-                    c.execute('''
-                        SELECT id FROM expenses 
-                        WHERE date = ? AND amount = ? AND description = ?
-                    ''', (
-                        invoice.invoice_date,
-                        invoice.total_amount,
-                        f"{invoice.supplier} - {invoice.invoice_number}"
-                    ))
-                    
-                    if not c.fetchone():
-                        # Insert new expense
-                        c.execute('''
-                            INSERT INTO expenses (
-                                date, amount, gst_amount, description, 
-                                category, is_gst_eligible, created_at
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                        ''', (
-                            invoice.invoice_date,
-                            invoice.total_amount,
-                            invoice.gst_amount,
-                            f"{invoice.supplier} - {invoice.invoice_number}",
-                            invoice.category,
-                            invoice.gst_eligible,
-                            datetime.now().isoformat()
-                        ))
-                        conn.commit()
-                        logger.debug("Expense saved successfully")
-                    else:
-                        logger.debug("Expense already exists, skipping")
-                    
-                    conn.close()
-                
                 return JSONResponse(content={
                     "success": True,
-                    "invoice": invoice.model_dump()
+                    "invoice": invoice.dict()
                 })
             else:
                 return JSONResponse(
@@ -619,12 +677,12 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
                 
         except Exception as e:
             logger.error(f"Invoice parsing failed: {str(e)}")
+            logger.error(traceback.format_exc())
             return JSONResponse(
                 status_code=500,
                 content={
                     "error": "Failed to parse invoice",
-                    "detail": str(e),
-                    "traceback": traceback.format_exc()
+                    "detail": str(e)
                 }
             )
             
@@ -637,44 +695,116 @@ async def process_invoice(file: UploadFile = File(...), invoice_type: str = Form
             status_code=500,
             content={
                 "error": "Unexpected error occurred",
-                "detail": str(e),
-                "traceback": traceback.format_exc()
+                "detail": str(e)
             }
         )
 
 @app.get("/invoices")
-async def get_invoices():
+async def get_invoices_endpoint(status: str = None):
+    """Get all invoices, optionally filtered by status"""
+    conn = None
     try:
         conn = sqlite3.connect('gst-helper.db')
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, invoice_date, supplier, invoice_number, total_amount, 
-                   gst_amount, net_amount, category, gst_eligible, is_system_date, invoice_type
-            FROM invoices
-            ORDER BY invoice_date DESC
-        """)
-        rows = cursor.fetchall()
+        c = conn.cursor()
+        
+        # Check if status column exists
+        c.execute("PRAGMA table_info(invoices)")
+        columns = [col[1] for col in c.fetchall()]
+        has_status = 'status' in columns
+        
+        if status and has_status:
+            c.execute('''
+                SELECT id, supplier, invoice_date, total_amount, gst_amount, status, 
+                       invoice_number, category, gst_eligible, file_path, created_at, 
+                       updated_at, is_system_date, invoice_type
+                FROM invoices 
+                WHERE status = ?
+                ORDER BY invoice_date DESC
+            ''', (status,))
+        else:
+            c.execute('''
+                SELECT id, supplier, invoice_date, total_amount, gst_amount, 
+                       invoice_number, category, gst_eligible, file_path, created_at,
+                       updated_at, is_system_date, invoice_type
+                FROM invoices 
+                ORDER BY invoice_date DESC
+            ''')
+            
         invoices = []
-        for row in rows:
+        for row in c.fetchall():
             invoice = {
-                "id": row[0],
-                "invoice_date": row[1],
-                "supplier": row[2],
-                "invoice_number": row[3],
-                "total_amount": row[4],
-                "gst_amount": row[5],
-                "net_amount": row[6],
-                "category": row[7],
-                "gst_eligible": bool(row[8]),
-                "is_system_date": bool(row[9]),
-                "invoice_type": row[10] or 'expense'  # Default to 'expense' if not specified
+                'id': row[0],
+                'supplier': row[1],
+                'invoice_date': row[2],
+                'total_amount': row[3],
+                'gst_amount': row[4],
+                'invoice_number': row[5],
+                'category': row[6],
+                'gst_eligible': bool(row[7]),
+                'file_path': row[8],
+                'created_at': row[9],
+                'updated_at': row[10],
+                'is_system_date': bool(row[11]),
+                'invoice_type': row[12]
             }
+            if has_status:
+                invoice['status'] = row[5]
+            else:
+                invoice['status'] = 'pending'
             invoices.append(invoice)
-        conn.close()
+            
         return {"invoices": invoices}
+        
     except Exception as e:
-        logger.error(f"Error fetching invoices: {str(e)}")
+        logger.error(f"Error getting invoices: {str(e)}")
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+@app.post("/api/invoices")
+def create_invoice_from_dict(invoice: dict):
+    """Save a new invoice from raw dict to avoid conflict with internal save_invoice()"""
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # Check for duplicate invoice
+        c.execute('''
+            SELECT id FROM invoices 
+            WHERE supplier = ? AND total_amount = ? AND invoice_date = ?
+        ''', (invoice['supplier'], invoice['total_amount'], invoice['invoice_date']))
+        
+        if c.fetchone():
+            raise HTTPException(
+                status_code=400,
+                detail="Duplicate invoice detected"
+            )
+        
+        # Insert new invoice
+        c.execute('''
+            INSERT INTO invoices (
+                supplier, invoice_date, total_amount, gst_amount, status
+            ) VALUES (?, ?, ?, ?, ?)
+        ''', (
+            invoice['supplier'],
+            invoice['invoice_date'],
+            invoice['total_amount'],
+            invoice['gst_amount'],
+            invoice.get('status', 'pending')
+        ))
+        
+        conn.commit()
+        return {"message": "Invoice saved successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error saving invoice: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 @app.post("/invoices")
 async def create_invoice(invoice: dict):
@@ -1067,9 +1197,5 @@ async def clear_expenses():
             conn.close()
 
 if __name__ == "__main__":
-    # Initialize database
-    init_db()
-    
     # Start the server
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001) 
+    uvicorn.run(app, host=HOST, port=PORT) 

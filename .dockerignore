@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.env
+.venv
+env.bak
+venv.bak
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Build
+frontend/build
+dist
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store 

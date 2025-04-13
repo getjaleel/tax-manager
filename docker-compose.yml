@@ -1,51 +1,33 @@
 version: '3.8'
 
 services:
-  backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=production
-    ports:
-      - "8000:8000"
-    environment:
-      - FRONTEND_URL=http://frontend:3000
-      - NODE_ENV=production
-    networks:
-      - tax-manager-network
-    restart: unless-stopped
-    volumes:
-      - ./backend:/app
-    working_dir: /app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-  frontend:
+  tax-manager:
     build:
-      context: ./frontend
+      context: .
       dockerfile: Dockerfile
-      args:
-        - NODE_ENV=production
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT:-3000}:3000"
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - tax-manager-db:/app/db:rw
+      - tax-manager-uploads:/app/uploads:rw
     environment:
-      - REACT_APP_API_URL=http://localhost:8000
-      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=${BACKEND_PORT:-8000}
+      - UPLOAD_DIR=/app/uploads
+      - DB_DIR=/app/db
+      - CLEAN_DB=${CLEAN_DB:-false}
+      - REACT_APP_API_URL=http://localhost:${BACKEND_PORT:-8000}
+      - REACT_APP_API_PORT=${BACKEND_PORT:-8000}
+    user: "1000:1000"
     networks:
       - tax-manager-network
-    restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      backend:
-        condition: service_healthy
+
+volumes:
+  tax-manager-db:
+    driver: local
+  tax-manager-uploads:
+    driver: local
 
 networks:
   tax-manager-network:
