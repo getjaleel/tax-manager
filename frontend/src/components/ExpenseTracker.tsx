@@ -218,7 +218,7 @@ const ExpenseTracker: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/expenses`, {
+      const response = await fetch(`${API_BASE_URL}/api/expenses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

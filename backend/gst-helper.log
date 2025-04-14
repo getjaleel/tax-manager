@@ -1,0 +1,1655 @@
+2025-04-14 15:14:24,966 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:14:24,967 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:14:41,646 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:14:41,926 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:14:42,091 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:14:42,092 - auth - INFO - Creating new user: getjaleel@gmail.com
+2025-04-14 15:14:42,095 - auth - INFO - Successfully created JWT token
+2025-04-14 15:14:42,107 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:14:42,359 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:14:42,360 - auth - ERROR - Response status: 400
+2025-04-14 15:14:42,360 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:14:42,360 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:14:42,361 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:14:42,376 - gst_helper - ERROR - Error fetching tax calculations: name 'get_user_by_email' is not defined
+2025-04-14 15:14:42,377 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1102, in get_tax_calculations
+    user = get_user_by_email(current_user)
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_user_by_email' is not defined
+
+2025-04-14 15:14:42,386 - gst_helper - ERROR - Error fetching tax calculations: name 'get_user_by_email' is not defined
+2025-04-14 15:14:42,386 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1102, in get_tax_calculations
+    user = get_user_by_email(current_user)
+           ^^^^^^^^^^^^^^^^^
+NameError: name 'get_user_by_email' is not defined
+
+2025-04-14 15:15:32,102 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:15:32,403 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:15:32,612 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:15:32,613 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:15:32,613 - auth - INFO - Successfully created JWT token
+2025-04-14 15:15:32,620 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:15:32,894 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:15:32,894 - auth - ERROR - Response status: 400
+2025-04-14 15:15:32,895 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:15:32,895 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:15:32,895 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:15:32,899 - gst_helper - ERROR - Error fetching tax calculations: name 'get_user_by_email' is not defined
+2025-04-14 15:15:32,900 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1102, in get_tax_calculations
+    except Exception as e:
+               ^^^^^^^^^^^^
+NameError: name 'get_user_by_email' is not defined
+
+2025-04-14 15:15:32,905 - gst_helper - ERROR - Error fetching tax calculations: name 'get_user_by_email' is not defined
+2025-04-14 15:15:32,906 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1102, in get_tax_calculations
+    except Exception as e:
+               ^^^^^^^^^^^^
+NameError: name 'get_user_by_email' is not defined
+
+2025-04-14 15:16:51,761 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:16:51,761 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:17:07,729 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:17:07,991 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:17:08,145 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:17:08,146 - auth - INFO - Creating new user: getjaleel@gmail.com
+2025-04-14 15:17:08,151 - auth - INFO - Successfully created JWT token
+2025-04-14 15:17:08,174 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:17:08,481 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:17:08,481 - auth - ERROR - Response status: 400
+2025-04-14 15:17:08,481 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:17:08,481 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:17:08,482 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:17:41,272 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:17:41,531 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:17:41,681 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:17:41,682 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:17:41,682 - auth - INFO - Successfully created JWT token
+2025-04-14 15:17:41,709 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:17:41,954 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:17:41,954 - auth - ERROR - Response status: 400
+2025-04-14 15:17:41,955 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:17:41,955 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:17:41,955 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:18:21,861 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:18:22,142 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:18:22,292 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:18:22,293 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:18:22,293 - auth - INFO - Successfully created JWT token
+2025-04-14 15:18:22,322 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:18:22,572 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:18:22,572 - auth - ERROR - Response status: 400
+2025-04-14 15:18:22,572 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:18:22,573 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:18:22,574 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:18:32,149 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:18:32,149 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:18:40,053 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:18:40,345 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:18:40,345 - auth - ERROR - Response status: 400
+2025-04-14 15:18:40,345 - auth - ERROR - Response body: {
+  "error": "redirect_uri_mismatch",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:18:40,345 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:18:40,346 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:18:40,352 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:18:40,638 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:18:40,638 - auth - ERROR - Response status: 400
+2025-04-14 15:18:40,638 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:18:40,639 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:18:40,639 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:19:07,806 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:19:08,049 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:19:08,049 - auth - ERROR - Response status: 400
+2025-04-14 15:19:08,049 - auth - ERROR - Response body: {
+  "error": "redirect_uri_mismatch",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:19:08,049 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:19:08,049 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:19:08,056 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:19:08,392 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:19:08,392 - auth - ERROR - Response status: 400
+2025-04-14 15:19:08,392 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:19:08,392 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:19:08,392 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:20:13,579 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:13,829 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:20:13,830 - auth - ERROR - Response status: 400
+2025-04-14 15:20:13,830 - auth - ERROR - Response body: {
+  "error": "redirect_uri_mismatch",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:20:13,830 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:20:13,831 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:20:13,839 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:14,090 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:20:14,090 - auth - ERROR - Response status: 400
+2025-04-14 15:20:14,090 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:20:14,090 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:20:14,090 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:20:25,411 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:25,657 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:20:25,658 - auth - ERROR - Response status: 400
+2025-04-14 15:20:25,658 - auth - ERROR - Response body: {
+  "error": "redirect_uri_mismatch",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:20:25,658 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:20:25,659 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:20:25,665 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:25,911 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:20:25,911 - auth - ERROR - Response status: 400
+2025-04-14 15:20:25,911 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:20:25,911 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:20:25,912 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:20:36,784 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:20:36,784 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:20:52,743 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:53,018 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:20:53,176 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:20:53,176 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:20:53,177 - auth - INFO - Successfully created JWT token
+2025-04-14 15:20:53,199 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:20:53,536 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:20:53,536 - auth - ERROR - Response status: 400
+2025-04-14 15:20:53,537 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:20:53,537 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:20:53,538 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:25:59,577 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:25:59,849 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:26:00,003 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:26:00,005 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:26:00,006 - auth - INFO - Successfully created JWT token
+2025-04-14 15:26:00,035 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:00,276 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:26:00,276 - auth - ERROR - Response status: 400
+2025-04-14 15:26:00,277 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:26:00,277 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:26:00,278 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    error_detail = response.json().get('error_description', 'Unknown error')
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:26:02,023 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:02,310 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:26:02,456 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:26:02,457 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:26:02,457 - auth - INFO - Successfully created JWT token
+2025-04-14 15:26:02,492 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:02,735 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:26:02,735 - auth - ERROR - Response status: 400
+2025-04-14 15:26:02,735 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:26:02,736 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:26:02,736 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 88, in handle_google_callback
+    error_detail = response.json().get('error_description', 'Unknown error')
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:26:20,487 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:26:20,487 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:26:30,423 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:30,674 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:26:30,810 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:26:30,811 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:26:30,811 - auth - INFO - Successfully created JWT token
+2025-04-14 15:26:30,874 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:31,127 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:26:31,127 - auth - ERROR - Response status: 400
+2025-04-14 15:26:31,127 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:26:31,127 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:26:31,127 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 92, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:26:37,791 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:38,150 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:26:38,340 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:26:38,341 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:26:38,341 - auth - INFO - Successfully created JWT token
+2025-04-14 15:26:38,347 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:26:38,754 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:26:38,754 - auth - ERROR - Response status: 400
+2025-04-14 15:26:38,754 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:26:38,755 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:26:38,755 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 92, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:28:14,517 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:28:14,784 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:28:14,944 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:28:14,945 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:28:14,945 - auth - INFO - Successfully created JWT token
+2025-04-14 15:28:14,966 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:28:15,204 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:28:15,205 - auth - ERROR - Response status: 400
+2025-04-14 15:28:15,205 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:28:15,205 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:28:15,206 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 92, in handle_google_callback
+    logger.error(f"Response status: {response.status_code}")
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:28:30,089 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:28:30,089 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:34:11,954 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:34:11,954 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:34:38,452 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:34:38,452 - auth - INFO - Request data: {'code': '4/0Ab_5qlm9ql8IiMRMpfj5KojS2HZdrwVzwNjpiunIRYy6Vo1zFwS9p7sDXJAFItLH-DS4ow', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:34:38,726 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:34:38,883 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:34:38,884 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:34:38,884 - auth - INFO - Successfully created JWT token
+2025-04-14 15:34:38,908 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:34:38,908 - auth - INFO - Request data: {'code': '4/0Ab_5qlm9ql8IiMRMpfj5KojS2HZdrwVzwNjpiunIRYy6Vo1zFwS9p7sDXJAFItLH-DS4ow', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:34:39,148 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:34:39,148 - auth - ERROR - Response status: 400
+2025-04-14 15:34:39,148 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:34:39,148 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:34:39,149 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:34:39,149 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:34:39,150 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:34:41,344 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:34:41,344 - auth - INFO - Request data: {'code': '4/0Ab_5qllhx2dnD2tJMaHWokRgyJCbBgYcdHuMIeH7sPjXiaU3K4S5OG5Q4znErdaKcCFMKA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:34:41,611 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:34:41,783 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:34:41,784 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:34:41,785 - auth - INFO - Successfully created JWT token
+2025-04-14 15:34:41,791 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:34:41,791 - auth - INFO - Request data: {'code': '4/0Ab_5qllhx2dnD2tJMaHWokRgyJCbBgYcdHuMIeH7sPjXiaU3K4S5OG5Q4znErdaKcCFMKA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:34:42,035 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:34:42,036 - auth - ERROR - Response status: 400
+2025-04-14 15:34:42,036 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:34:42,036 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:34:42,036 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:34:42,036 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:34:42,036 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:35:25,153 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:35:25,153 - auth - INFO - Request data: {'code': '4/0Ab_5qllWZ46mGvuLVDDmEsegNeF9ck-gHmg_pQkvoeFvwYtUwiqrRfQueqdCbvpGF6zSMA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:35:25,429 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:35:25,571 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:35:25,572 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:35:25,572 - auth - INFO - Successfully created JWT token
+2025-04-14 15:35:25,619 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:35:25,619 - auth - INFO - Request data: {'code': '4/0Ab_5qllWZ46mGvuLVDDmEsegNeF9ck-gHmg_pQkvoeFvwYtUwiqrRfQueqdCbvpGF6zSMA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:35:25,868 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:35:25,868 - auth - ERROR - Response status: 400
+2025-04-14 15:35:25,868 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:35:25,868 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:35:25,868 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:35:25,868 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:35:25,868 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:35:32,175 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:35:32,175 - auth - INFO - Request data: {'code': '4/0Ab_5qlldSXJYYDnTZG-VFW4kePb2xPN611E9xdDCcOlosgs1szZwvb0Y1IhJcLX2teekOA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:35:32,432 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:35:32,564 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:35:32,564 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:35:32,565 - auth - INFO - Successfully created JWT token
+2025-04-14 15:35:32,571 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:35:32,571 - auth - INFO - Request data: {'code': '4/0Ab_5qlldSXJYYDnTZG-VFW4kePb2xPN611E9xdDCcOlosgs1szZwvb0Y1IhJcLX2teekOA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:35:32,806 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:35:32,806 - auth - ERROR - Response status: 400
+2025-04-14 15:35:32,806 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:35:32,806 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:35:32,806 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:35:32,806 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:35:32,806 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:38:53,462 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:38:53,462 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:38:56,431 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:38:56,431 - auth - INFO - Request data: {'code': '4/0Ab_5qllWiVpNv6nx6IHm2i43ZZtNIYTx34B8Wl57QPKBDwUeB4gQmcPoLoxT-pxy5MA5kg', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:38:56,693 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:38:56,848 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:38:56,848 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:38:56,849 - auth - INFO - Successfully created JWT token
+2025-04-14 15:38:56,874 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:38:56,874 - auth - INFO - Request data: {'code': '4/0Ab_5qllWiVpNv6nx6IHm2i43ZZtNIYTx34B8Wl57QPKBDwUeB4gQmcPoLoxT-pxy5MA5kg', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:38:57,169 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:38:57,169 - auth - ERROR - Response status: 400
+2025-04-14 15:38:57,169 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:38:57,170 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:38:57,170 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:38:57,170 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:38:57,171 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:39:13,939 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:39:13,939 - auth - INFO - Request data: {'code': '4/0Ab_5qlmSj3h4ImZhcIIaFRv_mcbWLzxJxzzz1ET1588arMn7QkOz6IuFsy3ZJnM1DzMCvA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:39:14,201 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:39:14,346 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:39:14,347 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:39:14,347 - auth - INFO - Successfully created JWT token
+2025-04-14 15:39:14,383 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:39:14,384 - auth - INFO - Request data: {'code': '4/0Ab_5qlmSj3h4ImZhcIIaFRv_mcbWLzxJxzzz1ET1588arMn7QkOz6IuFsy3ZJnM1DzMCvA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:39:14,726 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:39:14,727 - auth - ERROR - Response status: 400
+2025-04-14 15:39:14,727 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:39:14,727 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:39:14,727 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:39:14,727 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:39:14,728 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:40:03,817 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:40:03,818 - auth - INFO - Request data: {'code': '4/0Ab_5qlm5jfn0ruy3P1n9fhEf6pbGfkbQggPKkT7abSZx-t06PFdrMpTUaTEhHHqJYvMU7g', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:40:04,110 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:40:04,255 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:40:04,256 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:40:04,256 - auth - INFO - Successfully created JWT token
+2025-04-14 15:40:04,303 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:40:04,303 - auth - INFO - Request data: {'code': '4/0Ab_5qlm5jfn0ruy3P1n9fhEf6pbGfkbQggPKkT7abSZx-t06PFdrMpTUaTEhHHqJYvMU7g', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:40:04,554 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:40:04,554 - auth - ERROR - Response status: 400
+2025-04-14 15:40:04,555 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:40:04,555 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:40:04,556 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:40:04,556 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:40:04,557 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:40:59,169 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:40:59,169 - auth - INFO - Request data: {'code': '4/0Ab_5qllhwn_V6kyW33Jk7Sxbl0BXxNX6x_qVLxHdY7NGoAS2xRAR9YMgfynP8BHn5aKIDQ', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:40:59,425 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:40:59,568 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:40:59,569 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:40:59,570 - auth - INFO - Successfully created JWT token
+2025-04-14 15:40:59,607 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:40:59,607 - auth - INFO - Request data: {'code': '4/0Ab_5qllhwn_V6kyW33Jk7Sxbl0BXxNX6x_qVLxHdY7NGoAS2xRAR9YMgfynP8BHn5aKIDQ', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:40:59,849 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:40:59,850 - auth - ERROR - Response status: 400
+2025-04-14 15:40:59,850 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:40:59,850 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:40:59,851 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:40:59,851 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:40:59,853 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:41:58,946 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:41:58,946 - auth - INFO - Request data: {'code': '4/0Ab_5qlmqyflZJi50ziNlrVpvhSC_MXDwTRNx2C9vQ-XMSNkaklf2mh4ENLhj0-0olgB1jw', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:41:59,209 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:41:59,351 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:41:59,352 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:41:59,353 - auth - INFO - Successfully created JWT token
+2025-04-14 15:41:59,388 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:41:59,388 - auth - INFO - Request data: {'code': '4/0Ab_5qlmqyflZJi50ziNlrVpvhSC_MXDwTRNx2C9vQ-XMSNkaklf2mh4ENLhj0-0olgB1jw', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:41:59,628 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:41:59,629 - auth - ERROR - Response status: 400
+2025-04-14 15:41:59,629 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:41:59,629 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:41:59,629 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:41:59,630 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:41:59,630 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:42:03,123 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:42:03,124 - auth - INFO - Request data: {'code': '4/0Ab_5qlnYVAy24pqRwJEqPJavtb68K60TE5mb_OXH9049YsMcoOL65xdpWbbLO41Tj22lTw', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:42:03,386 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:42:03,529 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:42:03,530 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:42:03,530 - auth - INFO - Successfully created JWT token
+2025-04-14 15:42:03,565 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:42:03,565 - auth - INFO - Request data: {'code': '4/0Ab_5qlnYVAy24pqRwJEqPJavtb68K60TE5mb_OXH9049YsMcoOL65xdpWbbLO41Tj22lTw', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:42:03,801 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:42:03,801 - auth - ERROR - Response status: 400
+2025-04-14 15:42:03,801 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:42:03,801 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:42:03,802 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:42:03,804 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:42:03,804 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:42:45,880 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:42:45,880 - auth - INFO - Request data: {'code': '4/0Ab_5qlnmiv2u3fJWHMDJAxowTm3-3PouQso_lZYEddSDQGFKYk2WObpIHXG21xgB3RW2iA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:42:46,134 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:42:46,285 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:42:46,286 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:42:46,286 - auth - INFO - Successfully created JWT token
+2025-04-14 15:42:46,317 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:42:46,317 - auth - INFO - Request data: {'code': '4/0Ab_5qlnmiv2u3fJWHMDJAxowTm3-3PouQso_lZYEddSDQGFKYk2WObpIHXG21xgB3RW2iA', 'client_id': '714029485818-p9it4ehukgfp71dnleuhb6ubd40plf72.apps.googleusercontent.com', 'client_secret': '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', 'redirect_uri': 'http://localhost:3000/auth/callback', 'grant_type': 'authorization_code'}
+2025-04-14 15:42:46,560 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:42:46,560 - auth - ERROR - Response status: 400
+2025-04-14 15:42:46,560 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:42:46,561 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:42:46,561 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:42:46,562 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:42:46,563 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 95, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 140, in handle_google_callback
+    status_code=400,
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:43:01,223 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:43:01,223 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:43:29,214 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:43:29,533 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:43:29,668 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:43:29,668 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:43:29,668 - auth - INFO - Successfully created JWT token
+2025-04-14 15:43:29,711 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:43:29,950 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:43:29,950 - auth - ERROR - Response status: 400
+2025-04-14 15:43:29,950 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:43:29,950 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:43:29,951 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 94, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:43:29,951 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:43:29,953 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 94, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    return await handle_google_callback(AuthCallbackRequest(code=code))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 139, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:45:04,732 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:45:04,993 - auth - INFO - Successfully exchanged code for tokens
+2025-04-14 15:45:05,149 - auth - INFO - Successfully verified ID token for user: getjaleel@gmail.com
+2025-04-14 15:45:05,151 - auth - INFO - User already exists: getjaleel@gmail.com
+2025-04-14 15:45:05,152 - auth - INFO - Successfully created JWT token
+2025-04-14 15:45:05,184 - auth - INFO - Exchanging code for tokens...
+2025-04-14 15:45:05,424 - auth - ERROR - Token exchange failed: Bad Request
+2025-04-14 15:45:05,424 - auth - ERROR - Response status: 400
+2025-04-14 15:45:05,424 - auth - ERROR - Response body: {
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+}
+2025-04-14 15:45:05,424 - auth - ERROR - Error in Google callback: 400: Token exchange failed: Bad Request
+2025-04-14 15:45:05,425 - auth - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 94, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:45:05,425 - gst_helper - ERROR - Error in auth callback: 400: Authentication failed: 400: Token exchange failed: Bad Request
+2025-04-14 15:45:05,426 - gst_helper - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/auth.py", line 94, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Token exchange failed: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jaleel/tax-manager/backend/main.py", line 1337, in auth_callback
+    if not code:
+           ^^^^^^
+  File "/home/jaleel/tax-manager/backend/auth.py", line 139, in handle_google_callback
+    raise HTTPException(
+fastapi.exceptions.HTTPException: 400: Authentication failed: 400: Token exchange failed: Bad Request
+
+2025-04-14 15:58:05,390 - uvicorn.error - INFO - Started server process [544620]
+2025-04-14 15:58:05,390 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 15:58:05,391 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:58:05,391 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 15:58:05,391 - gst_helper - INFO - Database initialized successfully
+2025-04-14 15:58:05,391 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 15:58:05,391 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 15:58:25,439 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-14 15:58:25,705 - database - ERROR - Error creating user: table users has no column named password_hash
+2025-04-14 15:58:25,705 - auth - ERROR - Error during signup: table users has no column named password_hash
+2025-04-14 16:01:06,430 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:01:06,532 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:01:06,536 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:01:06,536 - uvicorn.error - INFO - Finished server process [544620]
+2025-04-14 16:01:14,454 - uvicorn.error - INFO - Started server process [545704]
+2025-04-14 16:01:14,455 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:01:14,456 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:01:14,456 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 16:01:14,456 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:01:14,456 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:01:27,658 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-14 16:01:27,886 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:01:27,886 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:01:31,796 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:01:31,796 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:01:50,317 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:01:50,317 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:02:00,675 - uvicorn.error - INFO - Started server process [546070]
+2025-04-14 16:02:00,676 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:02:00,676 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:02:00,676 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 16:02:00,676 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:02:00,676 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:02:00,677 - uvicorn.error - ERROR - [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+2025-04-14 16:02:00,677 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:02:00,677 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:02:04,196 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:02:04,297 - uvicorn.error - INFO - Finished server process [545704]
+2025-04-14 16:02:04,301 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:02:06,870 - uvicorn.error - INFO - Started server process [546184]
+2025-04-14 16:02:06,870 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:02:06,870 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:02:06,870 - gst_helper - INFO - Database migration completed successfully
+2025-04-14 16:02:06,870 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:02:06,870 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:02:06,870 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:04:01,160 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-14 16:04:01,387 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:01,387 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:04:02,495 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:02,495 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:04:03,236 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:03,236 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:04:03,472 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:03,472 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:04:03,669 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:03,669 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:04:03,875 - database - ERROR - Error creating user: no such table: users
+2025-04-14 16:04:03,875 - auth - ERROR - Error during signup: no such table: users
+2025-04-14 16:05:26,881 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:05:26,983 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:05:26,983 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:05:26,983 - uvicorn.error - INFO - Finished server process [546184]
+2025-04-14 16:05:33,806 - uvicorn.error - INFO - Started server process [546940]
+2025-04-14 16:05:33,807 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:05:33,811 - database - INFO - Database initialized successfully
+2025-04-14 16:05:33,811 - database - INFO - Database migration completed successfully
+2025-04-14 16:05:33,811 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:05:33,811 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:05:50,292 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-14 16:08:53,675 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:08:53,777 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:08:53,778 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:08:53,779 - uvicorn.error - INFO - Finished server process [546940]
+2025-04-14 16:08:54,151 - uvicorn.error - INFO - Started server process [547457]
+2025-04-14 16:08:54,151 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:08:54,152 - database - INFO - Database initialized successfully
+2025-04-14 16:08:54,152 - database - INFO - Database migration completed successfully
+2025-04-14 16:08:54,152 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:08:54,152 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:08:55,160 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:08:55,261 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:08:55,261 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:08:55,262 - uvicorn.error - INFO - Finished server process [547457]
+2025-04-14 16:08:55,585 - uvicorn.error - INFO - Started server process [547470]
+2025-04-14 16:08:55,585 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:08:55,586 - database - INFO - Database initialized successfully
+2025-04-14 16:08:55,587 - database - INFO - Database migration completed successfully
+2025-04-14 16:08:55,587 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:08:55,587 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:09:29,010 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:09:29,111 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:09:29,111 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:09:29,111 - uvicorn.error - INFO - Finished server process [547470]
+2025-04-14 16:09:29,431 - uvicorn.error - INFO - Started server process [547791]
+2025-04-14 16:09:29,432 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:09:29,433 - database - INFO - Database initialized successfully
+2025-04-14 16:09:29,433 - database - INFO - Database migration completed successfully
+2025-04-14 16:09:29,433 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:09:29,433 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:09:58,839 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:09:58,941 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:09:58,941 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:09:58,941 - uvicorn.error - INFO - Finished server process [547791]
+2025-04-14 16:09:59,267 - uvicorn.error - INFO - Started server process [547886]
+2025-04-14 16:09:59,267 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:09:59,268 - database - INFO - Database initialized successfully
+2025-04-14 16:09:59,276 - database - INFO - Updated invoices table schema
+2025-04-14 16:09:59,276 - database - INFO - Database migration completed successfully
+2025-04-14 16:09:59,276 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:09:59,276 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:09:59,682 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:09:59,783 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:09:59,783 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:09:59,783 - uvicorn.error - INFO - Finished server process [547886]
+2025-04-14 16:10:00,081 - uvicorn.error - INFO - Started server process [547887]
+2025-04-14 16:10:00,082 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:10:00,084 - database - INFO - Database initialized successfully
+2025-04-14 16:10:00,084 - database - INFO - Updated invoices table schema
+2025-04-14 16:10:00,084 - database - INFO - Database migration completed successfully
+2025-04-14 16:10:00,084 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:10:00,084 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:10:01,091 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:10:01,192 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:10:01,192 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:10:01,192 - uvicorn.error - INFO - Finished server process [547887]
+2025-04-14 16:10:01,507 - uvicorn.error - INFO - Started server process [547902]
+2025-04-14 16:10:01,507 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:10:01,508 - database - INFO - Database initialized successfully
+2025-04-14 16:10:01,508 - database - INFO - Updated invoices table schema
+2025-04-14 16:10:01,509 - database - INFO - Database migration completed successfully
+2025-04-14 16:10:01,509 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:10:01,509 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:10:10,464 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:10:10,566 - uvicorn.error - INFO - Finished server process [547902]
+2025-04-14 16:10:10,569 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:10:21,614 - uvicorn.error - INFO - Started server process [548041]
+2025-04-14 16:10:21,614 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:10:21,615 - database - INFO - Database initialized successfully
+2025-04-14 16:10:21,616 - database - INFO - Updated invoices table schema
+2025-04-14 16:10:21,616 - database - INFO - Database migration completed successfully
+2025-04-14 16:10:21,616 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:10:21,616 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:10:43,050 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-14 16:11:26,640 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:11:26,741 - uvicorn.error - INFO - Finished server process [548041]
+2025-04-14 16:11:26,745 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:11:33,694 - uvicorn.error - INFO - Started server process [548501]
+2025-04-14 16:11:33,694 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:11:33,699 - database - INFO - Database initialized successfully
+2025-04-14 16:11:33,700 - database - INFO - Updated invoices table schema
+2025-04-14 16:11:33,700 - database - INFO - Database migration completed successfully
+2025-04-14 16:11:33,700 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:11:33,700 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:17:07,922 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:17:08,023 - uvicorn.error - INFO - Finished server process [548501]
+2025-04-14 16:17:08,027 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:17:09,035 - uvicorn.error - INFO - Started server process [549196]
+2025-04-14 16:17:09,035 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:17:09,036 - database - INFO - Database initialized successfully
+2025-04-14 16:17:09,037 - database - INFO - Updated invoices table schema
+2025-04-14 16:17:09,037 - database - INFO - Database migration completed successfully
+2025-04-14 16:17:09,037 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:17:09,037 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:23:22,372 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:23:22,474 - uvicorn.error - INFO - Finished server process [549196]
+2025-04-14 16:23:22,483 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:23:24,775 - uvicorn.error - INFO - Started server process [550438]
+2025-04-14 16:23:24,775 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:23:24,776 - database - INFO - Database initialized successfully
+2025-04-14 16:23:24,776 - database - INFO - Updated invoices table schema
+2025-04-14 16:23:24,777 - database - INFO - Database migration completed successfully
+2025-04-14 16:23:24,777 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:23:24,777 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:25:58,189 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:25:58,291 - uvicorn.error - INFO - Finished server process [550438]
+2025-04-14 16:25:58,296 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:26:11,796 - uvicorn.error - INFO - Started server process [551185]
+2025-04-14 16:26:11,796 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:26:11,797 - database - INFO - Database initialized successfully
+2025-04-14 16:26:11,797 - database - INFO - Updated invoices table schema
+2025-04-14 16:26:11,797 - database - INFO - Database migration completed successfully
+2025-04-14 16:26:11,797 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:26:11,797 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:26:11,797 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:27:33,184 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:27:33,287 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:27:33,288 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:27:33,289 - uvicorn.error - INFO - Finished server process [551185]
+2025-04-14 16:27:34,281 - uvicorn.error - INFO - Started server process [551511]
+2025-04-14 16:27:34,282 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:27:34,282 - database - INFO - Database initialized successfully
+2025-04-14 16:27:34,283 - database - INFO - Updated invoices table schema
+2025-04-14 16:27:34,283 - database - INFO - Database migration completed successfully
+2025-04-14 16:27:34,283 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:27:34,283 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:27:34,283 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:38:36,937 - uvicorn.error - WARNING - Invalid HTTP request received.
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 136, in handle_events
+    event = self.conn.next_event()
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 487, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 77, in _reraise_as_remote_protocol_error
+    raise self
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 469, in next_event
+    event = self._extract_next_receive_event()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 411, in _extract_next_receive_event
+    event = self._reader(self._receive_buffer)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_readers.py", line 83, in maybe_read_from_IDLE_client
+    matches = validate(
+              ^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 91, in validate
+    raise LocalProtocolError(msg)
+h11._util.RemoteProtocolError: illegal request line: bytearray(b'\x16\x03\x01\x06\xf2\x01\x00\x06\xee\x03\x03\x0f\xf0#\xa3\x17y\xaaY\xb2{\xba\x8fy\x0b\x8cp2\xb6M\xf35;\xe6\x97\xd9\x9ah\xdc\x9a\xbc\xe4')
+2025-04-14 16:38:36,942 - uvicorn.error - WARNING - Invalid HTTP request received.
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 136, in handle_events
+    event = self.conn.next_event()
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 487, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 77, in _reraise_as_remote_protocol_error
+    raise self
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 469, in next_event
+    event = self._extract_next_receive_event()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 411, in _extract_next_receive_event
+    event = self._reader(self._receive_buffer)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_readers.py", line 79, in maybe_read_from_IDLE_client
+    raise LocalProtocolError("illegal request line")
+h11._util.RemoteProtocolError: illegal request line
+2025-04-14 16:38:36,944 - uvicorn.error - WARNING - Invalid HTTP request received.
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 136, in handle_events
+    event = self.conn.next_event()
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 487, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 77, in _reraise_as_remote_protocol_error
+    raise self
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 469, in next_event
+    event = self._extract_next_receive_event()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 411, in _extract_next_receive_event
+    event = self._reader(self._receive_buffer)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_readers.py", line 79, in maybe_read_from_IDLE_client
+    raise LocalProtocolError("illegal request line")
+h11._util.RemoteProtocolError: illegal request line
+2025-04-14 16:38:36,945 - uvicorn.error - WARNING - Invalid HTTP request received.
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 136, in handle_events
+    event = self.conn.next_event()
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 487, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 77, in _reraise_as_remote_protocol_error
+    raise self
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 469, in next_event
+    event = self._extract_next_receive_event()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_connection.py", line 411, in _extract_next_receive_event
+    event = self._reader(self._receive_buffer)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_readers.py", line 83, in maybe_read_from_IDLE_client
+    matches = validate(
+              ^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/h11/_util.py", line 91, in validate
+    raise LocalProtocolError(msg)
+h11._util.RemoteProtocolError: illegal request line: bytearray(b'\x16\x03\x01\x06\xd2\x01\x00\x06\xce\x03\x03\x03FS\xc0\xb6##zf\xb1@zb\x9c\xe3\x8c*<\xb6\xa0z\xd8\xddJ\xba\xc3\xfe\x89\x9d$\xcfu (\xbf\xc2\xb4\x18\x11\xc6\xf1s/\x0f\xb9\x8a\x82\xc8\xc17\xb2o\x0f\xbe\t+K~\xad\x8d\xeb5\x8b\xc4;\x00 \x8a\x8a\x13\x01\x13\x02\x13\x03\xc0+\xc0/\xc0,\xc00\xcc\xa9\xcc\xa8\xc0\x13\xc0\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06e::\x00\x00\x00\x0b\x00\x02\x01\x00\xff\x01\x00\x01\x00\x00#\x00\x00\x00\x17\x00\x00\x00\x1b\x00\x03\x02\x00\x02\x00\x10\x00\x0e\x00\x0c\x02h2\x08http/1.1\x00\r\x00\x12\x00\x10\x04\x03\x08\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\xfe\r\x00\xda\x00\x00\x01\x00\x01\xc3\x00 x\x89!\x82%\xe10\xd2\\\xff\xd5~\t\x00\x81G\xe8\xfeu\xb3b\xe3dMI\x1a#\x15\xd04n%\x00\xb0\xbb\xb1\xbag\xa6\x7fh\x84\x1a\xa2Hm\x91\xad\xf2LKr\xdd\xaaPS]\xd3\xc9\xb1\xd9S\xfeR:\xb2.\xf4\xe8\xcfL\xd2r\rW$"&\x0eR1\xe3\xff5\xf4"\xf3\x8b\xef)K\xd3\x98o<X@\xe9G\xf8\xe0\x10\xf6\x8d\xb3\xe5=\x150\xd5^\xbfK\xdeZ\xff\x0f\xee\x9f\xb7+h\xe2\xeff\xffg\x19\xd9\\\x91\x01\x8b\xe7\xc6#4-\xcb\xe6\'$\xe9\xe5q\x8b9\xe1vs\x11*\x13?V\xb4\x14\xc6\xc0_q\xdc\xa2\xe4\xf7\xb8\xf7\x8cf\r\x04g\xeeR\xf6\xb1\x00\xb3\x08\xe7\x96\xdd\xad\xa6\xe7\t-\x13\x98\xea{\xdf\xa4\xc2\xaf\x06\xb3\x99\x1ff\xb4\xae&!\x14\x19l\x13\x16@\x00\x00\x00\x0e\x00\x0c\x00\x00\tlocalhost\x003\x04\xef\x04\xed**\x00\x01\x00\x11\xec\x04\xc0t\xe3Pd\x023\x1a\xa7\x1b\xdcT\x7f\xc2(PJr\x82*\x15\xbd\xf8\teQ(\x15Yy\x03\xf6u4F\xbb\x15y4&\xd36\xbecf\x0ck\x91\x1d\x81,\xc2\x9f\xf3~\xb1\xf1s\xd3\xb1s\xc2\xfb\xa7\xa6X\xa6%\xab\x0b\xcc\x83&\x04q&\x0f\xdb\xa8\x19\xf0\xaa\x92\x08\\\xfc3\xc4k\x15I\x80$\x99a\xdcL\x10c3\x88\xa31\xcb,RJ\xa7m\xe6\xca\x04\xbd\x06x`,\x8fxa\xba\x0e\x0b\xafU4\xa8"\x86\x9a\xb0!Z\xd7\xd9S\xa1\\\t\x044\xccNpe0\xb2&3\xa9N\xdbP]\x08\xb2\xa3L\x11\xb2\xc8\xa2\x10\xe6i)/\xcc\x148\xac\xc8[0\xba\xd0\xa6\x87\xb8rq\xc2\xd8\x0c\xfd\xcb3\xe6\xc1\x0cW\xa5\x11C\xd3\xbd8D\xafu\x11\x1e\xb1\xf8\ra\xd2\xab\xa5Y\x87}\x03\xc8M[\xc8\x97\x94\x85\xb5 \x89\xebH\x0c;\xa5\x06e\xe0\x97r\xb9\r\xe0\xa6v;\xc6&D<')
+2025-04-14 16:39:20,962 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:39:21,064 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:39:21,065 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:39:21,065 - uvicorn.error - INFO - Finished server process [551511]
+2025-04-14 16:39:24,107 - database - INFO - Database initialized successfully
+2025-04-14 16:41:50,421 - database - INFO - Database initialized successfully
+2025-04-14 16:43:38,423 - database - INFO - Database initialized successfully
+2025-04-14 16:44:22,497 - database - INFO - Database initialized successfully
+2025-04-14 16:44:22,497 - database - INFO - Database initialized successfully
+2025-04-14 16:44:22,498 - database - INFO - Updated invoices table schema
+2025-04-14 16:44:22,498 - database - INFO - Database migration completed successfully
+2025-04-14 16:44:22,498 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:44:22,498 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:44:22,498 - uvicorn.error - INFO - Started reloader process [554244] using statreload
+2025-04-14 16:44:22,783 - uvicorn.error - INFO - Started server process [554298]
+2025-04-14 16:44:22,784 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:44:22,784 - database - INFO - Database initialized successfully
+2025-04-14 16:44:22,784 - database - INFO - Database initialized successfully
+2025-04-14 16:44:22,784 - database - INFO - Updated invoices table schema
+2025-04-14 16:44:22,784 - database - INFO - Database migration completed successfully
+2025-04-14 16:44:22,784 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:44:22,784 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:45:41,162 - database - INFO - Database initialized successfully
+2025-04-14 16:45:41,163 - database - INFO - Database initialized successfully
+2025-04-14 16:45:41,163 - database - INFO - Updated invoices table schema
+2025-04-14 16:45:41,163 - database - INFO - Database migration completed successfully
+2025-04-14 16:45:41,163 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:45:41,163 - uvicorn.error - ERROR - [Errno 98] Address already in use
+2025-04-14 16:47:30,988 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:47:31,089 - uvicorn.error - INFO - Finished server process [554298]
+2025-04-14 16:47:31,091 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:47:31,091 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:47:31,093 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:47:31,094 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:47:31,094 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:47:31,171 - uvicorn.error - INFO - Stopping reloader process [554244]
+2025-04-14 16:47:32,387 - database - INFO - Database initialized successfully
+2025-04-14 16:47:32,387 - database - INFO - Database initialized successfully
+2025-04-14 16:47:32,387 - database - INFO - Updated invoices table schema
+2025-04-14 16:47:32,387 - database - INFO - Database migration completed successfully
+2025-04-14 16:47:32,387 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:47:32,387 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:47:32,388 - uvicorn.error - INFO - Started reloader process [554971] using statreload
+2025-04-14 16:47:32,636 - uvicorn.error - INFO - Started server process [555029]
+2025-04-14 16:47:32,636 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:47:32,636 - database - INFO - Database initialized successfully
+2025-04-14 16:47:32,636 - database - INFO - Database initialized successfully
+2025-04-14 16:47:32,636 - database - INFO - Updated invoices table schema
+2025-04-14 16:47:32,636 - database - INFO - Database migration completed successfully
+2025-04-14 16:47:32,636 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:47:32,637 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:49:12,727 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:49:12,828 - uvicorn.error - INFO - Finished server process [555029]
+2025-04-14 16:49:12,837 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:49:12,838 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:49:12,839 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:49:12,840 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:49:12,924 - uvicorn.error - INFO - Stopping reloader process [554971]
+2025-04-14 16:49:13,804 - database - INFO - Database initialized successfully
+2025-04-14 16:49:13,804 - database - INFO - Database initialized successfully
+2025-04-14 16:49:13,804 - database - INFO - Updated invoices table schema
+2025-04-14 16:49:13,804 - database - INFO - Database migration completed successfully
+2025-04-14 16:49:13,804 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:49:13,805 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 16:49:13,805 - uvicorn.error - INFO - Started reloader process [555350] using statreload
+2025-04-14 16:49:14,050 - uvicorn.error - INFO - Started server process [555404]
+2025-04-14 16:49:14,050 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:49:14,051 - database - INFO - Database initialized successfully
+2025-04-14 16:49:14,051 - database - INFO - Database initialized successfully
+2025-04-14 16:49:14,051 - database - INFO - Updated invoices table schema
+2025-04-14 16:49:14,051 - database - INFO - Database migration completed successfully
+2025-04-14 16:49:14,051 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:49:14,051 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:49:52,327 - uvicorn.error - WARNING - StatReload detected file change in 'auth.py'. Reloading...
+2025-04-14 16:49:52,412 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:49:52,513 - uvicorn.error - INFO - Waiting for connections to close. (CTRL+C to force quit)
+2025-04-14 16:49:53,921 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-14 16:49:53,922 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-14 16:49:53,922 - uvicorn.error - INFO - Finished server process [555404]
+2025-04-14 16:49:54,258 - uvicorn.error - INFO - Started server process [555492]
+2025-04-14 16:49:54,258 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:49:54,258 - database - INFO - Database initialized successfully
+2025-04-14 16:49:54,258 - database - INFO - Database initialized successfully
+2025-04-14 16:49:54,259 - database - INFO - Updated invoices table schema
+2025-04-14 16:49:54,259 - database - INFO - Database migration completed successfully
+2025-04-14 16:49:54,259 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:49:54,259 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 16:50:09,895 - auth - ERROR - Login error: 
+2025-04-14 16:50:20,222 - uvicorn.error - WARNING - StatReload detected file change in 'database.py'. Reloading...
+2025-04-14 16:50:20,227 - uvicorn.error - INFO - Shutting down
+2025-04-14 16:50:20,328 - uvicorn.error - INFO - Waiting for connections to close. (CTRL+C to force quit)
+2025-04-14 16:50:29,144 - database - INFO - Database initialized successfully
+2025-04-14 16:50:29,144 - database - INFO - Database initialized successfully
+2025-04-14 16:50:29,144 - database - INFO - Updated invoices table schema
+2025-04-14 16:50:29,144 - database - INFO - Database migration completed successfully
+2025-04-14 16:50:29,145 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:50:29,145 - uvicorn.error - ERROR - [Errno 98] Address already in use
+2025-04-14 16:50:37,949 - uvicorn.error - INFO - Finished server process [555492]
+2025-04-14 16:50:37,951 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 16:50:37,951 - asyncio - ERROR - Exception in callback handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56
+handle: <Handle handle_http.<locals>.retrieve_exception(<Task cancell...erver.py:104>>) at /home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py:56>
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 58, in retrieve_exception
+    exc = task.exception()
+          ^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/server.py", line 107, in handler
+    await handle_http(
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/_handlers/http.py", line 87, in handle_http
+    await connection_lost
+asyncio.exceptions.CancelledError
+2025-04-14 16:50:38,038 - uvicorn.error - INFO - Stopping reloader process [555350]
+2025-04-14 16:51:29,728 - database - INFO - Database initialized successfully
+2025-04-14 16:51:29,729 - database - INFO - Database initialized successfully
+2025-04-14 16:51:29,729 - database - INFO - Updated invoices table schema
+2025-04-14 16:51:29,729 - database - INFO - Database migration completed successfully
+2025-04-14 16:51:29,729 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 16:51:29,729 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8001 (Press CTRL+C to quit)
+2025-04-14 16:51:29,729 - uvicorn.error - INFO - Started reloader process [556103] using statreload
+2025-04-14 16:51:29,989 - uvicorn.error - INFO - Started server process [556157]
+2025-04-14 16:51:29,990 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 16:51:29,990 - database - INFO - Database initialized successfully
+2025-04-14 16:51:29,990 - database - INFO - Database initialized successfully
+2025-04-14 16:51:29,990 - database - INFO - Updated invoices table schema
+2025-04-14 16:51:29,990 - database - INFO - Database migration completed successfully
+2025-04-14 16:51:29,990 - gst_helper - INFO - Database initialized successfully
+2025-04-14 16:51:29,990 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 17:34:11,479 - uvicorn.error - INFO - Shutting down
+2025-04-14 17:34:11,581 - uvicorn.error - INFO - Finished server process [556157]
+2025-04-14 17:34:11,588 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 17:34:11,690 - uvicorn.error - INFO - Stopping reloader process [556103]
+2025-04-14 17:34:12,963 - database - INFO - Database initialized successfully
+2025-04-14 17:34:12,963 - database - INFO - Database initialized successfully
+2025-04-14 17:34:12,963 - database - INFO - Updated invoices table schema
+2025-04-14 17:34:12,963 - database - INFO - Database migration completed successfully
+2025-04-14 17:34:12,964 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-14 17:34:12,964 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-14 17:34:12,964 - uvicorn.error - INFO - Started reloader process [557214] using statreload
+2025-04-14 17:34:13,235 - uvicorn.error - INFO - Started server process [557272]
+2025-04-14 17:34:13,236 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-14 17:34:13,236 - database - INFO - Database initialized successfully
+2025-04-14 17:34:13,236 - database - INFO - Database initialized successfully
+2025-04-14 17:34:13,236 - database - INFO - Updated invoices table schema
+2025-04-14 17:34:13,236 - database - INFO - Database migration completed successfully
+2025-04-14 17:34:13,236 - gst_helper - INFO - Database initialized successfully
+2025-04-14 17:34:13,237 - uvicorn.error - INFO - Application startup complete.
+2025-04-14 19:28:16,838 - uvicorn.error - INFO - Shutting down
+2025-04-14 19:28:16,943 - uvicorn.error - INFO - Finished server process [557272]
+2025-04-14 19:28:16,954 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-14 19:28:17,065 - uvicorn.error - INFO - Stopping reloader process [557214]
+2025-04-15 04:25:49,723 - database - INFO - Database initialized successfully
+2025-04-15 04:25:49,723 - database - INFO - Database initialized successfully
+2025-04-15 04:25:49,723 - database - INFO - Updated invoices table schema
+2025-04-15 04:25:49,723 - database - INFO - Database migration completed successfully
+2025-04-15 04:25:49,724 - uvicorn.error - INFO - Will watch for changes in these directories: ['/home/jaleel/tax-manager/backend']
+2025-04-15 04:25:49,724 - uvicorn.error - INFO - Uvicorn running on https://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-15 04:25:49,724 - uvicorn.error - INFO - Started reloader process [561086] using statreload
+2025-04-15 04:25:49,933 - uvicorn.error - INFO - Started server process [561140]
+2025-04-15 04:25:49,933 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:25:49,934 - database - INFO - Database initialized successfully
+2025-04-15 04:25:49,934 - database - INFO - Database initialized successfully
+2025-04-15 04:25:49,934 - database - INFO - Updated invoices table schema
+2025-04-15 04:25:49,934 - database - INFO - Database migration completed successfully
+2025-04-15 04:25:49,934 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:25:49,934 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:28:15,783 - uvicorn.error - INFO - Started server process [561990]
+2025-04-15 04:28:15,783 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:28:15,783 - database - INFO - Database initialized successfully
+2025-04-15 04:28:15,783 - database - INFO - Database initialized successfully
+2025-04-15 04:28:15,783 - database - INFO - Updated invoices table schema
+2025-04-15 04:28:15,784 - database - INFO - Database migration completed successfully
+2025-04-15 04:28:15,784 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:28:15,784 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:28:15,784 - uvicorn.error - ERROR - [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+2025-04-15 04:28:15,784 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:28:15,784 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:28:23,550 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:28:23,651 - uvicorn.error - INFO - Finished server process [561140]
+2025-04-15 04:28:23,653 - uvicorn.error - ERROR - Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/starlette/routing.py", line 686, in lifespan
+    await receive()
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/uvicorn/lifespan/on.py", line 135, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/asyncio/queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-04-15 04:28:23,729 - uvicorn.error - INFO - Stopping reloader process [561086]
+2025-04-15 04:28:25,879 - uvicorn.error - INFO - Started server process [562115]
+2025-04-15 04:28:25,879 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:28:25,880 - database - INFO - Database initialized successfully
+2025-04-15 04:28:25,880 - database - INFO - Database initialized successfully
+2025-04-15 04:28:25,880 - database - INFO - Updated invoices table schema
+2025-04-15 04:28:25,880 - database - INFO - Database migration completed successfully
+2025-04-15 04:28:25,880 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:28:25,880 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:28:25,880 - uvicorn.error - INFO - Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2025-04-15 04:28:32,557 - auth - ERROR - Login error: 
+2025-04-15 04:28:37,187 - auth - ERROR - Login error: 
+2025-04-15 04:29:31,638 - auth - ERROR - Login error: 
+2025-04-15 04:30:18,532 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:30:18,634 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:30:18,636 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:30:18,637 - uvicorn.error - INFO - Finished server process [562115]
+2025-04-15 04:30:25,890 - uvicorn.error - INFO - Started server process [562947]
+2025-04-15 04:30:25,890 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:30:25,891 - database - INFO - Database initialized successfully
+2025-04-15 04:30:25,891 - database - INFO - Database initialized successfully
+2025-04-15 04:30:25,891 - database - INFO - Updated invoices table schema
+2025-04-15 04:30:25,891 - database - INFO - Database migration completed successfully
+2025-04-15 04:30:25,891 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:30:25,891 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:30:48,481 - auth - ERROR - Login error: 
+2025-04-15 04:32:11,375 - auth - ERROR - Login error: 
+2025-04-15 04:32:55,743 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:32:55,844 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:32:55,845 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:32:55,845 - uvicorn.error - INFO - Finished server process [562947]
+2025-04-15 04:32:56,125 - uvicorn.error - INFO - Started server process [563148]
+2025-04-15 04:32:56,126 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:32:56,126 - database - INFO - Database initialized successfully
+2025-04-15 04:32:56,126 - database - INFO - Database initialized successfully
+2025-04-15 04:32:56,126 - database - INFO - Updated invoices table schema
+2025-04-15 04:32:56,126 - database - INFO - Database migration completed successfully
+2025-04-15 04:32:56,126 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:32:56,126 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:32:56,833 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:32:56,933 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:32:56,934 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:32:56,934 - uvicorn.error - INFO - Finished server process [563148]
+2025-04-15 04:32:57,206 - uvicorn.error - INFO - Started server process [563161]
+2025-04-15 04:32:57,206 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:32:57,206 - database - INFO - Database initialized successfully
+2025-04-15 04:32:57,207 - database - INFO - Database initialized successfully
+2025-04-15 04:32:57,207 - database - INFO - Updated invoices table schema
+2025-04-15 04:32:57,207 - database - INFO - Database migration completed successfully
+2025-04-15 04:32:57,207 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:32:57,207 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:33:06,772 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:33:06,873 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:33:06,875 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:33:06,875 - uvicorn.error - INFO - Finished server process [563161]
+2025-04-15 04:33:23,415 - uvicorn.error - INFO - Started server process [563549]
+2025-04-15 04:33:23,415 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:33:23,416 - database - INFO - Database initialized successfully
+2025-04-15 04:33:23,416 - database - INFO - Database initialized successfully
+2025-04-15 04:33:23,416 - database - INFO - Updated invoices table schema
+2025-04-15 04:33:23,416 - database - INFO - Database migration completed successfully
+2025-04-15 04:33:23,416 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:33:23,416 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:33:57,462 - auth - ERROR - Login error: 
+2025-04-15 04:35:05,936 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:35:32,773 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:35:32,875 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:35:32,876 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:35:32,877 - uvicorn.error - INFO - Finished server process [563549]
+2025-04-15 04:35:33,172 - uvicorn.error - INFO - Started server process [563831]
+2025-04-15 04:35:33,172 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:35:33,173 - database - INFO - Database initialized successfully
+2025-04-15 04:35:33,173 - database - INFO - Database initialized successfully
+2025-04-15 04:35:33,174 - database - INFO - Updated invoices table schema
+2025-04-15 04:35:33,174 - database - INFO - Database migration completed successfully
+2025-04-15 04:35:33,174 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:35:33,174 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:35:34,280 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:35:34,380 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:35:34,381 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:35:34,381 - uvicorn.error - INFO - Finished server process [563831]
+2025-04-15 04:35:34,662 - uvicorn.error - INFO - Started server process [563848]
+2025-04-15 04:35:34,662 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:35:34,662 - database - INFO - Database initialized successfully
+2025-04-15 04:35:34,662 - database - INFO - Database initialized successfully
+2025-04-15 04:35:34,662 - database - INFO - Updated invoices table schema
+2025-04-15 04:35:34,663 - database - INFO - Database migration completed successfully
+2025-04-15 04:35:34,663 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:35:34,663 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:35:39,483 - uvicorn.error - INFO - Shutting down
+2025-04-15 04:35:39,584 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-15 04:35:39,584 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-15 04:35:39,584 - uvicorn.error - INFO - Finished server process [563848]
+2025-04-15 04:35:52,923 - uvicorn.error - INFO - Started server process [564209]
+2025-04-15 04:35:52,923 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-15 04:35:52,923 - database - INFO - Database initialized successfully
+2025-04-15 04:35:52,923 - database - INFO - Database initialized successfully
+2025-04-15 04:35:52,924 - database - INFO - Updated invoices table schema
+2025-04-15 04:35:52,924 - database - INFO - Database migration completed successfully
+2025-04-15 04:35:52,924 - gst_helper - INFO - Database initialized successfully
+2025-04-15 04:35:52,924 - uvicorn.error - INFO - Application startup complete.
+2025-04-15 04:35:56,838 - auth - INFO - Login attempt for user: getjaleel@gmail.com
+2025-04-15 04:35:56,839 - auth - WARNING - Login failed: User not found - getjaleel@gmail.com
+2025-04-15 04:35:58,237 - auth - INFO - Login attempt for user: getjaleel@gmail.com
+2025-04-15 04:35:58,237 - auth - WARNING - Login failed: User not found - getjaleel@gmail.com
+2025-04-15 04:36:02,319 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:36:02,338 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:36:37,815 - auth - INFO - Login attempt for user: getjaleel@gmail.com
+2025-04-15 04:36:37,816 - auth - WARNING - Login failed: User not found - getjaleel@gmail.com
+2025-04-15 04:37:11,040 - passlib.handlers.bcrypt - WARNING - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/jaleel/.pyenv/versions/3.11.6/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-04-15 04:37:45,440 - auth - INFO - Login attempt for user: getjaleel@gmail.com
+2025-04-15 04:37:45,617 - auth - INFO - Login successful for user: getjaleel@gmail.com
+2025-04-15 04:39:28,013 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:28,069 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:32,400 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:50,874 - auth - INFO - Login attempt for user: getjaleel@gmail.com
+2025-04-15 04:39:51,043 - auth - INFO - Login successful for user: getjaleel@gmail.com
+2025-04-15 04:39:51,080 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:51,088 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:58,007 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:39:58,024 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:09,854 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:09,857 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,370 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,373 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,421 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,465 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,805 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,808 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,851 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:29,855 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:32,155 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:32,158 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:49,758 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:49,763 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:49,815 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:49,856 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,169 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,172 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,215 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,235 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,909 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,912 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,914 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:40:50,919 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:06,345 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:06,348 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:06,358 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:06,381 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:10,426 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:10,428 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:13,706 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:13,713 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:20,930 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:20,934 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:28,393 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:28,415 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:33,705 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:33,719 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:38,345 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:43,147 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:43,150 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:43,152 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:41:43,175 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:42:04,542 - gst_helper - INFO - Fetching invoices from database
+2025-04-15 04:42:04,548 - gst_helper - INFO - Fetching invoices from database

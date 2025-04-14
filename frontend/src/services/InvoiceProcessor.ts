@@ -83,7 +83,7 @@ export class InvoiceProcessor {
 
   async getInvoices(): Promise<Invoice[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/invoices`);
+      const response = await fetch(`${this.baseUrl}/api/invoices`);
       if (!response.ok) {
         throw new Error('Failed to fetch invoices');
       }
@@ -113,7 +113,7 @@ export class InvoiceProcessor {
 
   async getExpenses(): Promise<{ total: number; gstEligible: number }> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses`);
+      const response = await fetch(`${this.baseUrl}/api/expenses`);
       if (!response.ok) {
         console.error('Failed to fetch expenses:', response.status, response.statusText);
         return { total: 0, gstEligible: 0 };

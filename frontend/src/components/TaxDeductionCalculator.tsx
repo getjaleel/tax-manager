@@ -61,8 +61,8 @@ interface SavedCalculation {
 }
 
 interface TaxDeductionCalculatorProps {
-  onDataUpdate: (data: { income?: number; expenses?: number; gstEligibleExpenses?: number }) => void;
-  initialData: {
+  onDataUpdate?: (data: { income?: number; expenses?: number; gstEligibleExpenses?: number }) => void;
+  initialData?: {
     income: number;
     expenses: number;
     gstEligibleExpenses: number;
@@ -141,8 +141,11 @@ const INITIAL_CATEGORIES: DeductionCategory[] = [
   }
 ];
 
-const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataUpdate, initialData }) => {
-  const [income, setIncome] = useState<string>(initialData.income.toString());
+const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ 
+  onDataUpdate = () => {}, 
+  initialData = { income: 0, expenses: 0, gstEligibleExpenses: 0 } 
+}) => {
+  const [income, setIncome] = useState(initialData?.income?.toString() || '0');
   const [categories, setCategories] = useState<DeductionCategory[]>(INITIAL_CATEGORIES);
   const [totalDeductions, setTotalDeductions] = useState<number>(0);
   const [savedCalculations, setSavedCalculations] = useState<SavedCalculation[]>([]);
@@ -155,8 +158,8 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [totalExpenses, setTotalExpenses] = useState<number>(0);
-  const [gstEligibleExpenses, setGstEligibleExpenses] = useState<number>(0);
+  const [totalExpenses, setTotalExpenses] = useState(initialData?.expenses || 0);
+  const [gstEligibleExpenses, setGstEligibleExpenses] = useState(initialData?.gstEligibleExpenses || 0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
   const [isTabActive, setIsTabActive] = useState(true);
@@ -175,58 +178,26 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
 
   const fetchAllData = useCallback(async () => {
     try {
-      // Fetch expense data
-      const expenseResponse = await fetch(`${API_BASE_URL}/expenses`);
-      if (!expenseResponse.ok) {
-        throw new Error(`Failed to fetch expense summary: ${expenseResponse.statusText}`);
-      }
-      const expenseData = await expenseResponse.json();
+      const response = await fetch(`${API_BASE_URL}/api/expenses`);
+      if (!response.ok) throw new Error('Failed to fetch expenses');
+      const data = await response.json();
       
-      // Set expense data
-      if (expenseData.total_expenses !== undefined) {
-        setTotalExpenses(expenseData.total_expenses);
+      // Safely handle potentially undefined data
+      const totalExp = data?.total_expenses || 0;
+      const gstEligible = data?.gst_eligible_expenses || 0;
+      
+      setTotalExpenses(totalExp);
+      setGstEligibleExpenses(gstEligible);
+      
+      // Only update categories if they exist in the response
+      if (data?.categories) {
+        setCategories(prevCategories => 
+          prevCategories.map(category => {
+            const matchingCategory = data.categories.find((c: any) => c.id === category.id);
+            return matchingCategory ? { ...category, amount: matchingCategory.amount } : category;
+          })
+        );
       }
-      if (expenseData.gst_eligible_expenses !== undefined) {
-        setGstEligibleExpenses(expenseData.gst_eligible_expenses);
-      }
-
-      // Map expenses to deduction categories
-      const updatedDeductions = categories.map(category => {
-        let amount = 0;
-        
-        switch (category.id) {
-          case 'home-office':
-            amount = expenseData.category_summary?.['Home Office']?.total || 0;
-            break;
-          case 'vehicle':
-            amount = expenseData.category_summary?.['Vehicle']?.total || 0;
-            break;
-          case 'professional':
-            amount = expenseData.category_summary?.['Training']?.total || 0;
-            break;
-          case 'equipment':
-            amount = expenseData.category_summary?.['Equipment']?.total || 0;
-            break;
-          case 'travel':
-            amount = expenseData.category_summary?.['Travel']?.total || 0;
-            break;
-          case 'insurance':
-            amount = expenseData.category_summary?.['Insurance']?.total || 0;
-            break;
-          case 'marketing':
-            amount = expenseData.category_summary?.['Marketing']?.total || 0;
-            break;
-        }
-
-        if (category.gstEligible) {
-          const gstAmount = amount / 11;
-          amount = amount - gstAmount;
-        }
-
-        return { ...category, amount };
-      });
-
-      setCategories(updatedDeductions);
 
       // Fetch saved calculations
       const calculationsResponse = await fetch(`${API_BASE_URL}/api/tax-calculations`);
@@ -240,12 +211,12 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       setError(null);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load data');
+      setError('Failed to fetch expense data');
     } finally {
       setLoading(false);
       setIsRefreshing(false);
     }
-  }, [categories]);
+  }, []);
 
   useEffect(() => {
     // Initial fetch

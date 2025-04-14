@@ -180,7 +180,7 @@ const GSTHelper: React.FC = () => {
   const fetchInvoices = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/invoices?status=pending`);
+      const response = await fetch(`${API_BASE_URL}/api/invoices?status=pending`);
       const data = await response.json();
       setInvoices(data.invoices ?? []);
     } catch {

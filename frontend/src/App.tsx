@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { InvoiceProcessor } from './services/InvoiceProcessor';
 import { ParsedInvoice } from './types/Invoice';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme, Box, Tabs, Tab, Paper, Typography, Container, Grid, Link } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import GSTHelper from './components/GSTHelper';
@@ -11,6 +11,9 @@ import TaxCalculator from './components/TaxCalculator';
 import TaxDeductionCalculator from './components/TaxDeductionCalculator';
 import ExpenseTracker from './components/ExpenseTracker';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { authService } from './services/auth';
+import AuthForm from './components/AuthForm';
+import Dashboard from './components/Dashboard';
 
 interface Invoice {
   id: string;
@@ -47,10 +50,10 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
+      main: '#4a90e2',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#f50057',
     },
   },
 });
@@ -87,6 +90,22 @@ function a11yProps(index: number) {
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
+
+// Protected Route component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (!authService.isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
+
+// Public Route component (redirects to dashboard if already authenticated)
+const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (authService.isAuthenticated()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -543,118 +562,42 @@ const App: React.FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-      <Container maxWidth="lg">
-        <Box sx={{ width: '100%', mt: 4 }}>
-          <Paper sx={{ width: '100%', mb: 2 }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs 
-                value={tabValue} 
-                onChange={handleTabChange} 
-                aria-label="tax management tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab label="Tax Calculator" {...a11yProps(0)} />
-                <Tab label="Tax Deductions" {...a11yProps(1)} />
-                <Tab label="GST Helper" {...a11yProps(2)} />
-                <Tab label="Invoice Manager" {...a11yProps(3)} />
-                <Tab label="Expense Tracker" {...a11yProps(4)} />
-              </Tabs>
-            </Box>
-
-            <TabPanel value={tabValue} index={0}>
-              <TaxCalculator 
-                onDataUpdate={updateSharedData}
-                initialData={sharedData}
-              />
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={1}>
-              <TaxDeductionCalculator 
-                onDataUpdate={updateSharedData}
-                initialData={sharedData}
-              />
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={2}>
-              <GSTHelper 
-                onDataUpdate={updateSharedData}
-                initialData={sharedData}
-              />
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={3}>
-              <InvoiceManager 
-                invoices={invoices} 
-                onDelete={handleDeleteInvoice}
-                onUpdate={handleUpdateInvoice}
-              />
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={4}>
-              <ExpenseTracker />
-            </TabPanel>
-          </Paper>
-
-          <Paper sx={{ p: 2, mt: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Quick Links
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Link 
-                  component="button" 
-                  variant="body1" 
-                  onClick={() => setTabValue(0)}
-                  sx={{ textAlign: 'left' }}
-                >
-                  Calculate Tax
-                </Link>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Link 
-                  component="button" 
-                  variant="body1" 
-                  onClick={() => setTabValue(1)}
-                  sx={{ textAlign: 'left' }}
-                >
-                  View Deductions
-                </Link>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Link 
-                  component="button" 
-                  variant="body1" 
-                  onClick={() => setTabValue(2)}
-                  sx={{ textAlign: 'left' }}
-                >
-                  GST Calculator
-                </Link>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Link 
-                  component="button" 
-                  variant="body1" 
-                  onClick={() => setTabValue(3)}
-                  sx={{ textAlign: 'left' }}
-                >
-                  Manage Invoices
-                </Link>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Link 
-                  component="button" 
-                  variant="body1" 
-                  onClick={() => setTabValue(4)}
-                  sx={{ textAlign: 'left' }}
-                >
-                  Expense Tracker
-                </Link>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Box>
-      </Container>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <Navigate to="/login" replace />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <AuthForm mode="login" />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <AuthForm mode="signup" />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
 
       {/* Add loading and error states */}
       {isProcessing && (

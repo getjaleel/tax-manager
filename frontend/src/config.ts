@@ -1,7 +1,7 @@
 // Determine the API URL based on environment
 const getApiUrl = () => {
   if (process.env.NODE_ENV === 'development') {
-    // In development, use localhost
+    // In development, use localhost with HTTP
     return 'http://localhost:8000';
   } else {
     // In production, use the environment variable or default to relative path
