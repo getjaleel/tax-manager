@@ -1099,7 +1099,7 @@ async def create_expense(expense: Expense):
 async def get_expenses_summary(period: str = "quarter"):
     try:
         conn = sqlite3.connect('gst-helper.db')
-        cursor = conn.cursor()
+        c = conn.cursor()
         
         # Calculate date range based on period
         end_date = datetime.now()
@@ -1110,75 +1110,67 @@ async def get_expenses_summary(period: str = "quarter"):
         else:  # year
             start_date = end_date - timedelta(days=365)
             
-        # Get expenses within the date range
-        cursor.execute("""
-            SELECT 
-                category,
-                SUM(amount) as total_amount,
-                SUM(gst_amount) as total_gst,
-                COUNT(*) as count
+        # Get expenses within date range
+        c.execute('''
+            SELECT id, date, amount, gst_amount, description, category, is_gst_eligible
             FROM expenses
             WHERE date BETWEEN ? AND ?
-            GROUP BY category
-        """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+        ''', (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
         
+        expenses = c.fetchall()
+        
+        # Calculate totals
+        total_expenses = sum(exp[2] for exp in expenses)  # amount
+        total_gst_claimable = sum(exp[3] for exp in expenses)  # gst_amount
+        gst_eligible_expenses = sum(exp[2] for exp in expenses if exp[6])  # amount where is_gst_eligible
+        non_gst_expenses = sum(exp[2] for exp in expenses if not exp[6])  # amount where not is_gst_eligible
+        
+        # Calculate category summary
         category_summary = {}
-        total_expenses = 0
-        total_gst_claimable = 0
-        gst_eligible_expenses = 0
-        non_gst_expenses = 0
+        for exp in expenses:
+            category = exp[5]  # category
+            amount = exp[2]  # amount
+            gst_amount = exp[3]  # gst_amount
+            
+            if category not in category_summary:
+                category_summary[category] = {
+                    "total": 0,
+                    "gst_amount": 0,
+                    "count": 0
+                }
+                
+            category_summary[category]["total"] += amount
+            category_summary[category]["gst_amount"] += gst_amount
+            category_summary[category]["count"] += 1
         
-        for row in cursor.fetchall():
-            category, total, gst, count = row
-            category_summary[category] = {
-                "total": total,
-                "gst_amount": gst,
-                "count": count
+        # Format expenses for response
+        formatted_expenses = [
+            {
+                "id": exp[0],
+                "date": exp[1],
+                "amount": exp[2],
+                "gst_amount": exp[3],
+                "description": exp[4],
+                "category": exp[5]
             }
-            total_expenses += total
-            total_gst_claimable += gst
-            if gst > 0:
-                gst_eligible_expenses += total
-            else:
-                non_gst_expenses += total
-        
-        # Get recent expenses
-        cursor.execute("""
-            SELECT id, date, amount, gst_amount, description, category
-            FROM expenses
-            WHERE date BETWEEN ? AND ?
-            ORDER BY date DESC
-            LIMIT 10
-        """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
-        
-        recent_expenses = []
-        for row in cursor.fetchall():
-            recent_expenses.append({
-                "id": row[0],
-                "date": row[1],
-                "amount": row[2],
-                "gst_amount": row[3],
-                "description": row[4],
-                "category": row[5]
-            })
+            for exp in expenses
+        ]
         
         return {
-            "period": period,
-            "start_date": start_date.strftime('%Y-%m-%d'),
-            "end_date": end_date.strftime('%Y-%m-%d'),
             "total_expenses": total_expenses,
             "total_gst_claimable": total_gst_claimable,
             "gst_eligible_expenses": gst_eligible_expenses,
             "non_gst_expenses": non_gst_expenses,
             "category_summary": category_summary,
-            "expenses": recent_expenses
+            "expenses": formatted_expenses
         }
         
     except Exception as e:
         logger.error(f"Error getting expenses summary: {str(e)}")
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if 'conn' in locals():
+        if conn:
             conn.close()
 
 @app.delete("/api/expenses/clear")

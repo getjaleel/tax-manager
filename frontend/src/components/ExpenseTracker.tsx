@@ -20,11 +20,11 @@ import {
   CircularProgress,
   Tabs,
   Tab,
+  Tooltip,
+  Skeleton,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { API_BASE_URL, CATEGORIES, Category } from '../config';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface Expense {
   id: number;
@@ -73,7 +73,6 @@ const ExpenseTracker: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [period, setPeriod] = useState<'month' | 'quarter' | 'year'>('quarter');
   const [activeTab, setActiveTab] = useState(0);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
 
@@ -90,52 +89,74 @@ const ExpenseTracker: React.FC = () => {
     return () => {
       window.removeEventListener('expenseUpdated', handleExpenseUpdate);
     };
-  }, [period]);
+  }, []);
 
   const fetchExpenseSummary = async () => {
     setLoading(true);
     try {
       // Fetch regular expenses
-      const response = await fetch(`${API_BASE_URL}/api/expenses/summary?period=${period}`);
+      const response = await fetch(`${API_BASE_URL}/api/expenses/summary`);
       if (!response.ok) {
         throw new Error('Failed to fetch expense summary');
       }
       const data = await response.json();
+      console.log('Regular expenses data:', data); // Debug log
       
       // Fetch GST Helper expenses
-      const gstHelperResponse = await fetch(`${API_BASE_URL}/api/gst-summary?period=${period}`);
+      const gstHelperResponse = await fetch(`${API_BASE_URL}/api/gst-summary`);
       if (!gstHelperResponse.ok) {
         throw new Error('Failed to fetch GST summary');
       }
       const gstData = await gstHelperResponse.json();
+      console.log('GST Helper data:', gstData); // Debug log
       
       // Process GST Helper expenses
-      const gstExpenses: GstExpense[] = gstData.invoices
-        ?.filter((inv: any) => inv.invoice_type === 'expense')
-        .map((inv: any) => ({
-          id: inv.id,
-          date: inv.invoice_date,
-          amount: inv.total_amount,
-          gst_amount: inv.gst_amount,
-          description: `Invoice: ${inv.supplier}`,
-          category: 'GST Invoices'
-        })) || [];
+      const gstExpenses: GstExpense[] = [];
+      
+      // Add GST collected as income
+      if (gstData.gst_collected > 0) {
+        gstExpenses.push({
+          id: 'gst-collected',
+          date: new Date().toISOString().split('T')[0],
+          amount: gstData.gst_collected * 11, // Convert GST to total amount
+          gst_amount: gstData.gst_collected,
+          description: 'GST Collected',
+          category: 'GST Income'
+        });
+      }
+      
+      // Add GST paid as expense
+      if (gstData.gst_paid > 0) {
+        gstExpenses.push({
+          id: 'gst-paid',
+          date: new Date().toISOString().split('T')[0],
+          amount: gstData.gst_paid * 11, // Convert GST to total amount
+          gst_amount: gstData.gst_paid,
+          description: 'GST Paid',
+          category: 'GST Expenses'
+        });
+      }
 
-      console.log('GST Expenses:', gstExpenses); // Debug log
+      console.log('Processed GST Expenses:', gstExpenses); // Debug log
 
       // Calculate totals
-      const totalExpenses = (data.total_expenses || 0) + gstExpenses.reduce((sum: number, exp: GstExpense) => sum + exp.amount, 0);
-      const totalGstClaimable = (data.total_gst_claimable || 0) + gstExpenses.reduce((sum: number, exp: GstExpense) => sum + exp.gst_amount, 0);
-      const gstEligibleExpenses = (data.gst_eligible_expenses || 0) + gstExpenses.reduce((sum: number, exp: GstExpense) => sum + exp.amount, 0);
+      const totalExpenses = (data.total_expenses || 0) + gstExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+      const totalGstClaimable = (data.total_gst_claimable || 0) + gstExpenses.reduce((sum, exp) => sum + exp.gst_amount, 0);
+      const gstEligibleExpenses = (data.gst_eligible_expenses || 0) + gstExpenses.reduce((sum, exp) => sum + exp.amount, 0);
       const nonGstExpenses = data.non_gst_expenses || 0;
 
       // Create category summary
       const categorySummary = {
-        ...data.category_summary,
-        'GST Invoices': {
-          total: gstExpenses.reduce((sum: number, exp: GstExpense) => sum + exp.amount, 0),
-          gst_amount: gstExpenses.reduce((sum: number, exp: GstExpense) => sum + exp.gst_amount, 0),
-          count: gstExpenses.length
+        ...(data.category_summary || {}),
+        'GST Income': {
+          total: gstData.gst_collected * 11,
+          gst_amount: gstData.gst_collected,
+          count: gstData.gst_collected > 0 ? 1 : 0
+        },
+        'GST Expenses': {
+          total: gstData.gst_paid * 11,
+          gst_amount: gstData.gst_paid,
+          count: gstData.gst_paid > 0 ? 1 : 0
         }
       };
 
@@ -317,16 +338,18 @@ const ExpenseTracker: React.FC = () => {
           <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6">Expense Summary</Typography>
             <Box>
-              <FormControl sx={{ minWidth: 120, mr: 2 }}>
-                <Select
-                  value={period}
-                  onChange={(e) => setPeriod(e.target.value as 'month' | 'quarter' | 'year')}
+              <Tooltip title="Refresh the expense data to show the latest information">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={fetchExpenseSummary}
+                  disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}
+                  sx={{ mr: 2 }}
                 >
-                  <MenuItem value="month">Monthly</MenuItem>
-                  <MenuItem value="quarter">Quarterly</MenuItem>
-                  <MenuItem value="year">Yearly</MenuItem>
-                </Select>
-              </FormControl>
+                  Refresh
+                </Button>
+              </Tooltip>
               <Button
                 variant="outlined"
                 color="error"
@@ -367,7 +390,9 @@ const ExpenseTracker: React.FC = () => {
           )}
 
           {loading ? (
-            <CircularProgress />
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+              <CircularProgress />
+            </Box>
           ) : summary ? (
             <>
               <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -409,14 +434,26 @@ const ExpenseTracker: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {Object.entries(summary.category_summary).map(([category, data]) => (
-                      <TableRow key={category}>
-                        <TableCell>{category}</TableCell>
-                        <TableCell align="right">${data.total.toFixed(2)}</TableCell>
-                        <TableCell align="right">${data.gst_amount.toFixed(2)}</TableCell>
-                        <TableCell align="right">{data.count}</TableCell>
-                      </TableRow>
-                    ))}
+                    {loading ? (
+                      // Loading skeleton for category summary
+                      Array(3).fill(0).map((_, index) => (
+                        <TableRow key={`skeleton-${index}`}>
+                          <TableCell><Skeleton animation="wave" /></TableCell>
+                          <TableCell align="right"><Skeleton animation="wave" /></TableCell>
+                          <TableCell align="right"><Skeleton animation="wave" /></TableCell>
+                          <TableCell align="right"><Skeleton animation="wave" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      Object.entries(summary.category_summary).map(([category, data]) => (
+                        <TableRow key={category}>
+                          <TableCell>{category}</TableCell>
+                          <TableCell align="right">${data.total.toFixed(2)}</TableCell>
+                          <TableCell align="right">${data.gst_amount.toFixed(2)}</TableCell>
+                          <TableCell align="right">{data.count}</TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -434,15 +471,28 @@ const ExpenseTracker: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {summary.expenses.map((expense) => (
-                      <TableRow key={expense.id}>
-                        <TableCell>{expense.date}</TableCell>
-                        <TableCell>{expense.description}</TableCell>
-                        <TableCell>{expense.category}</TableCell>
-                        <TableCell align="right">${expense.amount.toFixed(2)}</TableCell>
-                        <TableCell align="right">${expense.gst_amount.toFixed(2)}</TableCell>
-                      </TableRow>
-                    ))}
+                    {loading ? (
+                      // Loading skeleton for recent expenses
+                      Array(5).fill(0).map((_, index) => (
+                        <TableRow key={`skeleton-expense-${index}`}>
+                          <TableCell><Skeleton animation="wave" /></TableCell>
+                          <TableCell><Skeleton animation="wave" /></TableCell>
+                          <TableCell><Skeleton animation="wave" /></TableCell>
+                          <TableCell align="right"><Skeleton animation="wave" /></TableCell>
+                          <TableCell align="right"><Skeleton animation="wave" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      summary.expenses.map((expense) => (
+                        <TableRow key={expense.id}>
+                          <TableCell>{expense.date}</TableCell>
+                          <TableCell>{expense.description}</TableCell>
+                          <TableCell>{expense.category}</TableCell>
+                          <TableCell align="right">${expense.amount.toFixed(2)}</TableCell>
+                          <TableCell align="right">${expense.gst_amount.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
