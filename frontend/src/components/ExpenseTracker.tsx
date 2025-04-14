@@ -22,6 +22,7 @@ import {
   Tab,
   Tooltip,
   Skeleton,
+  Divider,
 } from '@mui/material';
 import { API_BASE_URL, CATEGORIES, Category } from '../config';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -120,7 +121,7 @@ const ExpenseTracker: React.FC = () => {
           date: new Date().toISOString().split('T')[0],
           amount: gstData.gst_collected * 11, // Convert GST to total amount
           gst_amount: gstData.gst_collected,
-          description: 'GST Collected',
+          description: `GST Collected (${gstData.gst_collected.toFixed(2)} GST on ${(gstData.gst_collected * 10).toFixed(2)} sales)`,
           category: 'GST Income'
         });
       }
@@ -132,8 +133,29 @@ const ExpenseTracker: React.FC = () => {
           date: new Date().toISOString().split('T')[0],
           amount: gstData.gst_paid * 11, // Convert GST to total amount
           gst_amount: gstData.gst_paid,
-          description: 'GST Paid',
+          description: `GST Paid (${gstData.gst_paid.toFixed(2)} GST on ${(gstData.gst_paid * 10).toFixed(2)} purchases)`,
           category: 'GST Expenses'
+        });
+      }
+
+      // Add GST owing/refund
+      if (gstData.gst_owing > 0) {
+        gstExpenses.push({
+          id: 'gst-owing',
+          date: new Date().toISOString().split('T')[0],
+          amount: gstData.gst_owing,
+          gst_amount: gstData.gst_owing,
+          description: `GST Owing to ATO (${gstData.gst_owing.toFixed(2)})`,
+          category: 'GST Owing'
+        });
+      } else if (gstData.gst_refund > 0) {
+        gstExpenses.push({
+          id: 'gst-refund',
+          date: new Date().toISOString().split('T')[0],
+          amount: gstData.gst_refund,
+          gst_amount: gstData.gst_refund,
+          description: `GST Refund from ATO (${gstData.gst_refund.toFixed(2)})`,
+          category: 'GST Refund'
         });
       }
 
@@ -403,24 +425,97 @@ const ExpenseTracker: React.FC = () => {
                   </Paper>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="h6">GST Claimable</Typography>
-                    <Typography variant="h4">${summary.total_gst_claimable.toFixed(2)}</Typography>
-                  </Paper>
+                  <Tooltip title="Total GST amount that can be claimed from purchases">
+                    <Paper sx={{ p: 2, textAlign: 'center' }}>
+                      <Typography variant="h6">GST Claimable</Typography>
+                      <Typography variant="h4" sx={{ color: summary.total_gst_claimable > 0 ? 'success.main' : 'text.primary' }}>
+                        ${summary.total_gst_claimable.toFixed(2)}
+                      </Typography>
+                    </Paper>
+                  </Tooltip>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="h6">GST Eligible</Typography>
-                    <Typography variant="h4">${summary.gst_eligible_expenses.toFixed(2)}</Typography>
-                  </Paper>
+                  <Tooltip title="Total expenses that include GST">
+                    <Paper sx={{ p: 2, textAlign: 'center' }}>
+                      <Typography variant="h6">GST Eligible</Typography>
+                      <Typography variant="h4">${summary.gst_eligible_expenses.toFixed(2)}</Typography>
+                    </Paper>
+                  </Tooltip>
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="h6">Non-GST Expenses</Typography>
-                    <Typography variant="h4">${summary.non_gst_expenses.toFixed(2)}</Typography>
-                  </Paper>
+                  <Tooltip title="Expenses that do not include GST">
+                    <Paper sx={{ p: 2, textAlign: 'center' }}>
+                      <Typography variant="h6">Non-GST Expenses</Typography>
+                      <Typography variant="h4">${summary.non_gst_expenses.toFixed(2)}</Typography>
+                    </Paper>
+                  </Tooltip>
                 </Grid>
               </Grid>
+
+              {/* GST Calculation Summary */}
+              <Paper sx={{ p: 2, mb: 3 }}>
+                <Typography variant="h6" gutterBottom>GST Calculation Summary</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Typography>GST Collected from Sales:</Typography>
+                      <Typography sx={{ color: 'success.main' }}>
+                        ${summary.category_summary['GST Income']?.gst_amount.toFixed(2) || '0.00'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Typography>GST Paid on Purchases:</Typography>
+                      <Typography sx={{ color: 'error.main' }}>
+                        ${summary.category_summary['GST Expenses']?.gst_amount.toFixed(2) || '0.00'}
+                      </Typography>
+                    </Box>
+                    <Divider sx={{ my: 1 }} />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Typography variant="subtitle1">Net GST:</Typography>
+                      <Typography 
+                        variant="subtitle1" 
+                        sx={{ 
+                          color: summary.total_gst_claimable > 0 ? 'success.main' : summary.total_gst_claimable < 0 ? 'error.main' : 'text.primary',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        ${summary.total_gst_claimable.toFixed(2)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="subtitle1">Status:</Typography>
+                      <Typography 
+                        variant="subtitle1"
+                        sx={{ 
+                          color: summary.total_gst_claimable > 0 ? 'success.main' : summary.total_gst_claimable < 0 ? 'error.main' : 'text.primary',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {summary.total_gst_claimable > 0 ? 'Refund from ATO' : summary.total_gst_claimable < 0 ? 'Owing to ATO' : 'Balanced'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Calculation:
+                      </Typography>
+                      <Typography variant="body2">
+                        GST Collected (${summary.category_summary['GST Income']?.gst_amount.toFixed(2) || '0.00'}) - 
+                        GST Paid (${summary.category_summary['GST Expenses']?.gst_amount.toFixed(2) || '0.00'}) = 
+                        Net GST (${summary.total_gst_claimable.toFixed(2)})
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        {summary.total_gst_claimable > 0 
+                          ? `You will receive a refund of $${summary.total_gst_claimable.toFixed(2)} from the ATO`
+                          : summary.total_gst_claimable < 0
+                            ? `You need to pay $${Math.abs(summary.total_gst_claimable).toFixed(2)} to the ATO`
+                            : 'Your GST is balanced for this period'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
 
               <Typography variant="h6" gutterBottom>Category Summary</Typography>
               <TableContainer component={Paper}>
@@ -447,9 +542,23 @@ const ExpenseTracker: React.FC = () => {
                     ) : (
                       Object.entries(summary.category_summary).map(([category, data]) => (
                         <TableRow key={category}>
-                          <TableCell>{category}</TableCell>
+                          <TableCell>
+                            <Tooltip title={
+                              category === 'GST Income' ? 'GST collected from sales (1/11 of total amount)' :
+                              category === 'GST Expenses' ? 'GST paid on purchases (1/11 of total amount)' :
+                              category === 'GST Owing' ? 'Net GST amount owed to ATO' :
+                              category === 'GST Refund' ? 'Net GST amount refundable from ATO' :
+                              'Regular business expenses'
+                            }>
+                              <span>{category}</span>
+                            </Tooltip>
+                          </TableCell>
                           <TableCell align="right">${data.total.toFixed(2)}</TableCell>
-                          <TableCell align="right">${data.gst_amount.toFixed(2)}</TableCell>
+                          <TableCell align="right" sx={{ 
+                            color: data.gst_amount > 0 ? 'success.main' : data.gst_amount < 0 ? 'error.main' : 'text.primary'
+                          }}>
+                            ${data.gst_amount.toFixed(2)}
+                          </TableCell>
                           <TableCell align="right">{data.count}</TableCell>
                         </TableRow>
                       ))
@@ -489,7 +598,11 @@ const ExpenseTracker: React.FC = () => {
                           <TableCell>{expense.description}</TableCell>
                           <TableCell>{expense.category}</TableCell>
                           <TableCell align="right">${expense.amount.toFixed(2)}</TableCell>
-                          <TableCell align="right">${expense.gst_amount.toFixed(2)}</TableCell>
+                          <TableCell align="right" sx={{ 
+                            color: expense.gst_amount > 0 ? 'success.main' : expense.gst_amount < 0 ? 'error.main' : 'text.primary'
+                          }}>
+                            ${expense.gst_amount.toFixed(2)}
+                          </TableCell>
                         </TableRow>
                       ))
                     )}

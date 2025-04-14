@@ -137,6 +137,18 @@ def init_db():
                 created_at TEXT
             )
         ''')
+
+        # Create tax calculations table
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS tax_calculations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                annual_income REAL NOT NULL,
+                deductions TEXT NOT NULL,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
         
         conn.commit()
         logger.info("Database initialized successfully")
@@ -215,6 +227,14 @@ class Expense(BaseModel):
 class ReportRequest(BaseModel):
     year: Optional[str] = None
     quarter: Optional[str] = None
+
+class TaxCalculation(BaseModel):
+    id: Optional[int] = None
+    name: str
+    annual_income: float
+    deductions: List[Dict[str, Any]]
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
 # Database operations
 def normalize_supplier_name(supplier: str) -> str:
@@ -1183,6 +1203,103 @@ async def clear_expenses():
         return {"message": "All expenses cleared successfully"}
     except Exception as e:
         logger.error(f"Error clearing expenses: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+@app.get("/api/tax-calculations")
+async def get_tax_calculations():
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        c.execute('''
+            SELECT id, name, annual_income, deductions, created_at, updated_at
+            FROM tax_calculations
+            ORDER BY created_at DESC
+        ''')
+        
+        calculations = []
+        for row in c.fetchall():
+            calculations.append({
+                'id': row[0],
+                'name': row[1],
+                'annual_income': row[2],
+                'deductions': json.loads(row[3]),
+                'created_at': row[4],
+                'updated_at': row[5]
+            })
+        
+        return calculations
+    except Exception as e:
+        logger.error(f"Error fetching tax calculations: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+@app.get("/api/tax-calculations/{calculation_id}")
+async def get_tax_calculation(calculation_id: int):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        c.execute('''
+            SELECT id, name, annual_income, deductions, created_at, updated_at
+            FROM tax_calculations
+            WHERE id = ?
+        ''', (calculation_id,))
+        
+        row = c.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Calculation not found")
+        
+        return {
+            'id': row[0],
+            'name': row[1],
+            'annual_income': row[2],
+            'deductions': json.loads(row[3]),
+            'created_at': row[4],
+            'updated_at': row[5]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching tax calculation: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            conn.close()
+
+@app.post("/api/tax-calculations")
+async def create_tax_calculation(calculation: TaxCalculation):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        c.execute('''
+            INSERT INTO tax_calculations (name, annual_income, deductions)
+            VALUES (?, ?, ?)
+        ''', (
+            calculation.name,
+            calculation.annual_income,
+            json.dumps(calculation.deductions)
+        ))
+        
+        conn.commit()
+        calculation_id = c.lastrowid
+        
+        return {
+            'id': calculation_id,
+            'name': calculation.name,
+            'annual_income': calculation.annual_income,
+            'deductions': calculation.deductions,
+            'created_at': datetime.now().isoformat(),
+            'updated_at': datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error creating tax calculation: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn:

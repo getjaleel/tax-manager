@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Box, 
   Typography, 
@@ -26,7 +26,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Link
+  Link,
+  CircularProgress
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
@@ -35,6 +36,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import InfoIcon from '@mui/icons-material/Info';
+import LoadIcon from '@mui/icons-material/Download';
+import { API_BASE_URL } from '../config';
 
 interface DeductionCategory {
   id: string;
@@ -136,6 +140,16 @@ const INITIAL_CATEGORIES: DeductionCategory[] = [
   }
 ];
 
+// Create a shared state for expense data
+const sharedExpenseState = {
+  totalExpenses: 0,
+  gstEligibleExpenses: 0,
+  setExpenseData: (data: { total_expenses: number; gst_eligible_expenses: number }) => {
+    sharedExpenseState.totalExpenses = data.total_expenses;
+    sharedExpenseState.gstEligibleExpenses = data.gst_eligible_expenses;
+  }
+};
+
 const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataUpdate, initialData }) => {
   const [income, setIncome] = useState<string>(initialData.income.toString());
   const [categories, setCategories] = useState<DeductionCategory[]>(INITIAL_CATEGORIES);
@@ -146,14 +160,113 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
   const [selectedCalculation, setSelectedCalculation] = useState<string>('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
+  const [gstEligibleExpenses, setGstEligibleExpenses] = useState<number>(0);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // Update local state when shared state changes
   useEffect(() => {
-    // Load saved calculations from localStorage
-    const saved = localStorage.getItem('savedCalculations');
-    if (saved) {
-      setSavedCalculations(JSON.parse(saved));
+    const interval = setInterval(() => {
+      if (sharedExpenseState.totalExpenses !== totalExpenses) {
+        setTotalExpenses(sharedExpenseState.totalExpenses);
+      }
+      if (sharedExpenseState.gstEligibleExpenses !== gstEligibleExpenses) {
+        setGstEligibleExpenses(sharedExpenseState.gstEligibleExpenses);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [totalExpenses, gstEligibleExpenses]);
+
+  const fetchExpenseData = useCallback(async () => {
+    if (isInitialLoad) {
+      setLoading(true);
+    }
+    
+    try {
+      // Map expenses to deduction categories
+      const updatedDeductions = categories.map(category => {
+        let amount = 0;
+        
+        // Map based on category
+        switch (category.id) {
+          case 'home-office':
+            amount = totalExpenses * 0.1; // 10% of total expenses for home office
+            break;
+          case 'vehicle':
+            amount = totalExpenses * 0.2; // 20% of total expenses for vehicle
+            break;
+          case 'professional':
+            amount = totalExpenses * 0.15; // 15% of total expenses for professional
+            break;
+          case 'equipment':
+            amount = totalExpenses * 0.15; // 15% of total expenses for equipment
+            break;
+          case 'travel':
+            amount = totalExpenses * 0.1; // 10% of total expenses for travel
+            break;
+          case 'insurance':
+            amount = totalExpenses * 0.1; // 10% of total expenses for insurance
+            break;
+          case 'marketing':
+            amount = totalExpenses * 0.2; // 20% of total expenses for marketing
+            break;
+        }
+
+        // Apply GST if eligible
+        if (category.gstEligible) {
+          const gstAmount = amount / 11;
+          amount = amount - gstAmount;
+        }
+
+        return { ...category, amount };
+      });
+
+      setCategories(updatedDeductions);
+      setIsInitialLoad(false);
+    } catch (error) {
+      console.error('Error processing expense data:', error);
+      setError('Failed to process expense data');
+    } finally {
+      setLoading(false);
+    }
+  }, [categories, isInitialLoad, totalExpenses]);
+
+  const fetchSavedCalculations = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/tax-calculations`);
+      if (!response.ok) throw new Error('Failed to fetch saved calculations');
+      const data = await response.json();
+      setSavedCalculations(data);
+    } catch (error) {
+      console.error('Error fetching saved calculations:', error);
+      setError('Failed to load saved calculations');
     }
   }, []);
+
+  useEffect(() => {
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    // Set a new timeout to debounce the API calls
+    fetchTimeoutRef.current = setTimeout(() => {
+      fetchSavedCalculations();
+      fetchExpenseData();
+    }, 500); // 500ms debounce
+
+    // Cleanup function
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, [fetchSavedCalculations, fetchExpenseData]);
 
   useEffect(() => {
     // Update parent component with new data
@@ -167,6 +280,17 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       gstEligibleExpenses
     });
   }, [income, totalDeductions, categories, onDataUpdate]);
+
+  useEffect(() => {
+    // Calculate total deductions whenever categories change
+    const total = categories.reduce((sum, category) => {
+      if (category.percentage) {
+        return sum + (category.amount * category.percentage);
+      }
+      return sum + category.amount;
+    }, 0);
+    setTotalDeductions(total);
+  }, [categories]);
 
   const updateCategoryAmount = (id: string, amount: number) => {
     setCategories(prevCategories => 
@@ -249,6 +373,53 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
     setShowAlert(true);
   };
 
+  const handleSaveCalculation = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/tax-calculations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          annual_income: parseFloat(income) || 0,
+          deductions: categories,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save calculation');
+      
+      setSuccess('Calculation saved successfully');
+      fetchSavedCalculations();
+    } catch (error) {
+      setError('Failed to save calculation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadCalculation = async (id: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/tax-calculations/${id}`);
+      if (!response.ok) throw new Error('Failed to load calculation');
+      const data = await response.json();
+      
+      setIncome(data.income.toString());
+      setCategories(data.categories);
+      setTotalDeductions(data.totalDeductions);
+      setSuccess('Calculation loaded successfully');
+    } catch (error) {
+      setError('Failed to load calculation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateTaxableIncome = () => {
+    return parseFloat(income) - totalDeductions;
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
@@ -271,25 +442,14 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>
-              Load Saved Calculation
+              Total Expenses from GST Helper
             </Typography>
-            <FormControl fullWidth>
-              <InputLabel>Select Calculation</InputLabel>
-              <Select
-                value={selectedCalculation}
-                onChange={(e: SelectChangeEvent) => {
-                  setSelectedCalculation(e.target.value);
-                  loadCalculation(e.target.value);
-                }}
-                label="Select Calculation"
-              >
-                {savedCalculations.map(calc => (
-                  <MenuItem key={calc.id} value={calc.id}>
-                    {calc.name} ({new Date(calc.date).toLocaleDateString()})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Typography variant="h5" color="primary">
+              ${totalExpenses.toFixed(2)}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              GST Eligible: ${gstEligibleExpenses.toFixed(2)}
+            </Typography>
           </Grid>
         </Grid>
       </Paper>
@@ -367,10 +527,24 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
 
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Deduction Summary</Typography>
+          <Typography>Tax Calculation Summary</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
+            <ListItem>
+              <ListItemText 
+                primary="Total Expenses" 
+                secondary={`$${totalExpenses.toFixed(2)}`}
+              />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText 
+                primary="GST Eligible Expenses" 
+                secondary={`$${gstEligibleExpenses.toFixed(2)}`}
+              />
+            </ListItem>
+            <Divider />
             <ListItem>
               <ListItemText 
                 primary="Total Deductions" 
@@ -381,31 +555,21 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
             <ListItem>
               <ListItemText 
                 primary="Taxable Income" 
-                secondary={`$${(parseFloat(income) - totalDeductions).toFixed(2)}`}
+                secondary={`$${calculateTaxableIncome().toFixed(2)}`}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText 
                 primary="Tax Payable" 
-                secondary={`$${calculateTax(parseFloat(income) - totalDeductions).toFixed(2)}`}
+                secondary={`$${calculateTax(calculateTaxableIncome()).toFixed(2)}`}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText 
                 primary="Tax Savings" 
-                secondary={`$${(calculateTax(parseFloat(income)) - calculateTax(parseFloat(income) - totalDeductions)).toFixed(2)}`}
-              />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText 
-                primary="GST Eligible Expenses" 
-                secondary={`$${categories
-                  .filter(category => category.gstEligible)
-                  .reduce((sum, category) => sum + category.amount, 0)
-                  .toFixed(2)}`}
+                secondary={`$${(calculateTax(parseFloat(income)) - calculateTax(calculateTaxableIncome())).toFixed(2)}`}
               />
             </ListItem>
           </List>
@@ -439,6 +603,24 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
           {alertMessage}
         </Alert>
       </Snackbar>
+
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }} onClose={() => setSuccess(null)}>
+          {success}
+        </Alert>
+      )}
     </Box>
   );
 };
