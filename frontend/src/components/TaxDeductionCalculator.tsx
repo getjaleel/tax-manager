@@ -188,6 +188,21 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
     }
     
     try {
+      // Fetch expense summary from Expense Tracker
+      const expenseResponse = await fetch(`${API_BASE_URL}/expenses`);
+      if (!expenseResponse.ok) throw new Error('Failed to fetch expense summary');
+      const expenseData = await expenseResponse.json();
+      
+      console.log('Received expense data:', expenseData); // Debug log
+
+      // Set total expenses and GST eligible expenses from the API response
+      if (expenseData.total_expenses !== undefined) {
+        setTotalExpenses(expenseData.total_expenses);
+      }
+      if (expenseData.gst_eligible_expenses !== undefined) {
+        setGstEligibleExpenses(expenseData.gst_eligible_expenses);
+      }
+
       // Map expenses to deduction categories
       const updatedDeductions = categories.map(category => {
         let amount = 0;
@@ -195,25 +210,25 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
         // Map based on category
         switch (category.id) {
           case 'home-office':
-            amount = totalExpenses * 0.1; // 10% of total expenses for home office
+            amount = expenseData.category_summary?.['Home Office']?.total || 0;
             break;
           case 'vehicle':
-            amount = totalExpenses * 0.2; // 20% of total expenses for vehicle
+            amount = expenseData.category_summary?.['Vehicle']?.total || 0;
             break;
           case 'professional':
-            amount = totalExpenses * 0.15; // 15% of total expenses for professional
+            amount = expenseData.category_summary?.['Training']?.total || 0;
             break;
           case 'equipment':
-            amount = totalExpenses * 0.15; // 15% of total expenses for equipment
+            amount = expenseData.category_summary?.['Equipment']?.total || 0;
             break;
           case 'travel':
-            amount = totalExpenses * 0.1; // 10% of total expenses for travel
+            amount = expenseData.category_summary?.['Travel']?.total || 0;
             break;
           case 'insurance':
-            amount = totalExpenses * 0.1; // 10% of total expenses for insurance
+            amount = expenseData.category_summary?.['Insurance']?.total || 0;
             break;
           case 'marketing':
-            amount = totalExpenses * 0.2; // 20% of total expenses for marketing
+            amount = expenseData.category_summary?.['Marketing']?.total || 0;
             break;
         }
 
@@ -229,12 +244,12 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       setCategories(updatedDeductions);
       setIsInitialLoad(false);
     } catch (error) {
-      console.error('Error processing expense data:', error);
-      setError('Failed to process expense data');
+      console.error('Error fetching expense data:', error);
+      setError('Failed to load expense data');
     } finally {
       setLoading(false);
     }
-  }, [categories, isInitialLoad, totalExpenses]);
+  }, [categories, isInitialLoad]);
 
   const fetchSavedCalculations = useCallback(async () => {
     try {
@@ -417,8 +432,19 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
   };
 
   const calculateTaxableIncome = () => {
-    return parseFloat(income) - totalDeductions;
+    const annualIncome = parseFloat(income) || 0;
+    return annualIncome - totalExpenses;
   };
+
+  // Add effect to fetch data on mount and periodically
+  useEffect(() => {
+    fetchExpenseData();
+    
+    // Set up periodic refresh
+    const interval = setInterval(fetchExpenseData, 5000); // Refresh every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, [fetchExpenseData]);
 
   return (
     <Box sx={{ p: 3 }}>
