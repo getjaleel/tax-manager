@@ -1305,6 +1305,174 @@ async def create_tax_calculation(calculation: TaxCalculation):
         if conn:
             conn.close()
 
+@app.put("/invoices/{invoice_id}")
+async def update_invoice(invoice_id: str, invoice: dict):
+    try:
+        conn = sqlite3.connect('gst-helper.db')
+        c = conn.cursor()
+        
+        # First check if the invoice exists
+        c.execute('SELECT id FROM invoices WHERE id = ?', (str(invoice_id),))
+        if not c.fetchone():
+            return JSONResponse(
+                status_code=404,
+                content={
+                    "error": "Invoice not found",
+                    "detail": f"Invoice with ID {invoice_id} does not exist",
+                    "code": "INVOICE_NOT_FOUND"
+                }
+            )
+        
+        # Validate required fields
+        required_fields = ['supplier', 'total_amount', 'gst_amount', 'net_amount', 'invoice_date']
+        missing_fields = [field for field in required_fields if field not in invoice]
+        if missing_fields:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Missing required fields",
+                    "detail": f"The following fields are required: {', '.join(missing_fields)}",
+                    "code": "MISSING_FIELDS"
+                }
+            )
+        
+        # Validate data types
+        try:
+            total_amount = float(invoice['total_amount'])
+            gst_amount = float(invoice['gst_amount'])
+            net_amount = float(invoice['net_amount'])
+            
+            # Validate amounts
+            if total_amount <= 0:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "error": "Invalid amount",
+                        "detail": "Total amount must be greater than 0",
+                        "code": "INVALID_AMOUNT"
+                    }
+                )
+            
+            # Validate GST calculation
+            expected_gst = round(total_amount / 11, 2)
+            if abs(gst_amount - expected_gst) > 0.01:  # Allow small rounding differences
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "error": "Invalid GST amount",
+                        "detail": f"GST amount should be approximately {expected_gst} (1/11 of total amount)",
+                        "code": "INVALID_GST"
+                    }
+                )
+            
+            # Validate net amount
+            expected_net = round(total_amount - gst_amount, 2)
+            if abs(net_amount - expected_net) > 0.01:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "error": "Invalid net amount",
+                        "detail": f"Net amount should be {expected_net} (total - GST)",
+                        "code": "INVALID_NET_AMOUNT"
+                    }
+                )
+            
+        except ValueError as e:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Invalid data type",
+                    "detail": "Amount fields must be valid numbers",
+                    "code": "INVALID_DATA_TYPE"
+                }
+            )
+        
+        # Validate date format
+        try:
+            datetime.strptime(invoice['invoice_date'], '%Y-%m-%d')
+        except ValueError:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Invalid date format",
+                    "detail": "Date must be in YYYY-MM-DD format",
+                    "code": "INVALID_DATE_FORMAT"
+                }
+            )
+        
+        # Update the invoice
+        c.execute('''
+            UPDATE invoices 
+            SET supplier = ?,
+                total_amount = ?,
+                gst_amount = ?,
+                net_amount = ?,
+                invoice_date = ?,
+                invoice_number = ?,
+                category = ?,
+                gst_eligible = ?,
+                updated_at = ?
+            WHERE id = ?
+        ''', (
+            invoice.get('supplier'),
+            total_amount,
+            gst_amount,
+            net_amount,
+            invoice.get('invoice_date'),
+            invoice.get('invoice_number', ''),
+            invoice.get('category', 'Other'),
+            invoice.get('gst_eligible', True),
+            datetime.now().isoformat(),
+            str(invoice_id)
+        ))
+        
+        conn.commit()
+        
+        # Fetch the updated invoice
+        c.execute('''
+            SELECT id, supplier, total_amount, gst_amount, net_amount, 
+                   invoice_date, invoice_number, category, gst_eligible, 
+                   created_at, updated_at, is_system_date, invoice_type, status
+            FROM invoices 
+            WHERE id = ?
+        ''', (str(invoice_id),))
+        
+        updated_invoice = c.fetchone()
+        
+        return JSONResponse(content={
+            "success": True,
+            "message": f"Invoice {invoice_id} updated successfully",
+            "invoice": {
+                "id": updated_invoice[0],
+                "supplier": updated_invoice[1],
+                "total_amount": updated_invoice[2],
+                "gst_amount": updated_invoice[3],
+                "net_amount": updated_invoice[4],
+                "invoice_date": updated_invoice[5],
+                "invoice_number": updated_invoice[6],
+                "category": updated_invoice[7],
+                "gst_eligible": bool(updated_invoice[8]),
+                "created_at": updated_invoice[9],
+                "updated_at": updated_invoice[10],
+                "is_system_date": bool(updated_invoice[11]),
+                "invoice_type": updated_invoice[12],
+                "status": updated_invoice[13]
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error updating invoice: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Failed to update invoice",
+                "detail": str(e),
+                "code": "INTERNAL_SERVER_ERROR"
+            }
+        )
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     # Start the server
     uvicorn.run(app, host=HOST, port=PORT) 

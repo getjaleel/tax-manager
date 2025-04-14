@@ -38,6 +38,7 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import InfoIcon from '@mui/icons-material/Info';
 import LoadIcon from '@mui/icons-material/Download';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { API_BASE_URL } from '../config';
 
 interface DeductionCategory {
@@ -140,16 +141,6 @@ const INITIAL_CATEGORIES: DeductionCategory[] = [
   }
 ];
 
-// Create a shared state for expense data
-const sharedExpenseState = {
-  totalExpenses: 0,
-  gstEligibleExpenses: 0,
-  setExpenseData: (data: { total_expenses: number; gst_eligible_expenses: number }) => {
-    sharedExpenseState.totalExpenses = data.total_expenses;
-    sharedExpenseState.gstEligibleExpenses = data.gst_eligible_expenses;
-  }
-};
-
 const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataUpdate, initialData }) => {
   const [income, setIncome] = useState<string>(initialData.income.toString());
   const [categories, setCategories] = useState<DeductionCategory[]>(INITIAL_CATEGORIES);
@@ -166,36 +157,32 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [gstEligibleExpenses, setGstEligibleExpenses] = useState<number>(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+  const [isTabActive, setIsTabActive] = useState(true);
   const fetchTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Update local state when shared state changes
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (sharedExpenseState.totalExpenses !== totalExpenses) {
-        setTotalExpenses(sharedExpenseState.totalExpenses);
-      }
-      if (sharedExpenseState.gstEligibleExpenses !== gstEligibleExpenses) {
-        setGstEligibleExpenses(sharedExpenseState.gstEligibleExpenses);
-      }
-    }, 1000);
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
 
-    return () => clearInterval(interval);
-  }, [totalExpenses, gstEligibleExpenses]);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
-  const fetchExpenseData = useCallback(async () => {
-    if (isInitialLoad) {
-      setLoading(true);
-    }
-    
+  const fetchAllData = useCallback(async () => {
     try {
-      // Fetch expense summary from Expense Tracker
+      // Fetch expense data
       const expenseResponse = await fetch(`${API_BASE_URL}/expenses`);
-      if (!expenseResponse.ok) throw new Error('Failed to fetch expense summary');
+      if (!expenseResponse.ok) {
+        throw new Error(`Failed to fetch expense summary: ${expenseResponse.statusText}`);
+      }
       const expenseData = await expenseResponse.json();
       
-      console.log('Received expense data:', expenseData); // Debug log
-
-      // Set total expenses and GST eligible expenses from the API response
+      // Set expense data
       if (expenseData.total_expenses !== undefined) {
         setTotalExpenses(expenseData.total_expenses);
       }
@@ -207,7 +194,6 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       const updatedDeductions = categories.map(category => {
         let amount = 0;
         
-        // Map based on category
         switch (category.id) {
           case 'home-office':
             amount = expenseData.category_summary?.['Home Office']?.total || 0;
@@ -232,7 +218,6 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
             break;
         }
 
-        // Apply GST if eligible
         if (category.gstEligible) {
           const gstAmount = amount / 11;
           amount = amount - gstAmount;
@@ -242,46 +227,39 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       });
 
       setCategories(updatedDeductions);
-      setIsInitialLoad(false);
+
+      // Fetch saved calculations
+      const calculationsResponse = await fetch(`${API_BASE_URL}/api/tax-calculations`);
+      if (!calculationsResponse.ok) {
+        throw new Error('Failed to fetch saved calculations');
+      }
+      const calculationsData = await calculationsResponse.json();
+      setSavedCalculations(calculationsData);
+
+      setLastRefreshTime(new Date());
+      setError(null);
     } catch (error) {
-      console.error('Error fetching expense data:', error);
-      setError('Failed to load expense data');
+      console.error('Error fetching data:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load data');
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
-  }, [categories, isInitialLoad]);
-
-  const fetchSavedCalculations = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tax-calculations`);
-      if (!response.ok) throw new Error('Failed to fetch saved calculations');
-      const data = await response.json();
-      setSavedCalculations(data);
-    } catch (error) {
-      console.error('Error fetching saved calculations:', error);
-      setError('Failed to load saved calculations');
-    }
-  }, []);
+  }, [categories]);
 
   useEffect(() => {
-    // Clear any existing timeout
-    if (fetchTimeoutRef.current) {
-      clearTimeout(fetchTimeoutRef.current);
-    }
+    // Initial fetch
+    fetchAllData();
 
-    // Set a new timeout to debounce the API calls
-    fetchTimeoutRef.current = setTimeout(() => {
-      fetchSavedCalculations();
-      fetchExpenseData();
-    }, 500); // 500ms debounce
-
-    // Cleanup function
-    return () => {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
+    // Set up a single interval for periodic refresh (5 minutes)
+    const interval = setInterval(() => {
+      if (isTabActive) {
+        fetchAllData();
       }
-    };
-  }, [fetchSavedCalculations, fetchExpenseData]);
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+    return () => clearInterval(interval);
+  }, [fetchAllData, isTabActive]);
 
   useEffect(() => {
     // Update parent component with new data
@@ -405,7 +383,7 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
       if (!response.ok) throw new Error('Failed to save calculation');
       
       setSuccess('Calculation saved successfully');
-      fetchSavedCalculations();
+      fetchAllData();
     } catch (error) {
       setError('Failed to save calculation');
     } finally {
@@ -436,15 +414,12 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
     return annualIncome - totalExpenses;
   };
 
-  // Add effect to fetch data on mount and periodically
-  useEffect(() => {
-    fetchExpenseData();
-    
-    // Set up periodic refresh
-    const interval = setInterval(fetchExpenseData, 5000); // Refresh every 5 seconds
-    
-    return () => clearInterval(interval);
-  }, [fetchExpenseData]);
+  const handleManualRefresh = async () => {
+    if (!isRefreshing) {
+      setIsRefreshing(true);
+      await fetchAllData();
+    }
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -476,6 +451,22 @@ const TaxDeductionCalculator: React.FC<TaxDeductionCalculatorProps> = ({ onDataU
             <Typography variant="body2" color="text.secondary">
               GST Eligible: ${gstEligibleExpenses.toFixed(2)}
             </Typography>
+            {lastRefreshTime && (
+              <Typography variant="caption" color="text.secondary">
+                Last updated: {lastRefreshTime.toLocaleTimeString()}
+              </Typography>
+            )}
+          </Grid>
+          <Grid item xs={12} md={6} sx={{ textAlign: 'right' }}>
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              onClick={handleManualRefresh}
+              disabled={isRefreshing}
+              sx={{ mt: 2 }}
+            >
+              {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+            </Button>
           </Grid>
         </Grid>
       </Paper>
